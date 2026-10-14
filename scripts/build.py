@@ -105,7 +105,7 @@ def main():
                     cat="telugu"; sub=next((c for c,ws in TE_CAT if any(w in t for w in ws)),None)
                 else: sub=None
                 items.append(dict(id=hashlib.md5(link.encode()).hexdigest()[:10],title=t,source=src,summary=s,link=link,
-                    published=when.isoformat(),category=cat,subcategory=sub,lang=lang,image=hires(image(e)),score=round(sc,3),desc=clean(e.get('summary',''))[:900])); n+=1
+                    published=when.isoformat(),category=cat,subcategory=sub,lang=lang,image=hires(image(e)),score=round(sc,3),desc=clean(e.get('summary',''))[:2500])); n+=1
             report.append(dict(feed=url,source=src,entries=len(f.entries),kept=n,status=f.get("status")))
         except Exception as ex: report.append(dict(feed=url,source=src,error=str(ex)))
     items.sort(key=lambda x:(-x["score"])); out=[]; per={}

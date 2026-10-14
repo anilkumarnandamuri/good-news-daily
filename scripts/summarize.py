@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
-"""Short, elder-friendly English + Telugu summaries for Good News Daily stories.
+"""English + Telugu summaries for Good News Daily stories (strictly one-to-one).
 
 Method (no LLM available on the box):
- * English: extractive. Sentences come only from the feed description and the
-   article's <meta description>/og:description (never the article body), cleaned and
-   trimmed to 3-4 short sentences, ending with a pointer to the source.
- * Telugu: Telugu-language stories use their own Telugu description extractively;
-   other stories are machine-translated (free Google translate web endpoint, with the
-   MyMemory API as fallback). English for Telugu stories is translated the same way.
+ * ONE canonical summary in the story's own language: up to 6 sentences / ~120 words,
+   extractive from the full feed description plus the article's og:/meta/twitter
+   descriptions (never the article body). De-duplicated, no headline repeats, no
+   "Topic:" prefixes, no "read more" line (that lives on the button).
+ * The other language is a sentence-by-sentence machine translation of exactly that
+   text (free Google translate web endpoint, MyMemory fallback). If any sentence
+   fails to translate, the other language is left empty and retried next run.
  * Cached by story id in data/summaries.json, so reruns only touch new stories.
  * Every network call has a short timeout; failures are skipped and retried next run.
 Run standalone: python3 scripts/summarize.py  (updates data/news.json in place)
@@ -17,7 +18,7 @@ import concurrent.futures as cf, html, json, pathlib, re, time, urllib.parse, ur
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 CACHE = ROOT / "data" / "summaries.json"
 UA = {"User-Agent": "Mozilla/5.0 (GoodNewsDaily summary bot)"}
-BUDGET_S = 150  # whole summary step stays under ~2.5 min even on a cold cache
+BUDGET_S = 240  # whole summary step stays under ~2.5 min even on a cold cache
 
 def _get(url, timeout=8, limit=400_000):
     with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=timeout) as r:
@@ -36,7 +37,11 @@ def meta(url):
                 x = re.search(pat, h, re.I)
                 if x: return html.unescape(x.group(1)).strip()
         return None
-    return m("og:description", "description", "twitter:description") or "", m("og:image", "twitter:image")
+    ds = []
+    for n in ("og:description", "description", "twitter:description"):
+        v = m(n)
+        if v and v not in ds: ds.append(v)
+    return " ".join(ds), m("og:image", "twitter:image")
 
 def translate(text, sl, tl):
     if not text: return ""
@@ -56,52 +61,66 @@ def translate(text, sl, tl):
     return ""
 
 SPLIT = re.compile(r"(?<=[.!?।])\s+|(?<=\.\.)\s*|\s*\|\s*")
-def sentences(text):
+PREFIX = re.compile(r"^[^:：.!?]{2,45}[:：]\s+")  # "Indiramma Housing: ..." style lead-ins
+
+def _tok(s):
+    return set(re.findall(r"[\w\u0C00-\u0C7F]{3,}", s.lower()))
+
+def sentences(text, lang="en"):
+    text = re.split(r"\[\s*(?:…|\.\.\.)\s*\]|\[\s*&hellip;\s*\]", text or "")
+    if len(text) > 1:  # drop the half sentence that runs into a "[…]" cut
+        head = text[0]; cut = max(head.rfind(". "), head.rfind("! "), head.rfind("? "))
+        text = head[: cut + 1] if cut > 0 else ""
+    else:
+        text = text[0]
+    text = text.strip()
+    if re.search(r"(\.\.|…)$", text):  # feed truncated mid-sentence: drop that tail
+        m = list(re.finditer(r"(?<!\.)[.!?।](?!\.)\s", text))
+        text = text[: m[-1].end()] if m else ""
     text = re.sub(r"\([^)]{0,80}\)", "", text or "")
-    text = re.sub(r"https?://\S+|Read more.*$|Click here.*$|Also Read.*$", "", text, flags=re.I)
+    text = re.sub(r"https?://\S+|Read more.*$|Click here.*$|Also Read.*$|The post .*? appeared first on .*$", "", text, flags=re.I)
     out = []
     for s in SPLIT.split(text):
-        s = s.strip(" .…-–—:").strip()
-        if 25 <= len(s) <= 260 and not s.endswith("…"): out.append(s + ("" if s[-1] in ".!?" else "."))
+        s = PREFIX.sub("", s.strip()).strip(" .…-–—:").strip()
+        te_share = len(re.findall(r"[\u0C00-\u0C7F]", s)) / max(1, len(re.findall(r"\w", s)))
+        if (lang == "te") != (te_share > 0.3): continue  # keep the summary in one language
+        if 25 <= len(s) <= 260 and not s.endswith("…") and "…" not in s[-4:]:
+            out.append(s + ("" if s[-1] in ".!?" else "."))
     return out
 
-def extractive(title, *texts, n=3, source=""):
-    seen, picked = set(), []
-    tkey = re.sub(r"\W", "", title.lower())[:40]
+def canonical(title, *texts, n=6, max_words=120, lang="en"):
+    """Up to 5-6 clean, de-duplicated sentences in the source language; never just the headline."""
+    tt = _tok(PREFIX.sub("", title)); picked, toks = [], []
     for t in texts:
-        for s in sentences(t):
-            k = re.sub(r"\W", "", s.lower())[:40]
-            if k in seen or k == tkey: continue
-            seen.add(k); picked.append(s)
-            if len(picked) == n: break
-        if len(picked) == n: break
-    if not picked:
-        picked = [title.rstrip(".!?") + "."]
+        for s in sentences(t, lang):
+            k = _tok(s)
+            if not k: continue
+            if tt and len(k & tt) / len(k) > 0.7: continue          # headline repeat
+            if any(len(k & o) / max(1, min(len(k), len(o))) > 0.6 for o in toks): continue  # duplicate
+            if picked and len(" ".join(picked + [s]).split()) > max_words: return picked
+            picked.append(s); toks.append(k)
+            if len(picked) == n: return picked
+    if len(picked) < 2:  # thin source: lead with the headline (minus any "Topic:" prefix)
+        h = re.sub(r"\s*\.{2,}\s*", ", ", PREFIX.sub("", title)).strip(" ,.!?") + "."
+        if not picked or not (_tok(h) and len(_tok(h) & toks[0]) / len(_tok(h)) > 0.6):
+            picked = [h] + picked
     return picked
 
 def summarize_item(it):
     desc = it.get("desc") or it.get("summary") or ""
     md, img = meta(it["link"])
-    if it["lang"] == "te":
-        te = extractive(it["title"], desc, md, n=3)
-        if len(te) < 2: te = [it["title"].rstrip(".!?") + "."] + te
-        te.append(f"పూర్తి వార్త {it['source']}లో చదవండి.")
-        en_src = " ".join([it["title"].rstrip(".!?") + "."] + te[:-1])
-        en = translate(en_src, "te", "en")
-        en = (en + f" Read the full story at {it['source']}.") if en else ""
-        te = " ".join(te)
-    else:
-        en = extractive(it["title"], desc, md, n=3)
-        if len(en) < 2 and not en[0].startswith(it["title"][:30]): en = [it["title"].rstrip(".!?") + "."] + en
-        en = " ".join(en)
-        te = translate(en, "en", "te")
-        te = (te + f" పూర్తి వార్త {it['source']}లో చదవండి.") if te else ""
-        en += f" Read the full story at {it['source']}."
-    return {"en": en, "te": te, "og_image": img, "t": int(time.time())}
+    src_lang = "te" if it["lang"] == "te" else "en"
+    other = "en" if src_lang == "te" else "te"
+    sents = canonical(it["title"], desc, md, lang=src_lang)
+    trans = [translate(x, src_lang, other) for x in sents]  # one call per sentence: strict 1:1
+    if not all(trans):
+        trans = []
+    res = {src_lang: " ".join(sents), other: " ".join(trans), "n": len(sents)}
+    return {"en": res["en"], "te": res["te"], "n": res["n"], "og_image": img, "t": int(time.time()), "v": 5}
 
 def run(items):
     cache = json.loads(CACHE.read_text()) if CACHE.exists() else {}
-    todo = [i for i in items if not (cache.get(i["id"], {}).get("en") and cache[i["id"]].get("te"))]
+    todo = [i for i in items if not (cache.get(i["id"], {}).get("v") == 5 and cache[i["id"]].get("en") and cache[i["id"]].get("te"))]
     t0 = time.time(); done = fail = 0
     with cf.ThreadPoolExecutor(8) as ex:
         futs = {ex.submit(summarize_item, i): i for i in todo}
@@ -110,7 +129,7 @@ def run(items):
                 i = futs[f]
                 try:
                     r = f.result(); old = cache.get(i["id"], {})
-                    cache[i["id"]] = {k: r[k] or old.get(k) for k in r}; done += 1
+                    cache[i["id"]] = r; done += 1
                 except Exception:
                     fail += 1
         except cf.TimeoutError:
@@ -122,7 +141,7 @@ def run(items):
     both = 0
     for i in items:
         c = cache.get(i["id"], {})
-        i["sum_en"] = c.get("en") or ""; i["sum_te"] = c.get("te") or ""
+        ok = c.get("v") == 5; i["sum_en"] = c.get("en", "") if ok else ""; i["sum_te"] = c.get("te", "") if ok else ""
         if not i.get("image") and c.get("og_image", "") and c["og_image"].startswith("http"): i["image"] = c["og_image"]
         i.pop("desc", None)
         both += bool(i["sum_en"] and i["sum_te"])
