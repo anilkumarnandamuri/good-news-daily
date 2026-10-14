@@ -2,7 +2,7 @@
  var btn=document.getElementById("pushBtn"),hint=document.getElementById("pushHint"),box=document.getElementById("push");
  var ua=navigator.userAgent,iOS=/iPad|iPhone|iPod/.test(ua)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
  var standalone=window.navigator.standalone===true||matchMedia("(display-mode: standalone)").matches;
- function set(state){box.dataset.state=state;btn.disabled=state==="on"||state==="busy";
+ function set(state){box.dataset.state=state;window.GN_pushState=state;btn.disabled=state==="on"||state==="busy";
   btn.querySelector(".lbl").textContent=state==="on"?"✅ You're subscribed — see you tomorrow!":state==="busy"?"⏳ One moment…":state==="blocked"?"🔕 Notifications are blocked in settings":"🔔 Get daily good news";}
  set("off");
  if(iOS&&!standalone){hint.hidden=false;btn.onclick=function(){hint.classList.remove("pulse");void hint.offsetWidth;hint.classList.add("pulse")};return;}

@@ -15,7 +15,7 @@
 </head><body>
 <header class="top">
  <div class="brand"><span class="sun" aria-hidden="true"></span><div><h1>Good News <em>Daily</em></h1><p id="date" class="date"></p></div></div>
- <button id="theme" class="icon-btn" aria-label="Toggle dark mode">◐</button>
+ <div class="top-r"><span id="streak" class="streak" hidden></span><button id="theme" class="icon-btn" aria-label="Toggle dark mode">◐</button></div>
 </header>
 <nav class="tabs" id="tabs" aria-label="Categories"></nav>
 <main>
@@ -36,9 +36,9 @@
  </section>
 </main>
 <div id="reader" class="reader" role="dialog" aria-modal="true" aria-label="Story" hidden>
- <div class="r-bar"><button class="r-ic" id="rBack" aria-label="Back to stories">←</button><div class="r-sp"></div>
+ <div class="r-bar"><button class="r-ic" id="rBack" aria-label="Back to stories">←</button><div class="r-sp"></div><button class="r-ic" id="rSave" aria-label="Save story" aria-pressed="false">🔖</button>
   <button class="r-ic r-txt" id="rSm" aria-label="Smaller text">A−</button><button class="r-ic r-txt" id="rLg" aria-label="Larger text">A+</button><button class="r-ic" id="rShare" aria-label="Share">⤴︎</button></div>
  <article id="rBody" class="r-body"></article>
 </div>
 <footer><p>Headlines and short excerpts link to the original publishers; all rights belong to them. Positivity is scored automatically and can be wrong. <span id="gen"></span></p></footer>
-<script src="app.js"></script><script src="push.js"></script><script src="reader.js"></script></body></html>
+<script src="sticky.js"></script><script src="app.js"></script><script src="push.js"></script><script src="reader.js"></script></body></html>
