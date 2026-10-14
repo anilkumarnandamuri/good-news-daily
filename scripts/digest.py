@@ -29,9 +29,9 @@ def render(stories, day):
     rows = "".join(f"""
 <tr><td style="padding:0 0 22px">
  <div style="font:600 11px/1 Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:{CATS[s['category']][2]}">{CATS[s['category']][1]} {e(CATS[s['category']][0])} · {e(s['source'])}</div>
- <a href="{e(s['link'])}" style="display:block;margin:6px 0 4px;font:700 20px/1.3 Georgia,serif;color:#1d1a17;text-decoration:none">{e(s['title'])}</a>
- <div style="font:16px/1.5 Arial,'Noto Sans Telugu',sans-serif;color:#5a524b">{e(clip(s['summary']))}</div>
- <a href="{e(s['link'])}" style="font:600 15px Arial,sans-serif;color:#f26b3a">Read the story →</a>
+ <a href="{SITE}#/s/{s['id']}" style="display:block;margin:6px 0 4px;font:700 20px/1.3 Georgia,serif;color:#1d1a17;text-decoration:none">{e(s['title'])}</a>
+ <div style="font:16px/1.5 Arial,'Noto Sans Telugu',sans-serif;color:#5a524b">{e(clip(s.get('sum_en') or s['summary'], 240))}</div>
+ <a href="{SITE}#/s/{s['id']}" style="font:600 15px Arial,sans-serif;color:#f26b3a">Read the summary →</a> &nbsp;<a href="{e(s['link'])}" style="font:14px Arial,sans-serif;color:#8a8077">Full story at {e(s['source'])} ↗</a>
 </td></tr>""" for s in stories)
     return f"""<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Good News Daily — {day}</title></head>
 <body style="margin:0;background:#fff8f0">
@@ -51,7 +51,7 @@ def text(stories, day):
     lines = [f"☀️ Good News Daily — {day}", "5 stories to brighten your day", ""]
     for i, s in enumerate(stories, 1):
         c = CATS[s["category"]]
-        lines += [f"{i}. {c[1]} {c[0]}: {s['title']}", f"   {clip(s['summary'])}", f"   {s['link']}", ""]
+        lines += [f"{i}. {c[1]} {c[0]}: {s['title']}", f"   {clip(s['summary'])}", f"   Summary: {SITE}#/s/{s['id']}", f"   Full story: {s['link']}", ""]
     return "\n".join(lines + [f"See all of today's good news: {SITE}"])
 
 def main():

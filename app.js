@@ -6,7 +6,7 @@ const ago=iso=>{const m=(Date.now()-new Date(iso))/6e4;if(m<60)return Math.max(1
 const thumb=(it,cls="thumb")=>{const g=GRAD[it.category]||GRAD.community;const bg=`linear-gradient(135deg,${g[0]},${g[1]})`;
  return it.image?`<div class="${cls}" style="background-image:url('${esc(it.image)}'),${bg}"></div>`:`<div class="${cls} ph" style="background:${bg}">${CATS[it.category][1]}</div>`};
 const meta=it=>`<div class="meta"><span class="pill" style="--c:${(GRAD[it.category]||GRAD.community)[0]}">${CATS[it.category][0]}</span><span>${esc(it.source)}</span><span class="dot">•</span><time datetime="${it.published}">${ago(it.published)}</time></div>`;
-const card=(it,i)=>`<a class="card" href="${esc(it.link)}" target="_blank" rel="noopener" style="animation-delay:${Math.min(i,12)*45}ms">${thumb(it)}<div class="txt">${meta(it)}<h3 class="${isTe(it.title)?"te":""}">${esc(it.title)}</h3><p class="${isTe(it.summary)?"te":""}">${esc(it.summary)}</p></div></a>`;
+const card=(it,i)=>`<a class="card" href="#/s/${it.id}" style="animation-delay:${Math.min(i,12)*45}ms">${thumb(it)}<div class="txt">${meta(it)}<h3 class="${isTe(it.title)?"te":""}">${esc(it.title)}</h3><p class="${isTe(it.summary)?"te":""}">${esc(it.summary)}</p></div></a>`;
 let DATA=[],cur="all";
 function mix(a){const g={};a.forEach(x=>(g[x.category]=g[x.category]||[]).push(x));const ks=Object.keys(g),o=[];
  for(let i=0;o.length<a.length;i++)ks.forEach(k=>{if(g[k][i])o.push(g[k][i])});return o}
@@ -14,7 +14,7 @@ function render(){const list=cur==="all"?mix(DATA):DATA.filter(x=>x.category===c
  const lead=list.find(x=>x.image)||list[0];const rest=list.filter(x=>x!==lead);
  if(!lead){$("#hero").innerHTML="";$("#feed").innerHTML='<p class="empty">No uplifting stories here yet today — check back tomorrow 🌱</p>';return}
  const g=GRAD[lead.category];
- $("#hero").innerHTML=`<a class="hero" href="${esc(lead.link)}" target="_blank" rel="noopener"><div class="img" style="background-image:${lead.image?`url('${esc(lead.image)}'),`:""}linear-gradient(135deg,${g[0]},${g[1]})"></div><div class="body">${meta(lead)}<h2 class="${isTe(lead.title)?"te":""}">${esc(lead.title)}</h2><p>${esc(lead.summary)}</p></div></a>`
+ $("#hero").innerHTML=`<a class="hero" href="#/s/${lead.id}"><div class="img" style="background-image:${lead.image?`url('${esc(lead.image)}'),`:""}linear-gradient(135deg,${g[0]},${g[1]})"></div><div class="body">${meta(lead)}<h2 class="${isTe(lead.title)?"te":""}">${esc(lead.title)}</h2><p>${esc(lead.summary)}</p></div></a>`
   +(innerWidth>=1080?`<div class="side">${rest.slice(0,4).map(card).join("")}</div>`:"");
  const feed=innerWidth>=1080?rest.slice(4):rest;$("#feed").innerHTML=feed.map(card).join("");}
 function tabs(){const c={all:DATA.length};DATA.forEach(x=>c[x.category]=(c[x.category]||0)+1);
@@ -24,5 +24,5 @@ const th=localStorage.theme||(matchMedia("(prefers-color-scheme: dark)").matches
 $("#theme").onclick=()=>{const t=document.documentElement.dataset.theme==="dark"?"light":"dark";document.documentElement.dataset.theme=localStorage.theme=t};
 $("#date").textContent=new Date().toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"});
 const p=new URLSearchParams(location.search);if(p.get("theme"))document.documentElement.dataset.theme=p.get("theme");if(p.get("cat"))cur=p.get("cat");
-fetch("data/news.json",{cache:"no-cache"}).then(r=>r.json()).then(d=>{DATA=d.items;$("#gen").textContent="Updated "+new Date(d.generated).toLocaleString()+".";tabs();render()});
+fetch("data/news.json",{cache:"no-cache"}).then(r=>r.json()).then(d=>{DATA=d.items;$("#gen").textContent="Updated "+new Date(d.generated).toLocaleString()+".";tabs();render();window.onData&&onData(DATA)});
 let rt;addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(render,200)});

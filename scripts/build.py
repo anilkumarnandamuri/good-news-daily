@@ -105,7 +105,7 @@ def main():
                     cat="telugu"; sub=next((c for c,ws in TE_CAT if any(w in t for w in ws)),None)
                 else: sub=None
                 items.append(dict(id=hashlib.md5(link.encode()).hexdigest()[:10],title=t,source=src,summary=s,link=link,
-                    published=when.isoformat(),category=cat,subcategory=sub,lang=lang,image=hires(image(e)),score=round(sc,3))); n+=1
+                    published=when.isoformat(),category=cat,subcategory=sub,lang=lang,image=hires(image(e)),score=round(sc,3),desc=clean(e.get('summary',''))[:900])); n+=1
             report.append(dict(feed=url,source=src,entries=len(f.entries),kept=n,status=f.get("status")))
         except Exception as ex: report.append(dict(feed=url,source=src,error=str(ex)))
     items.sort(key=lambda x:(-x["score"])); out=[]; per={}
@@ -115,6 +115,12 @@ def main():
         if per.get(k,0)>={"telugu":32,"sports":12}.get(k,18) or ps.get((sk,k),0)>=(8 if it["lang"]=="te" else 12): continue
         per[k]=per.get(k,0)+1; ps[(sk,k)]=ps.get((sk,k),0)+1; out.append(it)
     out.sort(key=lambda x:x["published"],reverse=True)
+    try:
+        import sys; sys.path.insert(0,str(pathlib.Path(__file__).resolve().parent)); import summarize
+        out=summarize.run(out)
+    except Exception as ex:
+        print("summaries skipped:",ex)
+        for i in out: i.pop("desc",None)
     p=pathlib.Path(__file__).resolve().parent.parent/"data"; p.mkdir(exist_ok=True)
     (p/"news.json").write_text(json.dumps(dict(generated=now.isoformat(),count=len(out),feeds=report,items=out),ensure_ascii=False,indent=1))
     for r in report: print(r)

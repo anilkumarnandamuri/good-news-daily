@@ -72,3 +72,34 @@ footer{max-width:1180px;margin:auto;padding:10px 18px 40px;color:var(--mute);fon
 .push-hint .sh{display:inline-block;padding:0 6px;border-radius:6px;background:var(--bg2);border:1px solid var(--line)}
 .push-hint.pulse{animation:pulse .6s}@keyframes pulse{50%{transform:scale(1.03)}}
 @media(min-width:760px){.push{grid-template-columns:auto 1fr auto}.push-btn{grid-column:auto;width:auto;padding:0 28px}}
+/* ---------- Reader ---------- */
+html.r-open,html.r-open body{overflow:hidden}
+.reader{--rfs:1;position:fixed;inset:0;z-index:50;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--bg);transform:translateY(24px);opacity:0;transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .25s;overscroll-behavior:contain}
+.reader.show{transform:none;opacity:1}
+.r-bar{position:sticky;top:0;z-index:3;display:flex;gap:8px;align-items:center;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.r-sp{flex:1}
+.r-ic{min-width:48px;height:48px;border-radius:999px;border:1px solid var(--line);background:var(--bg2);color:var(--ink);font:600 22px/1 Inter,sans-serif;cursor:pointer;box-shadow:var(--shadow)}
+.r-ic.r-txt{font-size:17px;padding:0 12px}.r-ic:active{transform:scale(.94)}
+.r-body{max-width:720px;margin:0 auto 40px}
+.r-img{height:min(46vh,380px);margin:-68px 0 0;background-size:cover;background-position:center;display:grid;place-items:center;font-size:84px;position:relative}
+.r-img:after{content:"";position:absolute;inset:auto 0 0;height:40%;background:linear-gradient(transparent,var(--bg))}
+.r-card{position:relative;margin-top:-40px;padding:0 20px}
+.r-meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:calc(14px*var(--rfs));color:var(--mute);font-weight:500}
+.r-meta .pill{font-size:12px;padding:5px 10px}
+.r-card h1{font:700 calc(28px*var(--rfs))/1.22 Fraunces,Georgia,serif;letter-spacing:-.015em;margin:14px 0 20px;color:var(--ink);text-wrap:balance}
+.r-card h1.te{font:700 calc(25px*var(--rfs))/1.5 "Noto Sans Telugu",sans-serif}
+.r-sum{background:var(--bg2);border:1px solid var(--line);border-radius:22px;padding:18px 18px 20px;margin:0 0 14px;box-shadow:var(--shadow)}
+.r-sh{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.r-sh h2{margin:0;font:700 13px Inter,"Noto Sans Telugu",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--acc)}
+.r-sum p{margin:0;font-size:calc(19px*var(--rfs));line-height:1.65;color:var(--ink)}
+.r-sum.te p{font-family:"Noto Sans Telugu",sans-serif;font-size:calc(19px*var(--rfs));line-height:1.85}
+.r-listen{flex:none;min-height:44px;padding:0 16px;border-radius:999px;border:0;cursor:pointer;font:700 16px Inter,sans-serif;color:#fff;background:#1d1a17;transition:background .2s}
+[data-theme=dark] .r-listen{background:#f6efe7;color:#14110f}
+.r-listen.on{background:var(--acc)!important;color:#fff!important;animation:pulse 1.4s infinite}
+.r-cta{display:flex;align-items:center;justify-content:center;gap:8px;min-height:62px;margin:20px 0 10px;border-radius:999px;text-decoration:none;color:#fff;font:700 calc(18px*var(--rfs))/1.2 Inter,sans-serif;padding:10px 20px;text-align:center;
+ background:linear-gradient(135deg,var(--acc),#ff8a3d 55%,var(--acc2));box-shadow:0 10px 24px rgba(242,107,58,.35)}
+.r-note{font-size:13px;color:var(--mute);text-align:center;margin:6px 8px 22px;line-height:1.5}
+.r-next{display:block;text-decoration:none;color:var(--ink);border-top:1px solid var(--line);padding:18px 2px 8px}
+.r-next small{display:block;color:var(--acc);font-weight:700;font-size:14px;margin-bottom:4px}
+.r-next span{font:600 calc(18px*var(--rfs))/1.35 Fraunces,Georgia,serif}.r-next span.te{font-family:"Noto Sans Telugu",sans-serif}
+.r-toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%);max-width:88vw;background:#1d1a17;color:#fff;padding:14px 18px;border-radius:16px;font-size:15px;line-height:1.4;z-index:60;box-shadow:0 10px 30px rgba(0,0,0,.3);text-align:center}

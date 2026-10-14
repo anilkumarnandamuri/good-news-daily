@@ -21,7 +21,7 @@ def build(items, mode):
     items = sorted(items, key=lambda x: x.get("score", 0), reverse=True)
     if not items:
         return None
-    top = items[0]
+    top = items[0]; picks = [top]
     if mode == "teaser":
         picks, seen = [], set()
         for it in items:
@@ -38,7 +38,7 @@ def build(items, mode):
     return {"app_id": APP_ID, "target_channel": "push",
             "included_segments": ["Total Subscriptions"],
             "headings": {"en": title}, "contents": {"en": body},
-            "url": SITE, "chrome_web_icon": SITE + "icons/icon-192.png"}
+            "url": SITE + "#/s/" + (picks[0] if mode == "teaser" else top)["id"], "chrome_web_icon": SITE + "icons/icon-192.png"}
 
 def main():
     ap = argparse.ArgumentParser()

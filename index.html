@@ -35,5 +35,10 @@
   <small>No backend yet — this opens your mail app. Replace the address before launch.</small>
  </section>
 </main>
+<div id="reader" class="reader" role="dialog" aria-modal="true" aria-label="Story" hidden>
+ <div class="r-bar"><button class="r-ic" id="rBack" aria-label="Back to stories">←</button><div class="r-sp"></div>
+  <button class="r-ic r-txt" id="rSm" aria-label="Smaller text">A−</button><button class="r-ic r-txt" id="rLg" aria-label="Larger text">A+</button><button class="r-ic" id="rShare" aria-label="Share">⤴︎</button></div>
+ <article id="rBody" class="r-body"></article>
+</div>
 <footer><p>Headlines and short excerpts link to the original publishers; all rights belong to them. Positivity is scored automatically and can be wrong. <span id="gen"></span></p></footer>
-<script src="app.js"></script><script src="push.js"></script></body></html>
+<script src="app.js"></script><script src="push.js"></script><script src="reader.js"></script></body></html>
