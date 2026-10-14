@@ -1,6 +1,6 @@
 {
- "generated": "2026-10-14T06:21:46.901504+00:00",
- "count": 68,
+ "generated": "2026-10-14T08:00:58.911837+00:00",
+ "count": 112,
  "feeds": [
   {
    "feed": "https://www.goodnewsnetwork.org/feed/",
@@ -20,7 +20,7 @@
    "feed": "https://reasonstobecheerful.world/feed/",
    "source": "Reasons to be Cheerful",
    "entries": 10,
-   "kept": 3,
+   "kept": 2,
    "status": 200
   },
   {
@@ -59,10 +59,24 @@
    "status": 200
   },
   {
+   "feed": "https://www.thehindu.com/sci-tech/technology/feeder/default.rss",
+   "source": "The Hindu",
+   "entries": 60,
+   "kept": 1,
+   "status": 200
+  },
+  {
+   "feed": "https://www.thehindu.com/sci-tech/health/feeder/default.rss",
+   "source": "The Hindu",
+   "entries": 60,
+   "kept": 12,
+   "status": 200
+  },
+  {
    "feed": "https://www.thehindu.com/sci-tech/science/feeder/default.rss",
    "source": "The Hindu",
    "entries": 60,
-   "kept": 5,
+   "kept": 4,
    "status": 200
   },
   {
@@ -76,39 +90,233 @@
    "feed": "https://www.thehindu.com/news/national/telangana/feeder/default.rss",
    "source": "The Hindu",
    "entries": 60,
-   "kept": 7,
+   "kept": 5,
    "status": 200
   },
   {
    "feed": "https://www.sakshi.com/rss.xml",
    "source": "Sakshi",
    "entries": 10,
-   "kept": 0,
+   "kept": 1,
    "status": 200
   },
   {
    "feed": "https://tv9telugu.com/feed",
    "source": "TV9 Telugu",
    "entries": 60,
-   "kept": 2,
+   "kept": 10,
    "status": 200
   },
   {
    "feed": "https://telugu.oneindia.com/rss/feeds/telugu-news-fb.xml",
    "source": "Oneindia Telugu",
    "entries": 30,
-   "kept": 2,
+   "kept": 3,
    "status": 200
   },
   {
    "feed": "https://www.ntnews.com/feed",
    "source": "Namasthe Telangana",
    "entries": 200,
-   "kept": 2,
+   "kept": 18,
+   "status": 200
+  },
+  {
+   "feed": "https://feeds.bbci.co.uk/telugu/rss.xml",
+   "source": "BBC Telugu",
+   "entries": 14,
+   "kept": 1,
+   "status": 200
+  },
+  {
+   "feed": "https://telugu.news18.com/commonfeeds/v1/tel/rss/andhra-pradesh.xml",
+   "source": "News18 Telugu",
+   "entries": 200,
+   "kept": 25,
+   "status": 200
+  },
+  {
+   "feed": "https://telugu.news18.com/commonfeeds/v1/tel/rss/telangana.xml",
+   "source": "News18 Telugu",
+   "entries": 200,
+   "kept": 18,
+   "status": 200
+  },
+  {
+   "feed": "https://telugu.news18.com/commonfeeds/v1/tel/rss/sports.xml",
+   "source": "News18 Telugu",
+   "entries": 200,
+   "kept": 3,
+   "status": 200
+  },
+  {
+   "feed": "https://www.10tv.in/feed",
+   "source": "10TV",
+   "entries": 70,
+   "kept": 12,
+   "status": 301
+  },
+  {
+   "feed": "https://telugu.asianetnews.com/rss",
+   "source": "Asianet News Telugu",
+   "entries": 121,
+   "kept": 11,
+   "status": 200
+  },
+  {
+   "feed": "https://ntvtelugu.com/feed",
+   "source": "NTV Telugu",
+   "entries": 60,
+   "kept": 12,
+   "status": 200
+  },
+  {
+   "feed": "https://www.manatelangana.news/feed/",
+   "source": "Mana Telangana",
+   "entries": 147,
+   "kept": 14,
+   "status": 301
+  },
+  {
+   "feed": "https://feeds.bbci.co.uk/sport/rss.xml",
+   "source": "BBC Sport",
+   "entries": 73,
+   "kept": 17,
+   "status": 200
+  },
+  {
+   "feed": "https://www.thehindu.com/sport/feeder/default.rss",
+   "source": "The Hindu",
+   "entries": 60,
+   "kept": 11,
+   "status": 200
+  },
+  {
+   "feed": "https://www.thehindu.com/news/national/feeder/default.rss",
+   "source": "The Hindu",
+   "entries": 60,
+   "kept": 5,
    "status": 200
   }
  ],
  "items": [
+  {
+   "id": "edce1acb05",
+   "title": "Farmer Relief: కరువు వేళ రైతులకు దీపావళి కానుక.. ప్రతి రైతు ఖాతాలో రూ.5,000..!",
+   "source": "NTV Telugu",
+   "summary": "Farmer Relief: మహారాష్ట్రలో తీవ్రమైన కరువు పరిస్థితులు ఎదుర్కొంటున్న రైతన్నలకు ఆ రాష్ట్ర ప్రభుత్వం అండగా నిలిచింది. రాష్ట్రంలో నెలకొన్న దయనీయ పరిస్థితుల దృష్ట్యా, కేంద్ర ప్రభుత్వం నుంచి సాయం అందే వరకు వేచి చూడకుండా..…",
+   "link": "https://ntvtelugu.com/news/maharashtra-drought-relief-5000-farmer-assistance-diwali-1025736.html",
+   "published": "2026-10-14T07:30:13+00:00",
+   "category": "telugu",
+   "subcategory": null,
+   "lang": "te",
+   "image": "https://ntvtelugu.com/wp-content/uploads/2026/10/maharashtra-drought-relief-1024x576.jpg",
+   "score": 0.92
+  },
+  {
+   "id": "32d4e9eff1",
+   "title": "సెట్స్ పైకి యశ్ కొత్త మూవీ డైరెక్టర్ ఎవరంటే.?",
+   "source": "Sakshi",
+   "summary": "satya.k Wed, 10/14/2026 - 12:58 Display on listing page top story No సెట్స్ పైకి యశ్ కొత్త మూవీ డైరెక్టర్ ఎవరంటే.?",
+   "link": "https://www.sakshi.com/video/cinema/rocking-star-yash-and-psmithran-combo-toxic-2931827",
+   "published": "2026-10-14T07:28:58+00:00",
+   "category": "telugu",
+   "subcategory": null,
+   "lang": "te",
+   "image": "https://www.sakshi.com/s3/files/styles/medium/s3/article_images/2026/10/14/y.jpg?itok=ZxTemBxo",
+   "score": 1.04
+  },
+  {
+   "id": "8d4c882a70",
+   "title": "Employees Bonus: పండుగ వేళ 10 లక్షల మంది ఉద్యోగులకు గుడ్‌న్యూస్.. 78 రోజుల బోనస్‌కు క్యాబినెట్ ఆమోదం?",
+   "source": "NTV Telugu",
+   "summary": "సంవత్సరానికి గాను రైల్వే ఉద్యోగులకు ప్రొడక్టివిటీ లింక్డ్ బోనస్ (PLB) లేదా వార్షిక బోనస్‌కు యూనియన్ క్యాబినెట్ ఆమోదం…",
+   "link": "https://ntvtelugu.com/news/indian-railway-employees-plb-bonus-2025-26-78-days-1025727.html",
+   "published": "2026-10-14T07:05:03+00:00",
+   "category": "telugu",
+   "subcategory": null,
+   "lang": "te",
+   "image": "https://ntvtelugu.com/wp-content/uploads/2026/09/Employees-Bonus-1024x576.jpg",
+   "score": 1.32
+  },
+  {
+   "id": "0baedbb1e9",
+   "title": "The poet and his patrons: Tamil Nadu’s Ettayapuram honours Subramania Bharati",
+   "source": "The Hindu",
+   "summary": "Jagaveera Muthu Thanga Kumara Rama Venkateswara Ettappa Naicker Iyen Chandra Chaitanya, the zamindar of Ettayapuram, has brought out a book on Subramania Bharati, the national poet who received the patronage of his…",
+   "link": "https://www.thehindu.com/news/national/tamil-nadu/the-poet-and-his-patrons-ettayapuram-honours-subramania-bharati/article71578245.ece",
+   "published": "2026-10-14T07:03:47+00:00",
+   "category": "india",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://th-i.thgim.com/public/news/national/tamil-nadu/8wx02j/article71579042.ece/alternates/LANDSCAPE_1200/Screenshot%202026-10-13%20162457.png",
+   "score": 0.614
+  },
+  {
+   "id": "f20b01c3c3",
+   "title": "Wildlife photographer of the year 2026, the winning images",
+   "source": "Positive News",
+   "summary": "This year’s competition has attracted a record-breaking number of entries",
+   "link": "https://www.positive.news/society/wildlife-photographer-of-the-year-2026-the-winning-images/",
+   "published": "2026-10-14T07:00:50+00:00",
+   "category": "environment",
+   "subcategory": null,
+   "lang": "en",
+   "image": null,
+   "score": 1.232
+  },
+  {
+   "id": "6a4477aec5",
+   "title": "మార్కెట్లు పడుతున్నా తగ్గని SIP పెట్టుబడులు.. సెప్టెంబర్‌లో సరికొత్త రికార్డు!",
+   "source": "TV9 Telugu",
+   "summary": "SIP Investments: భారతీయ మదుపరులు స్టాక్ మార్కెట్ ఒడిదుడుకులను లెక్కచేయకుండా SIP పెట్టుబడులను కొనసాగిస్తున్నారు. AMFI గణాంకాల ప్రకారం.. సెప్టెంబర్ 2026లో SIP పెట్టుబడులు రికార్డు స్థాయిలో రూ.32,490 కోట్లకు చేరాయి.…",
+   "link": "https://tv9telugu.com/business/personal-finance/sip-investments-hit-record-rs-32490-crore-in-september-2026-despite-market-volatility-1933943.html",
+   "published": "2026-10-14T06:45:00+00:00",
+   "category": "telugu",
+   "subcategory": null,
+   "lang": "te",
+   "image": "https://images.tv9telugu.com/wp-content/uploads/2026/10/sip-investment-september-2026-1.jpg",
+   "score": 1.44
+  },
+  {
+   "id": "40860acb34",
+   "title": "విశాఖ స్టీల్ ప్లాంట్ భూముల వేలంలో కొత్త రికార్డ్- ఆదాయం ఎవరికి..!!",
+   "source": "Oneindia Telugu",
+   "summary": "Visakhapatnam Steel Plant: RINL-owned plots have received an overwhelming response in the e-auction, selling like hotcakes. విశాఖపట్నం స్టీల్‌ప్లాంటు కు చెందిన ప్లాట్లు ఈ-వేలంలో హాట్‌కేకుల్లా అమ్ముడుపోయాయి.",
+   "link": "https://telugu.oneindia.com/news/andhra-pradesh/visakhapatnam-steel-plant-plots-sold-like-hotcakes-in-e-auction-here-the-details-510647.html",
+   "published": "2026-10-14T06:35:30+00:00",
+   "category": "telugu",
+   "subcategory": null,
+   "lang": "te",
+   "image": "https://imagesvs.oneindia.com/webp/te/img/2026/10/viskhapatnamin-20401791959555.jpg",
+   "score": 0.8
+  },
+  {
+   "id": "9d85195859",
+   "title": "Telangana SIR: Special camps on October 15, 16 to help enrol omitted voters",
+   "source": "The Hindu",
+   "summary": "First-time electors can also apply for enrolment through Form-6; though the claims and objections period has ended, enrolment will remain open until November 7",
+   "link": "https://www.thehindu.com/news/national/telangana/sir-special-camps-on-october-15-16-to-help-enrol-omitted-voters-in-telangana/article71580414.ece",
+   "published": "2026-10-14T06:33:20+00:00",
+   "category": "india",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://th-i.thgim.com/public/incoming/5e4e8p/article71580750.ece/alternates/LANDSCAPE_1200/SIR-enumerationG9DGB4NGU.4.jpg.jpg",
+   "score": 0.9
+  },
+  {
+   "id": "92e7722d42",
+   "title": "Odisha Cabinet passes resolution praising Narendra Modi for completing 25 years in public life",
+   "source": "The Hindu",
+   "summary": "Odisha CM Mohan Majhi said that under Narendra Modi’s leadership, India has become a ‘completely transformed and new India’",
+   "link": "https://www.thehindu.com/news/national/odisha/odisha-cabinet-passes-resolution-praising-narendra-modi-for-completing-25-years-in-public-life/article71580728.ece",
+   "published": "2026-10-14T06:29:20+00:00",
+   "category": "india",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://th-i.thgim.com/public/incoming/swr6sd/article71581335.ece/alternates/LANDSCAPE_1200/20261013474L.jpg",
+   "score": 0.542
+  },
   {
    "id": "9e28cde5f5",
    "title": "New team to save Antarctic port from climate change",
@@ -123,30 +331,82 @@
    "score": 0.717
   },
   {
-   "id": "9d85195859",
-   "title": "SIR: Special camps on October 15, 16 to help enrol omitted voters in Telangana",
+   "id": "140b0e66c9",
+   "title": "Towards an age-ready Keralam: translating rights into care",
    "source": "The Hindu",
-   "summary": "First-time electors can also apply for enrolment through Form-6; though the claims and objections period has ended, enrolment will remain open until November 7",
-   "link": "https://www.thehindu.com/news/national/telangana/sir-special-camps-on-october-15-16-to-help-enrol-omitted-voters-in-telangana/article71580414.ece",
-   "published": "2026-10-14T04:53:43+00:00",
+   "summary": "The Keralam Senior Citizens (Care and Protection of Rights) Bill, 2026, a first-of-its-kind legislation in the country, is a welcome step towards protecting the rights and well-being of the elderly",
+   "link": "https://www.thehindu.com/news/national/kerala/towards-an-age-ready-keralam-translating-rights-into-care/article71579075.ece",
+   "published": "2026-10-14T04:47:57+00:00",
+   "category": "health",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://th-i.thgim.com/public/news/national/kerala/bwz6r6/article71579082.ece/alternates/LANDSCAPE_1200/Dr%20Sudha%20Chandrashekar.jpg",
+   "score": 1.155
+  },
+  {
+   "id": "b767d4b76d",
+   "title": "Modi speaks to Carney, says India and Canada contribute to stable, prosperous world",
+   "source": "The Hindu",
+   "summary": "The two Prime Ministers had a phone call as senior Canadian Ministers are in Delhi for talks; India steps up its middle power engagement",
+   "link": "https://www.thehindu.com/news/national/modi-speaks-to-carney-says-india-and-canada-contribute-to-stable-prosperous-world/article71581011.ece",
+   "published": "2026-10-14T03:37:57+00:00",
    "category": "india",
    "subcategory": null,
    "lang": "en",
-   "image": "https://th-i.thgim.com/public/incoming/5e4e8p/article71580750.ece/alternates/LANDSCAPE_1200/SIR-enumerationG9DGB4NGU.4.jpg.jpg",
-   "score": 0.9
+   "image": "https://th-i.thgim.com/public/incoming/k2nycu/article71581065.ece/alternates/LANDSCAPE_1200/8th_mukunth_GBPG3BFMCMGI.3.jpg.jpg",
+   "score": 0.728
   },
   {
-   "id": "3d6077633a",
-   "title": "Unbreakable Records: కోహ్లీ, జో రూట్లకు సైతం అసాధ్యం.. ఎప్పటికీ ఎవరూ బ్రేక్ చేయలేని సచిన్ ఆ 3 రికార్డులు",
+   "id": "237d2b6f84",
+   "title": "Apple unveils HomeView smart display in renewed home push",
+   "source": "The Hindu",
+   "summary": "The release's centerpiece is Siri AI, the overhauled version of Apple's assistant powered by Apple Intelligence",
+   "link": "https://www.thehindu.com/sci-tech/technology/apple-unveils-homeview-smart-display-in-renewed-home-push/article71582173.ece",
+   "published": "2026-10-14T03:29:27+00:00",
+   "category": "tech",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://th-i.thgim.com/public/incoming/3x83qu/article71582175.ece/alternates/LANDSCAPE_1200/2026-10-13T145500Z_1188023254_RC2E2OAOOXNK_RTRMADP_3_AI-APPLE-PRODUCTS.JPG",
+   "score": 0.551
+  },
+  {
+   "id": "841d739be8",
+   "title": "దసరా రోజు జమ్మి ఆకులను ఎందుకు పంచుకుంటారు.. దీని వెనక రహస్యం తెలుసా?",
    "source": "TV9 Telugu",
-   "summary": "దుకోవడం అసాధ్యం. సుదీర్ఘ కెరీర్‌లో అత్యధిక మ్యాచ్‌లు ఆడటం, అత్యధిక పరుగులు సాధించడం, అత్యధిక బౌండరీలు కొట్టడం వంటి…",
-   "link": "https://tv9telugu.com/sports/cricket-news/sachin-tendulkar-three-unbreakable-records-in-international-cricket-1933847.html",
-   "published": "2026-10-14T03:29:35+00:00",
+   "summary": "దసరా పండుగ వచ్చేస్తోంది. ఈ సమయంలో రావణ దహనం మాత్రమే కాకుండా, ఈ సమయంలో ప్రతి ఒక్కరూ జమ్మి చెట్టును పూజించి, ఆ ఆకులను పంచుకుంటారు. అయితే ప్రతి ఒక్కరూ హిందువులు అందరూ ఈ పండుగను జరుపుకుంటారు. కాగా, ఈ సమయంలో జమ్మి చెట్టును…",
+   "link": "https://tv9telugu.com/photo-gallery/vijayadashami-shami-puja-significance-of-jammi-leaves-ancient-tales-and-fortune-1933844.html",
+   "published": "2026-10-14T03:13:27+00:00",
    "category": "telugu",
    "subcategory": null,
    "lang": "te",
-   "image": "https://images.tv9telugu.com/wp-content/uploads/2026/10/sachin-tendulkar-1.jpg",
-   "score": 0.52
+   "image": "https://images.tv9telugu.com/wp-content/uploads/2026/10/jammi-chettu-3.jpg",
+   "score": 0.64
+  },
+  {
+   "id": "584c3822e6",
+   "title": "VB-G RAM G : ఎట్టకేలకు 20 ఏళ్ల కష్టానికి ఫలితం.. ఉపాధి హామీ ఉద్యోగులకు శుభవార్త చెప్పిన ప్రభుత్వం..",
+   "source": "NTV Telugu",
+   "summary": "తెలంగాణ ప్రభుత్వం ఉపాధి హామీ (వీబీ-జీరాంజీ) పథకంలో పనిచేస్తున్న దాదాపు 3,800 మంది ఫిక్స్డ్ టెన్యూర్ (ఎఫ్‌టీఈ) ఉద్యోగులకు తీపి కబురు అందించింది. దసరా పండుగ కానుకగా వీరికి గ్రాట్యుటీ సౌకర్యాన్ని కల్పిస్తూ పంచాయతీరాజ్,…",
+   "link": "https://ntvtelugu.com/news/telangana-mgnrega-fte-employees-gratuity-smartphones-tabs-go-548-1025640.html",
+   "published": "2026-10-14T02:40:34+00:00",
+   "category": "telugu",
+   "subcategory": null,
+   "lang": "te",
+   "image": "https://ntvtelugu.com/wp-content/uploads/2026/03/mgnrega-1024x576.jpg",
+   "score": 1.16
+  },
+  {
+   "id": "767761d7a1",
+   "title": "దసరా ఎప్పుడు? అక్టోబర్ 20 లేక 21.. క్లారిటీ ఇదే",
+   "source": "TV9 Telugu",
+   "summary": "హిందూ పండుగలలో అతి పెద్ద పండుగలో దసరా పండుగ ఒకటి. దీనికి చాలా ప్రాముఖ్యత ఉంటుంది. ఈ చెడుపై మంచి గెలిచినందుకు ఈ పండుగను జరుపుకుంటారు. రావణ దహనం చేస్తుంటారు. ప్రతి సంవత్సరం ఆశ్వయుజ మాసంలో శుక్ల పక్షం పదవ రోజున ఈ పండుగను…",
+   "link": "https://tv9telugu.com/photo-gallery/spiritual-photos/when-is-dussehra-2026-october-20-confirmed-by-astrologers-for-vijaya-dashami-1933823.html",
+   "published": "2026-10-14T02:12:35+00:00",
+   "category": "telugu",
+   "subcategory": null,
+   "lang": "te",
+   "image": "https://images.tv9telugu.com/wp-content/uploads/2026/10/dussehra-1.jpg",
+   "score": 0.76
   },
   {
    "id": "dba4fd7aaa",
@@ -162,17 +422,30 @@
    "score": 0.509
   },
   {
-   "id": "9a5317f52a",
-   "title": "APPSC: గ్రూప్-2 అభ్యర్థులకు గుడ్ న్యూస్.. 1,466 పోస్టులతో ఏకంగా 10 నోటిఫికేషన్లు!",
-   "source": "Oneindia Telugu",
-   "summary": "APPSC has released 10 brief notifications for 1,466 government job vacancies in Andhra Pradesh, including 686 Group 2 posts, AEE, and teaching positions.",
-   "link": "https://telugu.oneindia.com/news/andhra-pradesh/appsc-releases-10-brief-notifications-for-recruitment-of-1-466-government-jobs-in-andhra-pradesh-510605.html",
-   "published": "2026-10-14T01:34:59+00:00",
-   "category": "telugu",
+   "id": "5e9a4890aa",
+   "title": "Root and Tendulkar: Two great players and their motto that has enriched the sport",
+   "source": "The Hindu",
+   "summary": "Joe Root needs 1,644 runs to overtake Sachin Tendulkar’s Test run record. An interesting catch-me-if-you-can is guaranteed between the greatest batters their respective countries have produced",
+   "link": "https://www.thehindu.com/sport/cricket/two-great-players-and-their-motto-which-has-enriched-the-sport/article71579391.ece",
+   "published": "2026-10-13T19:36:16+00:00",
+   "category": "sports",
    "subcategory": null,
-   "lang": "te",
-   "image": "https://imagesvs.oneindia.com/webp/te/img/2026/10/appsc-15871791941135.jpg",
-   "score": 0.4
+   "lang": "en",
+   "image": "https://th-i.thgim.com/public/incoming/5qe3t7/article71581162.ece/alternates/LANDSCAPE_1200/2026-09-09T100309Z_1563943941_UP1EM990RX7NM_RTRMADP_3_CRICKET-TEST-ENG-PAK.JPG",
+   "score": 0.897
+  },
+  {
+   "id": "f313480124",
+   "title": "Hunt and Hodgkinson inspire Finucane's gold hunt - watch World Championships on BBC",
+   "source": "BBC Sport",
+   "summary": "Welsh cyclist Emma Finucane - born in the same year as Keely Hodgkinson and Amy Hunt - seeks glory at the Track World Championships.",
+   "link": "https://www.bbc.co.uk/sport/cycling/articles/c6kglymw738vo?at_medium=RSS&at_campaign=rss",
+   "published": "2026-10-13T19:02:27+00:00",
+   "category": "sports",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/2e55/live/02f29e50-c3ce-11f1-8fc5-335d62f6730b.png",
+   "score": 0.976
   },
   {
    "id": "243a4d95a7",
@@ -188,17 +461,17 @@
    "score": 0.572
   },
   {
-   "id": "61be31551f",
-   "title": "Reliance: ధీరూభాయ్ అంబానీ నుంచి ముఖేష్ అంబానీ వరకు.. భారతదేశ అభివృద్ధిలో ‘రిలయన్స్‌’ చెరగని ముద్ర",
-   "source": "TV9 Telugu",
-   "summary": "ఒకప్పుడు భారత స్టాక్ మార్కెట్ అంటే కేవలం కొద్దిమంది కోటీశ్వరులు, ప్రముఖ వ్యాపార కుటుంబాలకే పరిమితం అనుకునేవారు. కానీ ఈ పరిస్థితులను పూర్తిగా మార్చేశారు ధీరూబాయ్ అంబానీ . స్టాక్ మార్కెట్ ను సామాన్యులకు కూడా చేరువ…",
-   "link": "https://tv9telugu.com/business/dhirubhai-ambani-to-mukesh-ambani-the-inspiring-journey-of-reliance-and-its-legacy-in-india-1933796.html",
-   "published": "2026-10-13T17:57:04+00:00",
+   "id": "26c11c49d4",
+   "title": "AP DSC 2026 Notification: టీచర్ ఉద్యోగార్థులకు గుడ్ న్యూస్.. DSC నోటిఫికేషన్ విడుదల",
+   "source": "NTV Telugu",
+   "summary": "యర్థులకు ప్రభుత్వం కీలక సమాచారం వెల్లడించింది. DSC-2026 ద్వారా రాష్ట్రవ్యాప్తంగా 2,721 టీచర్ పోస్టులను భర్తీ చేయనున్నారు. ఈ మేరకు…",
+   "link": "https://ntvtelugu.com/andhra-pradesh-news/amaravathi/ap-dsc-2026-notification-2721-teacher-vacancies-in-andhra-pradesh-1025593.html",
+   "published": "2026-10-13T17:26:04+00:00",
    "category": "telugu",
    "subcategory": null,
    "lang": "te",
-   "image": "https://images.tv9telugu.com/wp-content/uploads/2026/10/dhirubhai-ambani-to-mukesh.jpg",
-   "score": 0.4
+   "image": "https://ntvtelugu.com/wp-content/uploads/2023/07/ap-dsc.jpg",
+   "score": 0.8
   },
   {
    "id": "09d92b84a0",
@@ -214,6 +487,19 @@
    "score": 0.776
   },
   {
+   "id": "56b688609c",
+   "title": "Vizag Steel Plant Land Auction: విశాఖ స్టీల్ ప్లాంట్ భూముల వేలంలో సరికొత్త రికార్డ్.. గజం రూ.1.80 లక్షలు.. ఏకంగా రూ.366 కోట్ల ఆదాయం!",
+   "source": "10TV",
+   "summary": "కోట్ల ఆదాయం సమకూరింది.",
+   "link": "https://10tv.in/telugu-news/andhra-pradesh/vizag-steel-plant-rinl-land-auction-hb-colony-fetches-366-crore-nlmc-sn-1147619.html",
+   "published": "2026-10-13T15:25:29+00:00",
+   "category": "telugu",
+   "subcategory": null,
+   "lang": "te",
+   "image": "https://static.10tv.in/wp-content/uploads/2026/10/Vizag-steel-plant-rinl-land-auction-hb-colony-fetches-366-crore-nlmc-1024x576.jpg",
+   "score": 0.8
+  },
+  {
    "id": "01d8131e2d",
    "title": "దసరా బొనాంజాతో ముందే పండుగ",
    "source": "Namasthe Telangana",
@@ -224,33 +510,7 @@
    "subcategory": null,
    "lang": "te",
    "image": "https://d2e1hu1ktur9ur.cloudfront.net/wp-content/uploads/2026/10/nt-1-1024x576.jpg",
-   "score": 0.4
-  },
-  {
-   "id": "378b4c3159",
-   "title": "Telangana approves gratuity for 3,800 rural development FTE employees",
-   "source": "The Hindu",
-   "summary": "",
-   "link": "https://www.thehindu.com/news/national/telangana/telangana-approves-gratuity-for-3800-rural-development-fte-employees/article71579348.ece",
-   "published": "2026-10-13T15:11:38+00:00",
-   "category": "india",
-   "subcategory": null,
-   "lang": "en",
-   "image": null,
-   "score": 0.402
-  },
-  {
-   "id": "bc5a62ec9b",
-   "title": "Master plan roads to improve connectivity between key areas in Tirupati, says Collector",
-   "source": "The Hindu",
-   "summary": "TUDA initiates construction of eight master plan roads in the district; taking part in the bhumi puja, S. Venkateswar says the opening of new roads will not only reduce traffic congestion in Tirupati but also provide…",
-   "link": "https://www.thehindu.com/news/national/andhra-pradesh/master-plan-roads-to-improve-connectivity-between-key-areas-in-tirupati-says-collector/article71580228.ece",
-   "published": "2026-10-13T15:04:29+00:00",
-   "category": "india",
-   "subcategory": null,
-   "lang": "en",
-   "image": "https://th-i.thgim.com/public/incoming/ggli9t/article71580290.ece/alternates/LANDSCAPE_1200/9604_13_10_2026_18_19_14_1_IMG_20261013_WA0021.JPG",
-   "score": 0.459
+   "score": 0.92
   },
   {
    "id": "5c23a716e2",
@@ -315,7 +575,7 @@
    "subcategory": null,
    "lang": "te",
    "image": "https://d2e1hu1ktur9ur.cloudfront.net/wp-content/uploads/2026/10/bathukamma-2-1024x576.jpg",
-   "score": 0.52
+   "score": 1.04
   },
   {
    "id": "d842ca7ac8",
@@ -331,6 +591,19 @@
    "score": 0.646
   },
   {
+   "id": "37e4d2f95c",
+   "title": "ఆడబిడ్డల ఆత్మగౌరవం బతుకమ్మ",
+   "source": "Namasthe Telangana",
+   "summary": "పూలను పేర్చి.. పాటలను అల్లి.. ప్రకృతిని కొలిచే పండుగ బతుకమ్మ. తరతరాల తెలంగాణ జీవన సంస్కృతి, మహిళల ఐక్యత, ప్రకృతితో మనిషికున్న విడదీయరాని బంధానికి ఈ వేడుక ప్రతీక. తెలంగాణ సంస్కృతి అంటే గుర్తుకొచ్చే పండుగల్లో బతుకమ్మకు…",
+   "link": "https://www.ntnews.com/opinions/bathukamma-a-magnificent-celebration-of-nature-and-telanganas-culture-2535832",
+   "published": "2026-10-13T14:20:41+00:00",
+   "category": "telugu",
+   "subcategory": null,
+   "lang": "te",
+   "image": "https://d2e1hu1ktur9ur.cloudfront.net/wp-content/uploads/2026/10/Bathukamma-celebrations-1-1024x576.jpg",
+   "score": 0.76
+  },
+  {
    "id": "169e461608",
    "title": "Conservation of 20% water in Hyderabad (CURE) can save 80 MGD; plans charted to meet drinking water needs, efficient usage",
    "source": "The Hindu",
@@ -344,30 +617,43 @@
    "score": 0.838
   },
   {
-   "id": "8722545e7d",
-   "title": "ఏపీలో డ్వాక్రా మహిళలకు మరో గుడ్ న్యూస్- 48 గంటల్లోనే 3 లక్షలు..!",
-   "source": "Oneindia Telugu",
-   "summary": "AP Govt focuses on quick financing for women's self-help groups through stree nidhi scheme, offering loans of up to Rs 3 lakh within 48 hours. ఏపీ ప్రభుత్వం స్త్రీనిధి పథకం ద్వారా డ్వాక్రా మహిళలకు 48 గంట్లలోనే 3 లక్షల…",
-   "link": "https://telugu.oneindia.com/news/andhra-pradesh/ap-govt-speeds-up-shg-financing-offers-up-to-rs-3-lakh-loans-within-48-hours-510583.html",
-   "published": "2026-10-13T13:38:20+00:00",
+   "id": "9f13634ea6",
+   "title": "వెస్టిండీస్ పై విధ్వంసం.. టీమిండియా కెప్టెన్ గిల్ నయా రికార్డు",
+   "source": "Mana Telangana",
+   "summary": "న్యూఢిల్లీ: టీమిండియా టెస్ట్, వన్డే కెప్టెన్ శుభ్‌మన్ గిల్ నయా రికార్డు నెలకొల్పాడు. వెస్టిండీస్ జట్టుతో జరిగిన వన్డే సిరీస్ లో అద్భుతంగా ఆడి సెంచరీ, డబుల్ సెంచరీ సాధించిన గిల్.. సెప్టెంబర్ 2026కు గాను ఐసీసీ ప్లేయర్ ఆఫ్…",
+   "link": "https://www.manatelangana.news/telangana-breaking-news/shubman-gill-creates-history-with-5th-icc-player-of-the-month-award-1641465",
+   "published": "2026-10-13T13:44:20+00:00",
+   "category": "telugu",
+   "subcategory": "sports",
+   "lang": "te",
+   "image": "https://www.manatelangana.news/h-upload/2026/10/13/2288907-gill.webp",
+   "score": 0.88
+  },
+  {
+   "id": "b13cf4c158",
+   "title": "O Na Siddayya Song Promo: ఘనంగా ‘ఓ నా సిద్ధయ్య’ పాట ప్రోమో ఆవిష్కరణ.. ముఖ్య అతిథిగా ఆస్కార్ విజేత చంద్రబోస్.. త్వరలోనే పూర్తి పాట!",
+   "source": "10TV",
+   "summary": "భార్యాభర్తల ప్రేమానురాగాల నేపథ్యంతో తెరకెక్కిన 'ఓ నా సిద్ధయ్య(O Na Siddayya Song Promo)' పాట ప్రోమో హైదరాబాద్‌లో ఘనంగా విడుదలైంది.",
+   "link": "https://10tv.in/telugu-news/movies/o-na-siddayya-song-promo-launch-siddu-reddy-kandakatla-chandrabose-sn-1147601.html",
+   "published": "2026-10-13T13:26:22+00:00",
    "category": "telugu",
    "subcategory": null,
    "lang": "te",
-   "image": "https://imagesvs.oneindia.com/webp/te/img/2026/10/apgovtdwacrascheme-88381791898615.jpg",
-   "score": 0.4
+   "image": "https://static.10tv.in/wp-content/uploads/2026/10/O-na-siddayya-song-promo-launch-siddu-reddy-kandakatla-chandrabose-1024x576.jpg",
+   "score": 0.8
   },
   {
-   "id": "65b976ba63",
-   "title": "Bay trough may bring rain, relief from heat in Telangana",
-   "source": "The Hindu",
-   "summary": "",
-   "link": "https://www.thehindu.com/news/national/telangana/bay-trough-may-bring-rain-relief-from-heat-in-telangana/article71579324.ece",
-   "published": "2026-10-13T13:16:39+00:00",
-   "category": "india",
+   "id": "a9e355c70a",
+   "title": "Different ways to win - what Rugby League World Cup success looks like",
+   "source": "BBC Sport",
+   "summary": "Some teams have their eyes on a trophy - others are prioritising longer-term gains. BBC Sport assesses a Rugby League World Cup that comes at a pivotal time for the international game.",
+   "link": "https://www.bbc.co.uk/sport/rugby-league/articles/cw5ynmn86prro?at_medium=RSS&at_campaign=rss",
+   "published": "2026-10-13T13:16:34+00:00",
+   "category": "sports",
    "subcategory": null,
    "lang": "en",
-   "image": "https://th-i.thgim.com/public/incoming/mbx92w/article71579643.ece/alternates/LANDSCAPE_1200/_DSC0967.JPG",
-   "score": 0.477
+   "image": "https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/eba9/live/9944e7f0-c671-11f1-8c1b-356b863d8549.jpg",
+   "score": 1.132
   },
   {
    "id": "e41d4d1cf6",
@@ -381,6 +667,19 @@
    "lang": "en",
    "image": null,
    "score": 1.405
+  },
+  {
+   "id": "661b220910",
+   "title": "పండుగల వేళ కొత్త అగరబత్తులు... సైకిల్ ప్యూర్ నుంచి కొత్త ప్రీమియం ప్రొడక్ట్స్",
+   "source": "News18 Telugu",
+   "summary": "వుడ్స్, దసరా, యజ్ఞా సువాసనలకు వచ్చిన ఆదరణతో పండుగల సీజన్‌లో హైదరాబాద్ మార్కెట్‌లోకి కొత్తగా రాయల్ సీక్రెట్, బన్సురి దర్బార్ అగరబత్తులను పరిచయం చేసింది సైకిల్ బ్రాండ్.",
+   "link": "https://telugu.news18.com/news/business/cycle-pure-agarbathi-unveils-royal-secret-and-bansuri-durbar-for-the-festive-season-ss-ws-kl-3245983.html",
+   "published": "2026-10-13T11:47:18+00:00",
+   "category": "telugu",
+   "subcategory": null,
+   "lang": "te",
+   "image": "https://images.news18.com/telugu/uploads/2026/10/Cycle-Pure-Agarbathi-Unveils-Royal-Secret-and-Bansuri-Durbar-for-the-Festive-Season-2-2026-10-0b989537af69df7aece81946c5971668-1200x800.jpeg",
+   "score": 1.16
   },
   {
    "id": "01c3f7e081",
@@ -435,6 +734,32 @@
    "score": 0.724
   },
   {
+   "id": "0ea56da9bb",
+   "title": "టిసిఎస్‌లో 80% ఉద్యోగాలకు ఎఐ స్కిల్స్ తప్పనిసరి",
+   "source": "Mana Telangana",
+   "summary": "న్యూఢిల్లీ: దేశీయ దిగ్గజ ఐటి సంస్థ టిసిఎస్ (టాటా కన్సల్టెన్సీ సర్వీసెస్) ఉద్యోగ నియామకాల్లో కీలక మార్పులు చేసింది. ఇకపై కొత్తగా తీసుకునే ఉద్యోగుల్లో 80 శాతం మందికి డిజిటల్, ఆర్టిఫిషియల్ ఇంటెలిజెన్స్ (ఎఐ) నైపుణ్యాలు…",
+   "link": "https://www.manatelangana.news/telangana-business-news/domestic-it-giant-tcs-1641347",
+   "published": "2026-10-13T10:31:41+00:00",
+   "category": "telugu",
+   "subcategory": "tech",
+   "lang": "te",
+   "image": "https://www.manatelangana.news/h-upload/2026/10/13/2288597-tcs.webp",
+   "score": 0.88
+  },
+  {
+   "id": "fb96a3ff41",
+   "title": "Nalgonda | గ్రామసభల్లోనే ‘ఇందిరమ్మ’ లబ్ధిదారుల ఎంపిక జరగాలి.. కలెక్టర్‌కు సర్పంచుల సంఘం జేఏసీ వినతి..!",
+   "source": "Namasthe Telangana",
+   "summary": "నల్లగొండ రూరల్, అక్టోబర్ 13: ఇందిరమ్మ ఇళ్ల లబ్ధిదారుల ఎంపిక గ్రామసభల ద్వారా పారదర్శకంగా నిర్వహించాలని తెలంగాణ సర్పంచుల సంఘం జేఏసీ నల్లగొండ జిల్లా కమిటీ కోరింది.",
+   "link": "https://www.ntnews.com/nalgonda/sarpanch-forum-appeals-collector-to-indiramma-houses-allocation-via-grama-sabha-2535806",
+   "published": "2026-10-13T10:20:37+00:00",
+   "category": "telugu",
+   "subcategory": "community",
+   "lang": "te",
+   "image": "https://d2e1hu1ktur9ur.cloudfront.net/wp-content/uploads/2026/10/sarpanch-1024x576.jpg",
+   "score": 1.04
+  },
+  {
    "id": "c1cc67c037",
    "title": "DNA recording system reveals how a single cell becomes a body",
    "source": "ScienceDaily",
@@ -487,6 +812,45 @@
    "score": 0.809
   },
   {
+   "id": "b4283bc437",
+   "title": "Dubai ETCA | దుబాయ్‌లో ఘనంగా ETCA 16వ బతుకమ్మ సంబరాలు.. 6 వేల మందికిపైగా తెలంగాణ ప్రవాసుల భాగస్వామ్యం",
+   "source": "Namasthe Telangana",
+   "summary": "Dubai ETCA | ETCA ఆధ్వర్యంలో అక్టోబర్ 11, 2026న దుబాయ్‌లోని షబాబ్ అల్ అహ్లీ స్పోర్ట్స్ క్లబ్‌లో నిర్వహించిన 16వ బతుకమ్మ వేడుకల్లో మహిళలు రంగురంగుల పూలతో బతుకమ్మలను పేర్చి, గౌరీదేవికి భక్తిశ్రద్ధలతో పూజలు నిర్వహించారు.…",
+   "link": "https://www.ntnews.com/nri/etca-organised-bathukamma-celebrations-grandly-in-dubai-2535750",
+   "published": "2026-10-13T07:29:36+00:00",
+   "category": "telugu",
+   "subcategory": null,
+   "lang": "te",
+   "image": "https://d2e1hu1ktur9ur.cloudfront.net/wp-content/uploads/2026/10/ETCA-1-1024x576.jpg",
+   "score": 0.64
+  },
+  {
+   "id": "c2ac87b372",
+   "title": "Singareni Bonus : సింగరేణి కార్మికులకు శుభవార్త చెప్పిన తెలంగాణ సర్కార్.. దసరా బోనస్‌పై కీలక ప్రకటన",
+   "source": "10TV",
+   "summary": "Singareni Dasara Bonus : సింగరేణి కార్మికులకు తెలంగాణ ప్రభుత్వం శుభవార్త చెప్పింది. బోనస్ పై కీలక ప్రకటన వెలువడింది. సింగరేణి సంస్థ సాధించిన లాభాల్లో 34శాతం వాటాను కార్మికులకు బోనస్‌గా కేటాయించింది.",
+   "link": "https://10tv.in/telugu-news/telangana/telangana-government-announces-dussehra-bonus-for-singareni-workers-hn-1147534.html",
+   "published": "2026-10-13T07:28:12+00:00",
+   "category": "telugu",
+   "subcategory": null,
+   "lang": "te",
+   "image": "https://static.10tv.in/wp-content/uploads/2026/10/Singareni-Workers-1024x576.jpg",
+   "score": 1.04
+  },
+  {
+   "id": "eab315a807",
+   "title": "Shubman Gill and Shafali Verma honoured with ICC ‘Player of the Month’",
+   "source": "The Hindu",
+   "summary": "This is the fifth time players from the same national board have swept the men's and women's awards in a month, with Indian cricketers achieving the feat on two previous occasions",
+   "link": "https://www.thehindu.com/sport/cricket/shubman-gill-and-shafali-verma-honoured-with-icc-player-of-the-month/article71578352.ece",
+   "published": "2026-10-13T07:27:59+00:00",
+   "category": "sports",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://th-i.thgim.com/public/news/national/panxna/article71578379.ece/alternates/LANDSCAPE_1200/Gill-Verma.jpg",
+   "score": 0.855
+  },
+  {
    "id": "4e013d1142",
    "title": "Improve civic infrastructure along Vizianagaram routes to Bhogapuram and Visakhapatnam: CREDAI",
    "source": "The Hindu",
@@ -498,6 +862,45 @@
    "lang": "en",
    "image": "https://th-i.thgim.com/public/news/national/andhra-pradesh/phgg5p/article71578362.ece/alternates/LANDSCAPE_1200/CREDAI.jpeg",
    "score": 0.56
+  },
+  {
+   "id": "42c3cd3ed2",
+   "title": "PM Kisan 24th Installment: రైతులకు గుడ్ న్యూస్.. పీఎం కిసాన్ 24వ విడత డబ్బులు ఖాతాలోకి ఎప్పుడంటే?",
+   "source": "Asianet News Telugu",
+   "summary": "నాయి. అర్హులైన రైతులు తమ మొబైల్ నంబర్, ఈ-కేవైసీ వివరాలను ఆన్‌లైన్‌లో త్వరగా అప్‌డేట్ చేసుకోవాలని అధికారులు తెలిపారు.",
+   "link": "https://telugu.asianetnews.com/gallery/national/pm-kisan-24th-installment-date-update-status-and-online-process-full-details-duiqkes",
+   "published": "2026-10-13T05:03:08+00:00",
+   "category": "telugu",
+   "subcategory": null,
+   "lang": "te",
+   "image": "https://static.asianetnews.com/images/w-1280,h-720,format-jpg,imgid-01m4st1h9h9hd65b3e3pe55kyr,imgname-pm-kisan-1791867536688.jpg",
+   "score": 0.8
+  },
+  {
+   "id": "66c442266e",
+   "title": "రాష్ట్రస్థాయి ఖో-ఖో పోటీలకు భీమవరం విద్యార్థినులు",
+   "source": "Namasthe Telangana",
+   "summary": "రాష్ట్రస్థాయి జూనియర్ ఖో-ఖో పోటీలకు ఖమ్మం జిల్లా ఎర్రుపాలెం మండలం భీమవరం గ్రామానికి చెందిన ఐదుగురు విద్యార్థినులు ఎంపికయ్యారు. ఈ నెల 11న కల్లూరు మినీ స్టేడియంలో నిర్వహించిన ఉమ్మడి ఖమ్మం జిల్లా ఖో-ఖో జట్టు ఎంపిక పోటీల్లో…",
+   "link": "https://www.ntnews.com/khammam/bhimavaram-students-to-participate-in-state-level-kho-kho-competitions-2535612",
+   "published": "2026-10-13T04:47:25+00:00",
+   "category": "telugu",
+   "subcategory": "community",
+   "lang": "te",
+   "image": "https://d2e1hu1ktur9ur.cloudfront.net/wp-content/uploads/2026/10/beemavaram-1024x640.jpg",
+   "score": 0.64
+  },
+  {
+   "id": "2329cac108",
+   "title": "AP Fodder Cultivation : ఏపీలోని సన్న, చిన్నకారు రైతులకు శుభవార్త.. ఎకరానికి రూ.69వేలు.. వెంటనే ఇలా చేయండి..",
+   "source": "10TV",
+   "summary": "రించడానికి ప్రభుత్వం వీబీ జీ-రామ్‌జీ పథకంను అనుసంధానించనుంది.",
+   "link": "https://10tv.in/telugu-news/andhra-pradesh/ap-government-key-decision-good-news-for-small-and-marginal-farmers-holding-job-cards-rs-69000-per-acre-hn-1147435.html",
+   "published": "2026-10-13T04:02:02+00:00",
+   "category": "telugu",
+   "subcategory": null,
+   "lang": "te",
+   "image": "https://static.10tv.in/wp-content/uploads/2026/10/Fodder-cultivation-1024x576.jpg",
+   "score": 0.8
   },
   {
    "id": "0fd39c7a7d",
@@ -513,6 +916,19 @@
    "score": 0.637
   },
   {
+   "id": "99262bbfff",
+   "title": "Keralam Senior Citizens (Care and Protection) Bill to focus on protection of rights, dignity of elderly",
+   "source": "The Hindu",
+   "summary": "The Bill that will be tabled in the Assembly on October 13 also aims at promoting active ageing, regulation of senior citizen care centres, and capacity-building for family and caregivers",
+   "link": "https://www.thehindu.com/news/national/kerala/keralam-senior-citizens-care-and-protection-bill-to-focus-on-protection-of-rights-dignity-of-elderly/article71575919.ece",
+   "published": "2026-10-13T02:28:36+00:00",
+   "category": "health",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://th-i.thgim.com/public/incoming/piq62g/article71576018.ece/alternates/LANDSCAPE_1200/IMG_Innovative-hous_GNNC_2_1_TUFT6A47.jpg",
+   "score": 1.056
+  },
+  {
    "id": "f0236a5d77",
    "title": "Europe's new Sentinel-3C satellite just sent back spectacular images of Earth",
    "source": "ScienceDaily",
@@ -526,13 +942,39 @@
    "score": 0.749
   },
   {
+   "id": "66e8244640",
+   "title": "Lampard keeping 'feet on ground' following big win over Newcastle",
+   "source": "BBC Sport",
+   "summary": "Coventry City head coach Frank Lampard gives his thoughts after his side pick up their first home win of the season beating Newcastle 4-1.",
+   "link": "https://www.bbc.co.uk/sport/football/videos/cqvgrp5225z7o?at_medium=RSS&at_campaign=rss",
+   "published": "2026-10-12T21:43:20+00:00",
+   "category": "sports",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/59aa/live/d8bec640-c684-11f1-bc2e-018d645d8d21.jpg",
+   "score": 0.993
+  },
+  {
+   "id": "f0002dee6c",
+   "title": "Coventry thrash Newcastle to claim first home win of season",
+   "source": "BBC Sport",
+   "summary": "Coventry City stun Newcastle United with an emphatic 4-1 victory as they win their first Premier League game at home in 25 years.",
+   "link": "https://www.bbc.co.uk/sport/football/videos/c65y71z4rjj2o?at_medium=RSS&at_campaign=rss",
+   "published": "2026-10-12T21:35:07+00:00",
+   "category": "sports",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/615d/live/7ef559e0-c683-11f1-a64c-550be9e3c66b.jpg",
+   "score": 1.216
+  },
+  {
    "id": "07bf947b7a",
    "title": "Scientists uncover the 2.3-billion-year-old secret that helped keep Earth habitable",
    "source": "ScienceDaily",
    "summary": "Scientists may have solved a 2.3-billion-year-old mystery about how Earth maintained enough oxygen to support life. Ancient rocks reveal that phosphorus recycling in the oceans created a self-sustaining cycle that…",
    "link": "https://www.sciencedaily.com/releases/2026/10/261011211602.htm",
    "published": "2026-10-12T21:27:10+00:00",
-   "category": "environment",
+   "category": "science",
    "subcategory": null,
    "lang": "en",
    "image": null,
@@ -552,6 +994,19 @@
    "score": 0.897
   },
   {
+   "id": "51ad30b497",
+   "title": "Osteoporosis awareness, detection camp on Oct. 20",
+   "source": "The Hindu",
+   "summary": "Osteoporosis is a condition that weakens bones, making them more susceptible to fractures. Early assessment, appropriate physical activity and timely medical advice can help people take steps to protect their bone health",
+   "link": "https://www.thehindu.com/news/cities/chennai/osteoporosis-awareness-detection-camp-on-oct-20/article71575313.ece",
+   "published": "2026-10-12T19:07:29+00:00",
+   "category": "health",
+   "subcategory": null,
+   "lang": "en",
+   "image": null,
+   "score": 0.469
+  },
+  {
    "id": "be4d5ceb60",
    "title": "Montana High School Softball Player Discovered Long-Lost Sister on Opposing Team",
    "source": "Good News Network",
@@ -565,30 +1020,17 @@
    "score": 0.852
   },
   {
-   "id": "80b17256a8",
-   "title": "DIET launches bootcamp to nurture student start-ups",
-   "source": "The Hindu",
-   "summary": "",
-   "link": "https://www.thehindu.com/news/national/andhra-pradesh/diet-launches-bootcamp-to-nurture-student-start-ups/article71576133.ece",
-   "published": "2026-10-12T16:45:09+00:00",
-   "category": "india",
+   "id": "2bb9873def",
+   "title": "ఆరు రాష్ట్రాలకు కొత్త గవర్నర్ల నియామకం",
+   "source": "Mana Telangana",
+   "summary": "రాష్ట్రపతి ద్రౌపది ముర్ము సోమవారం ఆరు రాష్ట్రాలకు కొత్త గవర్నర్లను నియమించారు. గవర్నర్ల బదిలీలు, కొత్త నియామాకాల్లో భాగంగా కేరళం గవర్నర్ రాజేంద్ర విశ్వనాథ్ ఆర్లేకర్‌ను తమిళనాడుకు బదిలీ చేశారు. ఓం ప్రకాశ్ మాథుర్‌ను కేరళ…",
+   "link": "https://www.manatelangana.news/telangana-breaking-news/president-murmu-appoints-new-governors-for-6-states-1641110",
+   "published": "2026-10-12T17:42:16+00:00",
+   "category": "telugu",
    "subcategory": null,
-   "lang": "en",
-   "image": null,
-   "score": 0.46
-  },
-  {
-   "id": "20a97e3cfc",
-   "title": "SPMVV partners with NIELIT Tirupati to boost digital learning, industry-ready skills development",
-   "source": "The Hindu",
-   "summary": "",
-   "link": "https://www.thehindu.com/news/national/andhra-pradesh/spmvv-partners-with-nielit-tirupati-to-boost-digital-learning-industry-ready-skills-development/article71576038.ece",
-   "published": "2026-10-12T16:23:20+00:00",
-   "category": "india",
-   "subcategory": null,
-   "lang": "en",
-   "image": "https://th-i.thgim.com/public/incoming/mzupdm/article71576525.ece/alternates/LANDSCAPE_1200/WhatsApp%20Image%202026-10-12%20at%2020.36.07.jpeg",
-   "score": 0.522
+   "lang": "te",
+   "image": "https://www.manatelangana.news/h-upload/2026/10/12/2288022-president-murmu-appoints-ne.webp",
+   "score": 0.92
   },
   {
    "id": "d3d16fa528",
@@ -604,17 +1046,56 @@
    "score": 1.047
   },
   {
-   "id": "fccaf16f3a",
-   "title": "Siddipet celebrates 10 years of formation with Harish thanking KCR",
+   "id": "23e4fb9902",
+   "title": "ఏపీ యువతకు గుడ్‌న్యూస్.. ఐటీఐల అభివృద్ధికి రూ.200 కోట్లు!",
+   "source": "News18 Telugu",
+   "summary": "ఆంధ్రప్రదేశ్‌లో ప్రభుత్వ ఐటీఐల్లో చదువుతున్న విద్యార్థులకు కొత్త అవకాశాలు అందుబాటులోకి రానున్నాయి. అసలు ఏయే ఐటీఐల్లో మార్పులు జరగనున్నాయి? విద్యార్థులకు ఈ ప్రాజెక్టుతో ఎలాంటి ప్రయోజనాలు కలగనున్నాయి? తెలుసుకుందాం.",
+   "link": "https://telugu.news18.com/news/andhra-pradesh/am-ns-india-to-invest-rs-200-crore-to-upgrade-4-government-itis-in-andhra-pradesh-under-pm-setu-osk-3245294.html",
+   "published": "2026-10-12T13:37:22+00:00",
+   "category": "telugu",
+   "subcategory": "tech",
+   "lang": "te",
+   "image": "https://images.news18.com/telugu/uploads/2026/10/SDFDSD-2026-10-aeedc0fefc16aee6c6fcbc7658b0f765-1200x800.jpg",
+   "score": 1.04
+  },
+  {
+   "id": "7ac46db477",
+   "title": "నిరుపేద యువతకు ఉపాధి అవకాశాలు.. హైదరాబాద్‌లో జీటా నైపుణ్య శిక్షణ కేంద్రం ప్రారంభం",
+   "source": "News18 Telugu",
+   "summary": "పుణ్య శిక్షణా కేంద్రాన్ని ప్రారంభించింది. హెడ్ హెల్డ్ హై ఫౌండేషన్ భాగస్వామ్యంతో హైదరాబాద్, బెంగళూరు, ముంబై నగరాల్లో మూడు నెలల పాటు యువతకు…",
+   "link": "https://telugu.news18.com/news/telangana/hyderabad-zeta-launches-skill-training-centre-in-hyderabad-to-empower-underprivileged-youth-mpk-ws-kn-3245261.html",
+   "published": "2026-10-12T12:56:36+00:00",
+   "category": "telugu",
+   "subcategory": null,
+   "lang": "te",
+   "image": "https://images.news18.com/telugu/uploads/2026/10/Untitled-Design-2026-10-12T182515.320-2026-10-6a842e5eda682e2217265ee3b1e62c19-1200x800.jpg",
+   "score": 1.44
+  },
+  {
+   "id": "9ba670d1ba",
+   "title": "హైదరాబాద్ లో నైపుణ్య శిక్షణా కేంద్రాన్ని ప్రారంభించిన జీటా",
+   "source": "Mana Telangana",
+   "summary": "తదుపరి తరం బ్యాంకింగ్ టెక్నాలజీ కంపెనీ అయిన జీటా, నిరుపేద యువతకు ఉద్యోగాలు, వ్యవస్థాపకతకు అవసరమైన నైపుణ్యాలను, ఆత్మవిశ్వాసాన్ని పెంపొందించేందుకు హైదరాబాద్‌లో ఒక నైపుణ్య శిక్షణా కేంద్రాన్ని ప్రారంభించింది. జీటా నిధులతో,…",
+   "link": "https://www.manatelangana.news/telangana-breaking-news/zeta-launches-skill-training-center-in-hyderabad-1641415",
+   "published": "2026-10-12T12:53:13+00:00",
+   "category": "telugu",
+   "subcategory": null,
+   "lang": "te",
+   "image": "https://www.manatelangana.news/h-upload/2026/10/13/2288762-zeta.webp",
+   "score": 1.68
+  },
+  {
+   "id": "cfb89879ab",
+   "title": "What the Skin Observatory reveals about access to dermatological care in India",
    "source": "The Hindu",
-   "summary": "",
-   "link": "https://www.thehindu.com/news/national/telangana/siddipet-celebrates-10-years-of-formation-with-harish-thanking-kcr/article71572442.ece",
-   "published": "2026-10-12T14:21:05+00:00",
-   "category": "india",
+   "summary": "For India, where dermatologists are concentrated in urban cities and very few practice rurally, the challenge is to bring appropriate treatment closer to the people who need it",
+   "link": "https://www.thehindu.com/sci-tech/health/what-the-skin-observatory-reveals-about-access-to-dermatological-care-in-india/article71546732.ece",
+   "published": "2026-10-12T12:33:53+00:00",
+   "category": "health",
    "subcategory": null,
    "lang": "en",
-   "image": null,
-   "score": 0.692
+   "image": "https://th-i.thgim.com/public/incoming/ibtrdf/article71567339.ece/alternates/LANDSCAPE_1200/iStock-852404126.jpg",
+   "score": 0.518
   },
   {
    "id": "f977721d10",
@@ -628,6 +1109,32 @@
    "lang": "en",
    "image": null,
    "score": 1.459
+  },
+  {
+   "id": "68a3f8c79e",
+   "title": "Brave Heart, Bellavita, Shining Dawn and Renoir impress",
+   "source": "The Hindu",
+   "summary": "",
+   "link": "https://www.thehindu.com/sport/races/brave-heart-bellavita-shining-dawn-and-renoir-impress/article71574918.ece",
+   "published": "2026-10-12T12:00:53+00:00",
+   "category": "sports",
+   "subcategory": null,
+   "lang": "en",
+   "image": null,
+   "score": 0.888
+  },
+  {
+   "id": "bca649716a",
+   "title": "'Freakish' footwork & 'unbelievable' catches - NFL best plays",
+   "source": "BBC Sport",
+   "summary": "JaMarr Chase's catch & Trey McBride's footwoork star in the best plays from week five in the NFL.",
+   "link": "https://www.bbc.co.uk/sport/american-football/videos/c6lyk8l0j1q8o?at_medium=RSS&at_campaign=rss",
+   "published": "2026-10-12T10:03:35+00:00",
+   "category": "sports",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/e9f6/live/07458e70-c623-11f1-9a39-31b474234113.jpg",
+   "score": 0.739
   },
   {
    "id": "66f1a35c4b",
@@ -649,11 +1156,37 @@
    "summary": "“I’m worried if I use an em dash they’ll think it’s A.I.,” I told my mom from where I sat at the kitchen counter, trying to work on one of my college essays. Despite her reassurances to the contrary, I wasn’t convinced.…",
    "link": "https://reasonstobecheerful.world/can-students-and-teachers-learn-to-trust-each-other-in-the-age-of-ai/",
    "published": "2026-10-12T08:00:25+00:00",
-   "category": "environment",
+   "category": "community",
    "subcategory": null,
    "lang": "en",
    "image": "https://reasonstobecheerful.world/wp-content/uploads/2026/10/Body-image-1-idea-1-Paper-scaled.jpeg",
    "score": 0.614
+  },
+  {
+   "id": "b10f8d14c3",
+   "title": "Special Trains: దసరా, దీపావళికి సొంతూళ్లకు వెళ్తున్నారా? ఈ ప్రత్యేక రైళ్లల్లో 23 వేలకుపైగా రైలు బెర్తులు ఖాళీ",
+   "source": "News18 Telugu",
+   "summary": "Special Trains | దసరా, దీపావళి పండగలకు సొంతూళ్లకు వెళ్లాలనుకునే ప్రయాణికులకు దక్షిణ మధ్య రైల్వే గుడ్ న్యూస్ చెప్పింది. అక్టోబర్, నవంబర్ నెలల్లో నడిచే ప్రత్యేక రైళ్లలో 23 వేలకు పైగా బెర్తులు ఖాళీగా ఉన్నాయి. తిరుపతి,…",
+   "link": "https://telugu.news18.com/photogallery/business/over-23000-berths-available-on-dasara-and-diwali-special-trains-ss-ws-bkl-3244916.html",
+   "published": "2026-10-12T07:37:36+00:00",
+   "category": "telugu",
+   "subcategory": null,
+   "lang": "te",
+   "image": "https://images.news18.com/telugu/uploads/2026/10/1-Over-23000-Berths-Available-on-Dasara-and-Diwali-Special-Trains-4-Copy-2026-10-71866075d83e0428626b67fb4f74e8d8-1200x800.jpg",
+   "score": 1.16
+  },
+  {
+   "id": "0a4563fb9c",
+   "title": "Your cells keep a record of every workout you’ve ever done – and those gains persist even after a break from exercise",
+   "source": "The Hindu",
+   "summary": "The data do not suggest the effects of past training can substitute for present training. But there is hope that the work you put into getting in shape isn’t completely lost over time.",
+   "link": "https://www.thehindu.com/sci-tech/health/your-cells-keep-a-record-of-every-workout-youve-ever-done-and-those-gains-persist-even-after-a-break-from-exercise/article71571509.ece",
+   "published": "2026-10-12T07:22:41+00:00",
+   "category": "health",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://th-i.thgim.com/public/incoming/h5phzr/article71571801.ece/alternates/LANDSCAPE_1200/workOut_03.jpg",
+   "score": 0.553
   },
   {
    "id": "8a370c09d0",
@@ -682,6 +1215,32 @@
    "score": 0.35
   },
   {
+   "id": "926f3e550b",
+   "title": "Pope Leo to undergo surgery for growth on lung",
+   "source": "The Hindu",
+   "summary": "The Pope says the small growth is ‘well-contained’ and was spotted early; recovery ​from surgery to take about a week, Vatican says",
+   "link": "https://www.thehindu.com/news/international/pope-leo-to-undergo-surgery-for-growth-on-lung/article71572904.ece",
+   "published": "2026-10-12T04:51:11+00:00",
+   "category": "health",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://th-i.thgim.com/public/incoming/71pjrn/article71572906.ece/alternates/LANDSCAPE_1200/2026-10-11T120055Z_858133043_RC2Y0OA4JTBE_RTRMADP_3_POPE-HEALTH.JPG",
+   "score": 0.629
+  },
+  {
+   "id": "c4389efeb7",
+   "title": "Of being young at heart: A platform for elderly in Thiruvananthapuram to rediscover life",
+   "source": "The Hindu",
+   "summary": "Envisioned as a platform for senior citizens and those in their 50s, Young at Heart hopes to bring people together to rediscover life’s little pleasures — new friendships, new learning experiences, evenings out, and a…",
+   "link": "https://www.thehindu.com/news/national/kerala/of-being-young-at-heart-a-platform-for-elderly-in-thiruvananthapuram-to-rediscover-life/article71567934.ece",
+   "published": "2026-10-12T04:50:49+00:00",
+   "category": "health",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://th-i.thgim.com/public/todays-paper/tp-national/tp-kerala/ozv6ld/article71571640.ece/alternates/LANDSCAPE_1200/WhatsApp%20Image%202026-10-11%20at%206.44.16%20PM.jpeg",
+   "score": 0.912
+  },
+  {
    "id": "a3c59e7deb",
    "title": "Scientists discover vanilla’s hidden healing potential",
    "source": "ScienceDaily",
@@ -695,6 +1254,19 @@
    "score": 0.695
   },
   {
+   "id": "a28e961b67",
+   "title": "How 'big star' Doku delivered for Man City in win at Liverpool",
+   "source": "BBC Sport",
+   "summary": "Speaking on Match of the Day, Wayne Rooney and Toby Alderweireld analyse how Jeremy Doku changed the game in Manchester City's favour, after coming on as a substitute in his side's 3-0 win against Liverpool at Anfield.",
+   "link": "https://www.bbc.co.uk/sport/football/videos/c8g47knxqvgdo?at_medium=RSS&at_campaign=rss",
+   "published": "2026-10-11T23:00:57+00:00",
+   "category": "sports",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/af25/live/b56c8a40-c5c3-11f1-a64c-550be9e3c66b.jpg",
+   "score": 0.977
+  },
+  {
    "id": "582f5fb11c",
    "title": "New Way to Relieve Arthritic Knees Without Drugs or Surgery by Changing Your Gait",
    "source": "Good News Network",
@@ -706,6 +1278,32 @@
    "lang": "en",
    "image": null,
    "score": 0.809
+  },
+  {
+   "id": "09c1cb310f",
+   "title": "History made as Zheng becomes first Chinese woman to win China Open",
+   "source": "BBC Sport",
+   "summary": "Zheng Qinwen makes history in Beijing as she beats Mirra Andreeva in straight sets to win the China Open, becoming the first Chinese woman to win the tournament.",
+   "link": "https://www.bbc.co.uk/sport/tennis/videos/cje36023xr42o?at_medium=RSS&at_campaign=rss",
+   "published": "2026-10-11T20:21:51+00:00",
+   "category": "sports",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/02b8/live/e7da37b0-c5b0-11f1-9a39-31b474234113.jpg",
+   "score": 1.354
+  },
+  {
+   "id": "670826db76",
+   "title": "Hull continue good start with entertaining Everton draw",
+   "source": "BBC Sport",
+   "summary": "Mohamed Belloumi scores a second-half leveller as Hull City and Everton continue their good starts to the season with an entertaining draw at MKM Stadium.",
+   "link": "https://www.bbc.co.uk/sport/football/videos/c61mvdy2mdx9o?at_medium=RSS&at_campaign=rss",
+   "published": "2026-10-11T18:59:04+00:00",
+   "category": "sports",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/b46a/live/e253b1c0-c599-11f1-a64c-550be9e3c66b.jpg",
+   "score": 0.796
   },
   {
    "id": "d37bfdb822",
@@ -734,17 +1332,17 @@
    "score": 0.749
   },
   {
-   "id": "ff676bac68",
-   "title": "NASA spots a giant patch of Moon-like rock on Earth",
-   "source": "ScienceDaily",
-   "summary": "An astronaut aboard the International Space Station photographed a remarkable formation in Madagascar that looks surprisingly similar to the Moon’s bright highlands. Made of anorthosite, a rock abundant on the lunar…",
-   "link": "https://www.sciencedaily.com/releases/2026/10/261008102707.htm",
-   "published": "2026-10-11T15:30:06+00:00",
-   "category": "science",
+   "id": "cd1b095c30",
+   "title": "వేములవాడలో ఎంగిలిపూల బతుకమ్మ సంబరాలు.. పండుగ విశేషాలు చెప్పిన యువతి సాహిత్య..!",
+   "source": "News18 Telugu",
+   "summary": "తెలంగాణలో రాజన్న సిరిసిల్ల జిల్లా వేములవాడలో బతుకమ్మ సంబరాలు ఘనంగా ప్రారంభమయ్యాయి. తొలిరోజు ఎంగిలిపూల బతుకమ్మ వేడుకలను మహిళలు భక్తిశ్రద్ధలతో జరుపుకున్నారు.",
+   "link": "https://telugu.news18.com/news/telangana/karimnagar-engili-pula-batukamma-celebrations-grandly-in-vemulawada-rkh-gvj-local18-ws-bl-3244393.html",
+   "published": "2026-10-11T09:38:42+00:00",
+   "category": "telugu",
    "subcategory": null,
-   "lang": "en",
-   "image": null,
-   "score": 0.416
+   "lang": "te",
+   "image": "https://images.news18.com/telugu/uploads/2026/10/HYP_6648210_42ae604ffb7a46d2b44d92d48079546f_wm_1791687359674_2.jpg",
+   "score": 1.16
   },
   {
    "id": "85b498350f",
@@ -760,6 +1358,19 @@
    "score": 0.584
   },
   {
+   "id": "a80e5f762f",
+   "title": "PM Modi: విజయవాడ ప్రజలకు ప్రధాని మోదీ శుభాకాంక్షలు.. ఉత్సవ్ 2.0తో పారిశ్రామిక, పర్యాటక రంగానికి సరికొత్త ఉత్తేజం!",
+   "source": "News18 Telugu",
+   "summary": "PM Modi: విజయవాడ నగర సాంస్కృతిక వైభవాన్ని, ఆధ్యాత్మిక వారసత్వాన్ని చాటిచెప్పేలా ప్రతిష్టాత్మకంగా తలపెట్టిన ‘విజయవాడ ఉత్సవ్ 2.0’ వేడుకలు ఆదివారం నుంచి అట్టహాసంగా ప్రారంభం కానున్నాయి.",
+   "link": "https://telugu.news18.com/news/andhra-pradesh/vijayawada-utsav-2-0-begins-pm-narendra-modi-congratulates-ap-govt-union-minister-ram-mohan-naidu-to-inaugurate-fest-sjn-3244285.html",
+   "published": "2026-10-11T06:41:31+00:00",
+   "category": "telugu",
+   "subcategory": null,
+   "lang": "te",
+   "image": "https://images.news18.com/telugu/uploads/2026/10/FotoJet-26-2026-10-c7a170b6a166b51a033788219d7de989-1200x800.jpg",
+   "score": 1.16
+  },
+  {
    "id": "20751ff090",
    "title": "‘Overemphasis on MCQs’: Ramanujan Prize winner, Mahesh Kakde, on maths education in India",
    "source": "The Hindu",
@@ -771,6 +1382,45 @@
    "lang": "en",
    "image": "https://th-i.thgim.com/public/education/nsl0qr/article71570728.ece/alternates/LANDSCAPE_1200/image%206.jpg",
    "score": 0.916
+  },
+  {
+   "id": "f04c5daa93",
+   "title": "సింహాచలంలో అక్టోబర్ 12 నుంచి శరన్నవరాత్రి ఉత్సవాలు ప్రారంభం.. ఆ తేదీలలో దర్శనాలు ఉండవు..",
+   "source": "News18 Telugu",
+   "summary": "సింహాచలంలోని శ్రీ వరాహ లక్ష్మీనృసింహ స్వామి వారి దేవస్థానంలో అక్టోబర్ 12 నుండి అక్టోబర్ 20 వరకు శరన్నవరాత్రి ఉత్సవాలు నిర్వహించనున్నట్లు ఆలయ ఈవో తెలిపారు. అక్టోబర్ 21న విజయదశమి వేడుకలు జరగనున్నాయి.",
+   "link": "https://telugu.news18.com/news/andhra-pradesh/visakhapatnam-sharad-navaratri-celebrations-in-simhachalam-from-october-12-mpk-vsj-local18-ws-kn-3244269.html",
+   "published": "2026-10-11T06:02:28+00:00",
+   "category": "telugu",
+   "subcategory": null,
+   "lang": "te",
+   "image": "https://images.news18.com/telugu/uploads/2026/10/HYP_6648560_8fd30ac7f19143b2bfd29858bad661b8_wm_1791696777511_1.jpg",
+   "score": 1.16
+  },
+  {
+   "id": "ee5e6b111d",
+   "title": "Kidwai’s home-based palliative care in Karnataka reaches over 3,000 patients and caregivers",
+   "source": "The Hindu",
+   "summary": "On World Hospice and Palliative Care Day, Kidwai institute highlights home visits and bereavement support for families dealing with life-limiting illnesses",
+   "link": "https://www.thehindu.com/news/national/karnataka/kidwais-home-based-palliative-care-reaches-over-3000-patients-and-caregivers/article71568102.ece",
+   "published": "2026-10-11T05:55:26+00:00",
+   "category": "health",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://th-i.thgim.com/public/incoming/m71nt/article71568849.ece/alternates/LANDSCAPE_1200/_JAI3674.JPG",
+   "score": 0.627
+  },
+  {
+   "id": "61c6b8366d",
+   "title": "2026 Nobel Prize, brain research, and healthcare access | Health Wrap | Episode 54",
+   "source": "The Hindu",
+   "summary": "In the 54th episode of Health Wrap by The Hindu, Ramya Kannan, Health Editor, and Zubeda Hamid, Senior Assistant Editor, discuss the 2026 Nobel Prize in Physiology or Medicine and the science behind optogenetics, they…",
+   "link": "https://www.thehindu.com/videos/shows/2026-nobel-prize-brain-research-and-healthcare-access-health-wrap-episode-54/article71570767.ece",
+   "published": "2026-10-11T05:40:22+00:00",
+   "category": "health",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://th-i.thgim.com/public/videos/r5bp3i/article71570762.ece/alternates/LANDSCAPE_1200/health%20wrap-la.png",
+   "score": 0.638
   },
   {
    "id": "02119f1e9e",
@@ -805,11 +1455,37 @@
    "summary": "What are chirality and molecular ‘handedness’, and why does life favour one form over the other? Why does the handedness of a molecule matter when developing drugs? What did Henri Kagan and Kenso Soai discover? Can it…",
    "link": "https://www.thehindu.com/sci-tech/science/what-was-the-chemistry-nobel-prize-given-for-explained/article71570533.ece",
    "published": "2026-10-11T04:04:56+00:00",
-   "category": "health",
+   "category": "science",
    "subcategory": null,
    "lang": "en",
    "image": "https://th-i.thgim.com/public/incoming/tpdq90/article71570535.ece/alternates/LANDSCAPE_1200/Japan_Nobel_Chemistry__712_.jpg",
    "score": 0.778
+  },
+  {
+   "id": "363883563f",
+   "title": "తిరుమలలో వైభవంగా శ్రీవారి నవరాత్రి బ్రహ్మోత్సవాలు.. అక్టోబరు 12 నుంచి 20 వరకు వాహనసేవల వివరాలు ఇవే!",
+   "source": "News18 Telugu",
+   "summary": "తిరుమల శ్రీవారి నవరాత్రి బ్రహ్మోత్సవాలు అక్టోబర్ 12 నుంచి 20వ తేదీ వరకు వైభవంగా జరగనున్నాయి. గరుడ వాహనం, పుష్పక విమానం, స్వర్ణరథోత్సవం, చక్రస్నానం వంటి ముఖ్యమైన సేవల తేదీలు, సమయాల వివరాలు తెలుసుకోండి. అక్టోబర్ 11న…",
+   "link": "https://telugu.news18.com/news/andhra-pradesh/tirupati-tirumala-navaratri-brahmotsavams-2026-dates-garuda-vahanam-and-key-events-schedule-mpk-tml-local18-ws-kn-3244134.html",
+   "published": "2026-10-11T02:42:33+00:00",
+   "category": "telugu",
+   "subcategory": "community",
+   "lang": "te",
+   "image": "https://images.news18.com/telugu/uploads/2026/10/HYP_6647771_bed9c93d1ed1419d93761cdf8688ebf4_wm_1791645063395_1.jpg",
+   "score": 1.16
+  },
+  {
+   "id": "492e60ab57",
+   "title": "'Absolutely superb' - How Caicedo proved pivotal in Chelsea win",
+   "source": "BBC Sport",
+   "summary": "Speaking on Match of the Day, Alan Shearer explains why the performance of Moises Caicedo was pivotal in Chelsea's 5-1 win against Bournemouth in the Premier League.",
+   "link": "https://www.bbc.co.uk/sport/football/videos/cmx2dp7xgew6o?at_medium=RSS&at_campaign=rss",
+   "published": "2026-10-10T23:00:14+00:00",
+   "category": "sports",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/21d0/live/24953340-c4f7-11f1-bc2e-018d645d8d21.jpg",
+   "score": 1.123
   },
   {
    "id": "ba38ba02e7",
@@ -838,17 +1514,17 @@
    "score": 0.628
   },
   {
-   "id": "9ba1b1a105",
-   "title": "MIT astronomers catch a star in a feast that could last billions of years",
-   "source": "ScienceDaily",
-   "summary": "Astronomers have discovered a bizarre star system about 300 light-years from Earth where a small star is slowly devouring a nearby brown dwarf, an object too massive to be a planet but too small to be a true star.…",
-   "link": "https://www.sciencedaily.com/releases/2026/10/261008005240.htm",
-   "published": "2026-10-10T18:56:25+00:00",
-   "category": "science",
+   "id": "f3937d269c",
+   "title": "Slew of events planned in memory of K.V. Thiruvengadam in centenary year",
+   "source": "The Hindu",
+   "summary": "The celebrations, in memory of the renowned physician’s extraordinary impact on medicine both in Chennai and beyond, will focus on restoring the art of listening to the patient, examining at the bedside, thinking before…",
+   "link": "https://www.thehindu.com/sci-tech/health/slew-of-events-planned-in-memory-of-kv-thiruvengadam-in-centenary-year/article71555118.ece",
+   "published": "2026-10-10T17:36:04+00:00",
+   "category": "health",
    "subcategory": null,
    "lang": "en",
-   "image": null,
-   "score": 0.354
+   "image": "https://th-i.thgim.com/public/incoming/6a56vc/article71567716.ece/alternates/LANDSCAPE_1200/Thiruvengdam_2.jpg",
+   "score": 0.388
   },
   {
    "id": "27aa8428b8",
@@ -916,13 +1592,26 @@
    "score": 0.575
   },
   {
+   "id": "1ec07e62a7",
+   "title": "What are stem-cell donor registries and how do they work?",
+   "source": "The Hindu",
+   "summary": "For patients who need a stem-cell transplant but do not have a suitable family donor, registries provide access to potential unrelated donors. Experts say India needs a larger and more diverse donor pool to improve the…",
+   "link": "https://www.thehindu.com/sci-tech/health/what-are-stem-cell-donor-registries-and-how-do-they-work/article71556116.ece",
+   "published": "2026-10-09T11:42:39+00:00",
+   "category": "health",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://th-i.thgim.com/public/incoming/yuv8ok/article71558677.ece/alternates/LANDSCAPE_1200/4863_25_3_2022_16_26_38_2_STEMCELL_1.JPG",
+   "score": 0.416
+  },
+  {
    "id": "f76f87afa9",
    "title": "Fund launched to back community wellbeing projects",
    "source": "BBC News",
    "summary": "The fund aims to attract support from individuals, families, businesses and charitable trusts.",
    "link": "https://www.bbc.co.uk/news/articles/cw80z5r8nmxro?at_medium=RSS&at_campaign=rss",
    "published": "2026-10-09T11:35:58+00:00",
-   "category": "health",
+   "category": "community",
    "subcategory": null,
    "lang": "en",
    "image": "https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/6f16/live/9a369f00-664a-11f1-9cfe-f18f6b94142d.jpg",
@@ -966,32 +1655,6 @@
    "lang": "en",
    "image": null,
    "score": 0.706
-  },
-  {
-   "id": "85234233ff",
-   "title": "Gen Z Is Rescuing Millions in Medical Supplies",
-   "source": "Reasons to be Cheerful",
-   "summary": "In early August, a freight truck pulled up to an OhioHealth facility in Columbus and took roughly 30,000 pounds of N95 masks and hot-and-cold packs, all boxed, sealed and stamped with expiration dates still a year or…",
-   "link": "https://reasonstobecheerful.world/gen-z-is-rescuing-millions-in-medical-supplies/",
-   "published": "2026-10-09T08:00:14+00:00",
-   "category": "health",
-   "subcategory": null,
-   "lang": "en",
-   "image": "https://reasonstobecheerful.world/wp-content/uploads/2026/10/DSC5239-1-scaled.jpg",
-   "score": 0.35
-  },
-  {
-   "id": "03b1a5c987",
-   "title": "Three surprising reasons to slow down for a thoughtful, nutritious breakfast",
-   "source": "Positive News",
-   "summary": "From cognitive function to reinforcing family bonds, the benefits of making time for good, whole foods in the morning are plentiful",
-   "link": "https://www.positive.news/environment/food/three-surprising-reasons-to-slow-down-for-a-thoughtful-nutritious-breakfast/",
-   "published": "2026-10-09T07:00:26+00:00",
-   "category": "community",
-   "subcategory": null,
-   "lang": "en",
-   "image": null,
-   "score": 1.06
   }
  ]
 }

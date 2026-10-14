@@ -11,7 +11,7 @@ SITE = "https://anilkumarnandamuri.github.io/good-news-daily/"
 API = "https://api.onesignal.com/notifications"
 NEWS = pathlib.Path(__file__).resolve().parent.parent / "data" / "news.json"
 EMOJI = {"science": "🔭", "health": "🌿", "community": "🤝", "environment": "🌍",
-         "india": "🇮🇳", "telugu": "🪔", "tech": "💡"}
+         "india": "🇮🇳", "telugu": "🪔", "tech": "💡", "sports": "🏏"}
 
 def clip(s, n):
     s = " ".join((s or "").split())
@@ -29,6 +29,7 @@ def build(items, mode):
                 picks.append(it); seen.add(it.get("category"))
             if len(picks) == 3:
                 break
+        assert len({p.get("category") for p in picks}) == len(picks), "teaser categories must differ"
         body = "\n".join(f"{EMOJI.get(i.get('category'), '✨')} {clip(i['title'], 60)}" for i in picks)
         title = "☀️ Today's good news"
     else:

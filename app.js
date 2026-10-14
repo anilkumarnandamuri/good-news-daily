@@ -1,5 +1,5 @@
-const CATS={all:["All","✨"],telugu:["తెలుగు","🪔"],india:["India · AP/TS","🇮🇳"],science:["Science","🔭"],health:["Health","🌿"],community:["Community","🤝"],environment:["Environment","🌍"],tech:["Tech","💡"]};
-const GRAD={science:["#5b6cff","#9fb4ff"],health:["#13a37f","#8be3c4"],community:["#f26b3a","#ffc46b"],environment:["#3f9d3a","#b6e388"],india:["#ff9933","#e2452b"],telugu:["#c2185b","#ffb36b"],tech:["#7c4dff","#4fc3f7"]};
+const CATS={all:["All","✨"],telugu:["తెలుగు","🪔"],india:["India · AP/TS","🇮🇳"],science:["Science","🔭"],health:["Health","🌿"],community:["Kindness","🤝"],environment:["Environment","🌍"],tech:["Tech","💡"],sports:["Sports","🏏"]};
+const GRAD={science:["#5b6cff","#9fb4ff"],health:["#13a37f","#8be3c4"],community:["#f26b3a","#ffc46b"],environment:["#3f9d3a","#b6e388"],india:["#ff9933","#e2452b"],telugu:["#c2185b","#ffb36b"],tech:["#7c4dff","#4fc3f7"],sports:["#0277bd","#4dd0e1"]};
 const $=s=>document.querySelector(s);const isTe=s=>/[\u0C00-\u0C7F]/.test(s);
 const esc=s=>(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const ago=iso=>{const m=(Date.now()-new Date(iso))/6e4;if(m<60)return Math.max(1,m|0)+"m ago";if(m<1440)return (m/60|0)+"h ago";return (m/1440|0)+"d ago"};
@@ -8,7 +8,9 @@ const thumb=(it,cls="thumb")=>{const g=GRAD[it.category]||GRAD.community;const b
 const meta=it=>`<div class="meta"><span class="pill" style="--c:${(GRAD[it.category]||GRAD.community)[0]}">${CATS[it.category][0]}</span><span>${esc(it.source)}</span><span class="dot">•</span><time datetime="${it.published}">${ago(it.published)}</time></div>`;
 const card=(it,i)=>`<a class="card" href="${esc(it.link)}" target="_blank" rel="noopener" style="animation-delay:${Math.min(i,12)*45}ms">${thumb(it)}<div class="txt">${meta(it)}<h3 class="${isTe(it.title)?"te":""}">${esc(it.title)}</h3><p class="${isTe(it.summary)?"te":""}">${esc(it.summary)}</p></div></a>`;
 let DATA=[],cur="all";
-function render(){const list=cur==="all"?DATA:DATA.filter(x=>x.category===cur);
+function mix(a){const g={};a.forEach(x=>(g[x.category]=g[x.category]||[]).push(x));const ks=Object.keys(g),o=[];
+ for(let i=0;o.length<a.length;i++)ks.forEach(k=>{if(g[k][i])o.push(g[k][i])});return o}
+function render(){const list=cur==="all"?mix(DATA):DATA.filter(x=>x.category===cur);
  const lead=list.find(x=>x.image)||list[0];const rest=list.filter(x=>x!==lead);
  if(!lead){$("#hero").innerHTML="";$("#feed").innerHTML='<p class="empty">No uplifting stories here yet today — check back tomorrow 🌱</p>';return}
  const g=GRAD[lead.category];
