@@ -6,6 +6,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600&family=Noto+Sans+Telugu:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Good News">
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌻</text></svg>">
 </head><body>
 <header class="top">
@@ -15,6 +20,12 @@
 <nav class="tabs" id="tabs" aria-label="Categories"></nav>
 <main>
  <section id="hero"></section>
+ <section class="push" id="push" aria-live="polite">
+  <div class="push-ic" aria-hidden="true">🔔</div>
+  <div class="push-tx"><h2>One happy story, every morning</h2><p>Free. No sign-up. Just a gentle reminder of the good in the world.</p></div>
+  <button class="push-btn" id="pushBtn" type="button"><span class="lbl">🔔 Get daily good news</span></button>
+  <p class="push-hint" id="pushHint" hidden>📱 <b>On iPhone:</b> Tap <b>Share</b> <span class="sh">⬆︎</span>, then <b>Add to Home Screen</b>, then open from the home screen to allow notifications.</p>
+ </section>
  <aside class="ad-slot" aria-label="Advertisement placeholder">Ad space · reserved for a future sponsor</aside>
  <section id="feed" class="grid"></section>
  <section class="digest">
@@ -25,4 +36,4 @@
  </section>
 </main>
 <footer><p>Headlines and short excerpts link to the original publishers; all rights belong to them. Positivity is scored automatically and can be wrong. <span id="gen"></span></p></footer>
-<script src="app.js"></script></body></html>
+<script src="app.js"></script><script src="push.js"></script></body></html>
