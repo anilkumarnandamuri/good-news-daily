@@ -6,6 +6,7 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 from unittest.mock import patch
 
@@ -161,6 +162,24 @@ class SummaryContract(unittest.TestCase):
         self.cache.write_text(json.dumps({"library": None}))
         with patch.dict("os.environ", {"GOOD_NEWS_LLM": "1"}), patch.object(summarize, "llm_pairs", return_value=PAIRS[:4]):
             self.assertEqual(self.run_items([item()])[0]["summary_status"], "paired")
+
+    def test_cache_evicts_departed_stories_older_than_seven_days(self):
+        now = time.time()
+        initial_cache = {
+            "current_live": dict(v=6, pairs=PAIRS[:4], t=now - 10 * 86400, en="en", te="te", n=4),
+            "recent_departed": dict(v=6, pairs=PAIRS[:4], t=now - 2 * 86400, en="en", te="te", n=4),
+            "old_departed": dict(v=6, pairs=PAIRS[:4], t=now - 8 * 86400, en="en", te="te", n=4),
+            "no_timestamp_departed": dict(v=6, pairs=PAIRS[:4], en="en", te="te", n=4),
+        }
+        self.cache.write_text(json.dumps(initial_cache))
+        live_item = item()
+        live_item["id"] = "current_live"
+        self.run_items([live_item])
+        saved_cache = json.loads(self.cache.read_text())
+        self.assertIn("current_live", saved_cache)
+        self.assertIn("recent_departed", saved_cache)
+        self.assertNotIn("old_departed", saved_cache)
+        self.assertNotIn("no_timestamp_departed", saved_cache)
 
 
 if __name__ == "__main__":

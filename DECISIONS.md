@@ -16,4 +16,12 @@
 - Alternatives rejected:
   - Regenerating `data/news.json` offline: Rejected because only 3 of 115 items re-pair cleanly under summarize v6, wiping 112 existing summaries, and agents must not touch routine-owned data files.
   - Making `reader.js` trust all legacy items without `summary_status`: Rejected because it breaks the fallback contract for legacy saved items in localStorage, where unverified summaries should show the explicit excerpt fallback as enforced by tests.
-
+## D004 — Controlled test fixtures and summary cache eviction (2026-10-15, agy/gemini-3.8-flash-high)
+- Decision: Use Playwright network routing (`context.route`) with controlled legacy feed fixtures for UI regression tests, isolate optional browser dependencies in test modules from standard unittest discovery, and restore bounded 7-day cache eviction for departed stories in `scripts/summarize.py`.
+- Why:
+  - Depending on live `data/news.json` in browser tests makes them brittle across routine feed refreshes, especially when the first story legitimately lacks summaries or after summarize v6 eliminates legacy-format items.
+  - Direct imports of pytest/playwright caused `python3 -m unittest discover` to fail in basic Python environments lacking test packages.
+  - Omission of cache eviction allowed `data/summaries.json` to grow indefinitely across routine refreshes.
+- Alternatives rejected:
+  - Modifying live `data/news.json` or pinning test stories to specific mutable feed indices: Flaky across scheduled data updates.
+  - Evicting all departed stories immediately (0-day retention): Breaks readers accessing recently departed stories from bookmarks/history and discards cached translations if a story temporarily drops and reappears.

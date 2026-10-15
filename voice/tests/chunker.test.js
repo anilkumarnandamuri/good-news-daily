@@ -11,6 +11,14 @@ test('chunks English and Telugu punctuation and retains all words', () => {
   assert.equal(chunks.join(' '), long);
 });
 
+test('preserves decimal numbers, abbreviations, and initials when chunking', () => {
+  assert.deepEqual(chunkText('The team raised $3.5 million.'), ['The team raised $3.5 million.']);
+  assert.deepEqual(
+    chunkText('Dr. Rao and Mr. Smith visited the U.S. and raised $4.2 million. The second sentence.'),
+    ['Dr. Rao and Mr. Smith visited the U.S. and raised $4.2 million.', 'The second sentence.']
+  );
+});
+
 test('handles whitespace, markup, missing text and long unbroken Telugu', () => {
   assert.equal(cleanText('<p>Hello</p>\n world '), 'Hello world');
   assert.deepEqual(chunkText(null), []);

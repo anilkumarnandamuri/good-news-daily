@@ -25,17 +25,38 @@ Smallest correct fix (implement exactly this):
 - [x] New screenshot in artifacts/GN-1/
 - [ ] Codex review (artifacts/GN-1/review.md) has no [P0]-[P2] items
 
+## Review response
+- **[P2] Preserve decimal numbers when chunking speech — voice/src/gn-voice.js:21-21**:
+  - Root cause: `chunkText` was splitting sentences on punctuation regex `[.!?।॥…]` without shielding decimal points (e.g. `$3.5 million`) or abbreviations/titles (e.g. `Dr.`, `Mr.`, `U.S.`), causing numbers to be split into separate speech utterances.
+  - Fix: Protected decimal points (`(?<=\d)\.(?=\d)`), common abbreviations/honorifics, and multi-letter/single-letter initials before sentence splitting, then restored periods on the resulting chunks. Added unit test in `voice/tests/chunker.test.js`.
+- **[P2] Declare or isolate browser-test dependencies — tests/test_legacy_feed_browser.py:8-9**:
+  - Root cause: Top-level unconditional imports of `pytest` and `playwright.sync_api` broke standard `python3 -m unittest discover -s tests -v` on fresh installs where only `requirements.txt` was installed.
+  - Fix: Created `requirements-test.txt` declaring `pytest>=7.0.0` and `playwright>=1.40.0`. In `tests/test_legacy_feed_browser.py`, protected imports with `try...except ImportError` so unittest discovery skips the file cleanly without import failure when optional browser-test dependencies are absent.
+- **[P2] Avoid requiring the first refreshed story to have summaries — tests/test_legacy_feed_browser.py:59-61**:
+  - Root cause: The browser test inspected `news["items"][0]` from the live `data/news.json`, which could legitimately have `summary_status: 'excerpt'` after feed refreshes or lose legacy characteristics after routine runs summarize v6.
+  - Fix: Used a controlled legacy feed fixture intercepted via Playwright network routing (`context.route`). Tested both legacy paired items (verifying "In short" and Listen button) and legacy excerpt items (verifying "Publisher excerpt" fallback and absence of Listen button). Generated fresh screenshots in `artifacts/GN-1/`.
+- **[P2] Restore eviction of obsolete summary-cache entries — scripts/summarize.py:206-209**:
+  - Root cause: The live-ID plus 7-day retention pruning step had been removed before serialization when refactoring cache saving, causing unpruned cache growth over time.
+  - Fix: Restored the live-ID plus 7-day prune before atomic temporary file serialization (`k in live or (now - v['t'] < 7 * 86400)`), and ensured each cached entry records/preserves its `t` timestamp. Added contract test `test_cache_evicts_departed_stories_older_than_seven_days` in `tests/test_summaries.py`.
+
 ## Checkpoint
 - **What changed**:
   - Implemented transitional legacy feed adapter in `app.js` when loading `data/news.json` to derive `summary_status` ('paired' if `sum_en` and `sum_te` non-empty, otherwise 'excerpt' with cleared summaries) on fetched feed items without modifying raw data or affecting localStorage items.
+  - Fixed speech chunking in `voice/src/gn-voice.js` to preserve decimal numbers and abbreviations without splitting across utterance boundaries.
+  - Created `requirements-test.txt` and isolated browser test imports in `tests/test_legacy_feed_browser.py` from standard `unittest` discovery.
+  - Converted `tests/test_legacy_feed_browser.py` to use a controlled legacy feed fixture via Playwright routing, testing both paired and excerpt legacy behaviors and regenerating screenshots.
+  - Restored 7-day and live-ID summary cache eviction in `scripts/summarize.py` prior to serialization, and added automated cache pruning tests.
   - Updated `tests/test_artifacts.py` contract test to tolerate legacy feed items without `summary_status` while preserving strict pairs-vs-cache checking for items carrying `summary_status=='paired'`.
-  - Added unit test in `tests/frontend.test.js` verifying that legacy feed items without `summary_status` correctly render bilingual summaries and Listen controls.
-  - Added Playwright browser test in `tests/test_legacy_feed_browser.py` testing story view in reader at 390px and 1280px viewports, verifying "In short" and Listen button visibility, and capturing screenshots in `artifacts/GN-1/`.
-  - Added architectural decision D003 in `DECISIONS.md`.
+  - Added architectural decisions D003 and D004 in `DECISIONS.md`.
 - **Files**:
   - `app.js`
+  - `voice/src/gn-voice.js`
+  - `voice/tests/chunker.test.js`
+  - `scripts/summarize.py`
+  - `requirements-test.txt`
   - `tests/test_artifacts.py`
   - `tests/frontend.test.js`
+  - `tests/test_summaries.py`
   - `tests/test_legacy_feed_browser.py`
   - `DECISIONS.md`
   - `HANDOFF.md`
@@ -43,11 +64,15 @@ Smallest correct fix (implement exactly this):
   - `artifacts/GN-1/gn1-reader-390.png`
   - `artifacts/GN-1/gn1-reader-1280.png`
 - **Verification evidence**:
-  - `python3 -m pytest tests/test_legacy_feed_browser.py -q && python3 -m unittest discover -s tests -p 'test_*.py' && node --test tests/*.test.js` exits 0 (2 passed in pytest, 27 tests in unittest OK, 12 tests in node --test pass).
-  - Screenshots `gn1-reader-390.png` (206KB) and `gn1-reader-1280.png` (284KB) verified in `artifacts/GN-1/`.
+  - `python3 -m pytest tests/test_legacy_feed_browser.py -q && python3 -m unittest discover -s tests -p 'test_*.py' && node --test tests/*.test.js` exits 0 (3 passed in pytest, 28 tests in unittest OK, 12 tests in node --test pass).
+  - `node --test voice/tests/chunker.test.js` exits 0 (5 tests pass).
+  - `python3 -m unittest discover -s tests -v` exits 0 (28 tests OK).
+  - Screenshots `gn1-reader-390.png` (198KB) and `gn1-reader-1280.png` (256KB) re-saved and verified in `artifacts/GN-1/`.
 - **Open items**:
   - Awaiting review by Codex / Anil.
 
 ## Log
 - 2026-10-15 15:30 PDT run-job started
 - 2026-10-15 15:34 PDT built by agy/gemini-3.8-flash-high
+- 2026-10-15 15:36 PDT Codex review: 4 must-fix item(s); running one fix pass
+- 2026-10-15 15:52 PDT all 4 must-fix items addressed and verified by agy/gemini-3.8-flash-high

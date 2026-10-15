@@ -18,7 +18,13 @@ export function storyText(story, lang) {
 export function chunkText(value, maxLength = 160) {
   if (!Number.isInteger(maxLength) || maxLength < 16) throw new RangeError('maxLength must be at least 16');
   const text = cleanText(value);
-  const sentences = text.match(/[^.!?।॥…]+[.!?।॥…]*|[.!?।॥…]+/gu) || [];
+  if (!text) return [];
+  const protectedText = text
+    .replace(/(?<=\d)\.(?=\d)/gu, '\ue000')
+    .replace(/\b(?:Mr|Mrs|Ms|Dr|Prof|Sr|Jr|St|vs|etc)\./giu, m => m.replace('.', '\ue000'))
+    .replace(/\b(?:[A-Za-z]\.){2,}|\b[A-Z]\.(?=\s+[A-Z][a-z])/gu, m => m.replaceAll('.', '\ue000'));
+  const sentences = (protectedText.match(/[^.!?।॥…]+[.!?।॥…]*|[.!?।॥…]+/gu) || [])
+    .map(s => s.replaceAll('\ue000', '.'));
   const chunks = [];
   const segmenter = typeof Intl.Segmenter === 'function' ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }) : null;
   for (const sentence of sentences) {
