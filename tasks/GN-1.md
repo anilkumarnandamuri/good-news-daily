@@ -79,3 +79,4 @@ Smallest correct fix (implement exactly this):
 - 2026-10-15 15:54 PDT run-job resumed
 - 2026-10-15 15:54 PDT Codex review: 2 must-fix item(s); running one fix pass
 - 2026-10-15 16:00 PDT addressed both review-1 must-fix items and added regression coverage; agy/gemini-3.8-flash-high
+- 2026-10-15 16:09 PDT Codex review: 0 must-fix item(s) open
