@@ -1,0 +1,5 @@
+---
+description: Agent protocol for this repo (claims, handoff, decisions)
+alwaysApply: true
+---
+Before any work, read and follow `AGENTS.md` at the repo root: read `HANDOFF.md` then `PLAN.md`, claim with `/workspace/projects/board.sh claim`, work on `job/<task-id>`, overwrite `HANDOFF.md` and run `board.sh checkpoint` at every stop, append real choices to `DECISIONS.md`. Never push.

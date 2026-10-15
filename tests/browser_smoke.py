@@ -9,6 +9,8 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'test-results'
 OUT.mkdir(exist_ok=True)
+ART = ROOT / 'artifacts' / 'GV-1'
+ART.mkdir(parents=True, exist_ok=True)
 
 
 class QuietHandler(SimpleHTTPRequestHandler):
@@ -117,6 +119,41 @@ try:
             view.screenshot(path=str(OUT / f'{name}.png'), full_page=True)
             mobile.close()
         print('PASS: 320/390px layout, dark mode, reduced motion, >=56px controls')
+        # Screenshot matrix for review: 390/1280 wide x light/dark, saved to artifacts/GV-1/.
+        for width, height in [(390, 844), (1280, 900)]:
+            for scheme in ('light', 'dark'):
+                shot = browser.new_context(viewport={'width': width, 'height': height}, color_scheme=scheme,
+                                           reduced_motion='reduce')
+                view = shot.new_page()
+                ready(view)
+                view.locator('.gn-settings summary').click()
+                name = f'{width}-{scheme}'
+                assert view.evaluate('document.documentElement.scrollWidth <= innerWidth'), name
+                # Nothing inside the player may overflow horizontally or be clipped off-screen.
+                assert view.evaluate('''() => [...document.querySelectorAll('gn-voice-player *')].every(el => {
+                  const r = el.getBoundingClientRect();
+                  return r.width === 0 || (r.left >= -0.5 && r.right <= innerWidth + 0.5);
+                })'''), name
+                # Telugu text must not be invisible against its background.
+                assert view.evaluate('''() => {
+                  const c = getComputedStyle(document.querySelector('.story-button'));
+                  return c.color !== c.backgroundColor && parseFloat(c.fontSize) >= 14;
+                }'''), name
+                view.screenshot(path=str(ART / f'{name}.png'), full_page=True)
+                view.screenshot(path=str(OUT / f'{name}.png'), full_page=True)
+                shot.close()
+        print('PASS: 390/1280px light/dark screenshots saved to artifacts/GV-1/')
+        # Playback rate must persist across MP3 source changes.
+        rate = browser.new_page()
+        ready(rate)
+        rate.evaluate(f'{P}.setRate(1.1)')
+        rate.locator('.gn-play').click()
+        rate.wait_for_function(f"{P}.state === 'playing' && {P}.mode === 'audio'")
+        rate.locator('.gn-next').click()
+        rate.wait_for_function(f"{P}.index === 1 && {P}.state === 'playing'")
+        assert abs(rate.evaluate(f'{P}.audio.playbackRate') - 1.1) < 1e-6
+        rate.close()
+        print('PASS: playback rate persists across source changes')
         # Deterministic speech engine for voiceschanged, chunking, cancellation and missing-voice behavior.
         speech = browser.new_context()
         speech.add_init_script('''
