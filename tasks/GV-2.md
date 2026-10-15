@@ -21,3 +21,4 @@ _(agent fills: what changed, files, verification evidence, open items)_
 ## Log
 - 2026-10-15 13:58 PDT run-job started
 - 2026-10-15 14:35 PDT Codex review: 3 must-fix item(s); running one fix pass
+- 2026-10-15 14:47 PDT Codex review: 3 must-fix item(s) open
