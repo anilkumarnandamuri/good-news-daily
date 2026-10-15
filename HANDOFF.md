@@ -1,10 +1,10 @@
 # HANDOFF — good-news
 
 ## Updated
-2026-10-15 16:39 PDT | agy/gemini-3.8-flash-high | branch `job/GV-2` | last commit 8a6bbb5
+2026-10-15 16:41 PDT | agy/gemini-3.8-flash-high | branch `job/GV-2` | last commit 9a7f0f3
 
 ## Current task / claim
-**GV-2** Integrate voice player into Good News UI using the `pairs` field — status **in-review** by agy/gemini-3.8-flash-high on `job/GV-2` (since 2026-10-15 13:58 PDT). Last note: Resolved Codex review P2s: summary load playback teardown, sample route verification, optional browser test imports Next: Codex re-review
+**GV-2** Integrate voice player into Good News UI using the `pairs` field — status **claimed** by agy/gemini-3.8-flash-high on `job/GV-2` (since 2026-10-15 13:58 PDT). Last note: agy/gemini-3.8-flash-high build finished; done-check FAIL (see artifacts/GV-2/done-check.txt) Next: fix done-check failures on job/GV-2
 
 ## Done this session
 - Invoked `stopVoice()` in `reader.js` before `renderBody(it)` when asynchronous summary loading completes for an active story, cleanly tearing down active playback, clearing highlights, and resetting the Listen button state before new bilingual pairs rerender.
