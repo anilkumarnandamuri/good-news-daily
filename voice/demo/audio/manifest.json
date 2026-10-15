@@ -1,0 +1,158 @@
+{
+  "version": 1,
+  "generated": "2026-10-15T05:52:44.620042+00:00",
+  "order": [
+    "beb21be0b4",
+    "d15c6145b8",
+    "24a3b80898",
+    "36957714f0",
+    "807df6d878"
+  ],
+  "stories": {
+    "beb21be0b4": {
+      "te": {
+        "file": "beb21be0b4-1ce60724-te-66a026b730698331.mp3",
+        "duration": 33.744,
+        "text": "హైదరాబాద్‌లోని ఉప్పల్ రాజీవ్ గాంధీ అంతర్జాతీయ స్టేడియం వేదికగా జరిగిన నాల్గవ టీ20 మ్యాచ్‌లో వెస్టిండీస్ జట్టు అద్భుతమైన ప్రదర్శనతో విజయం సాధించింది. ఐదు మ్యాచ్‌ల సిరీస్‌లో భాగంగా జరిగిన ఈ హోరాహోరీ పోరులో కరీబియన్ జట్టు భారత్‌ను 24 పరుగుల తేడాతో ఓడించింది. ఈ విజయంతో సిరీస్ 2-2తో సమమైంది. మొదట బ్యాటింగ్ చేసిన వెస్టిండీస్ జట్టు నిర్ణీత ఇరవై ఓవర్లలో మూడు వికెట్ల నష్టానికి 247 పరుగుల భారీ స్కోరు సాధించింది.",
+        "text_hash": "7566a8b2d58ab7492ca3a2fe752634ec162bf3113988d373ad8e0a7382bef1be",
+        "cache_key": "66a026b73069833102eb6c336c488ecd7b041c989fe6562237b1d7cc05bd6888",
+        "voice": "te-IN-ShrutiNeural",
+        "rate": "+0%"
+      },
+      "en": {
+        "file": "beb21be0b4-1ce60724-en-49927a14a1f3f5e7.mp3",
+        "duration": 29.376,
+        "text": "West Indies won the fourth T20I at the Uppal Rajiv Gandhi International Stadium in Hyderabad by an impressive margin. The Caribbean team defeated India by 24 runs in this fierce battle that took place as part of the five-match series. The win tied the series at 2-2. Batting first, the West Indies scored a huge score of 247 runs for the loss of three wickets in the allotted twenty overs.",
+        "text_hash": "d37114baf0ffb6bc30d1d255167a57b3d6e3180ccdc80355a1ef80662bc40583",
+        "cache_key": "49927a14a1f3f5e78b5292c9e4c2dc4faf2851311ff9d89c651fa40510e6a56b",
+        "voice": "en-IN-NeerjaNeural",
+        "rate": "+0%"
+      }
+    },
+    "d15c6145b8": {
+      "te": {
+        "file": "d15c6145b8-c2be065c-te-8270350f6e2ebcc9.mp3",
+        "duration": 14.928,
+        "text": "దాడి చేసే 'సముద్ర వాంతి'ని వేటాడే కుక్క సంవత్సరపు జంతువుగా గౌరవించబడింది. Sgiath UK యొక్క మొట్టమొదటి సముద్రపు ఉన్ని-వేట కుక్కగా భావించబడుతుంది మరియు సముద్రపు తెగులును తొలగించడానికి శిక్షణ పొందింది.",
+        "text_hash": "4ae665b71eb6c3a1fa7686d8f43bbca70537c42369c9b1636c92de441802e6fa",
+        "cache_key": "8270350f6e2ebcc90ea4d0fed342432f52fdb61f0a762ec0582d37b0690127fa",
+        "voice": "te-IN-ShrutiNeural",
+        "rate": "+0%"
+      },
+      "en": {
+        "file": "d15c6145b8-c2be065c-en-2b23cbfe47f9b781.mp3",
+        "duration": 12.744,
+        "text": "Dog that hunts invasive 'sea vomit' honoured as animal of the year. Sgiath is thought to be the UK's first sea squirt-hunting dog and has been trained to sniff out the marine pest.",
+        "text_hash": "a8cdede7d518021a78e8c2a5d198f7594081e6945e03109d044ca653c76ffb98",
+        "cache_key": "2b23cbfe47f9b7816ab95af7e30ba37aac2a8548f944d5281bd484411a22aaf9",
+        "voice": "en-IN-NeerjaNeural",
+        "rate": "+0%"
+      }
+    },
+    "24a3b80898": {
+      "te": {
+        "file": "24a3b80898-5afe2531-te-7e790aeb173e7326.mp3",
+        "duration": 20.256,
+        "text": "స్లొవాన్ బ్రాటిస్లావాపై స్టట్ ‌ గార్ట్ సులువుగా విజయం సాధించింది. స్లోవేకియాలో స్లోవాన్ బ్రాటిస్లావాపై 3-0 తేడాతో గెలుపొందినందున, ఈ సీజన్ ఛాంపియన్స్ లీగ్‌లో స్టుట్‌గార్ట్ తమ సంపూర్ణ ఆరంభాన్ని కొనసాగించారు, అదే సమయంలో స్వదేశీ జట్టు వారి రెండు ప్రారంభ మ్యాచ్‌లలో ఓడిపోయింది.",
+        "text_hash": "4e99cdba20b8524fd0ee30db1a5511a9c20d6f9dac8df75c110ebc9e0a8f6fc2",
+        "cache_key": "7e790aeb173e73265e12b8b673625ded7dc4a0474c15df9ee284c62200f72dfa",
+        "voice": "te-IN-ShrutiNeural",
+        "rate": "+0%"
+      },
+      "en": {
+        "file": "24a3b80898-5afe2531-en-abd3e081697e8405.mp3",
+        "duration": 18.12,
+        "text": "Stuttgart ease to comfortable win against Slovan Bratislava. Stuttgart maintan their perfect start to this season's Champions League as they eased past Slovan Bratislava 3-0 in Slovakia, whilst the home side have lost both of their opening matches.",
+        "text_hash": "fa49cecd73613494bd202bfb651c6c0df8c32b8440f5e57cf9c8c36b83e8fa15",
+        "cache_key": "abd3e081697e840552b73ee785d9adb263c0dc8e7e4bb1e64875b90277e1ac0f",
+        "voice": "en-IN-NeerjaNeural",
+        "rate": "+0%"
+      }
+    },
+    "36957714f0": {
+      "te": {
+        "file": "36957714f0-1fade7a6-te-70f33bfc66c4ead2.mp3",
+        "duration": 15.192,
+        "text": "AEK ఏథెన్స్‌పై పూర్తి పునరాగమన విజయానికి షాఖ్తర్ ఆలస్యంగా బయలుదేరాడు. AEK ఏథెన్స్‌పై స్టాంఫోర్డ్ బ్రిడ్జ్‌లో 3-1 తేడాతో విజయం సాధించడానికి షాఖ్తర్ డోనెట్స్క్ చివరి దశలో రెండుసార్లు స్కోర్ చేశాడు.",
+        "text_hash": "f261b907bfe2ff40fef9316f52a1e403ca950a218c95e34320ff8fb0513d5581",
+        "cache_key": "70f33bfc66c4ead24dcfd91746330c03642ffef5e7713e8bb9ac03e7233d9187",
+        "voice": "te-IN-ShrutiNeural",
+        "rate": "+0%"
+      },
+      "en": {
+        "file": "36957714f0-1fade7a6-en-7886da15ebdd20d1.mp3",
+        "duration": 15.48,
+        "text": "Shakhtar leave it late to complete comeback win against AEK Athens. Shakhtar Donetsk score twice in the final stages to snatch victory against AEK Athens, coming from behind to win 3-1 at Stamford Bridge.",
+        "text_hash": "439f7e8003f0910b8d6219d4e2f46ce8f47f12a16347743a7a4770e680e1c322",
+        "cache_key": "7886da15ebdd20d175e8a2c69079e67454366e6c2771096d25549f993f0ab5c6",
+        "voice": "en-IN-NeerjaNeural",
+        "rate": "+0%"
+      }
+    },
+    "807df6d878": {
+      "te": {
+        "file": "807df6d878-d2b613b7-te-de4cb0263440cec3.mp3",
+        "duration": 15.936,
+        "text": "ఇస్కో పోర్టోను అధిగమించి బెటిస్ విజయాన్ని అందుకుంది. ఈ సీజన్ ఛాంపియన్స్ లీగ్ ప్రారంభంలో రియల్ బెటిస్ పోర్టోపై 3-2 తేడాతో విజయం సాధించడంలో సహాయపడటానికి ఇస్కో 84వ నిమిషంలో పెనాల్టీని స్కోర్ చేశాడు.",
+        "text_hash": "924ae340ddad3a7a48d7579c976b38dc3d2a6a1d68b461c610c229941bb17b08",
+        "cache_key": "de4cb0263440cec31df5e78f44e3c3f1667e1f4c57829fbec2145f03469a0fc8",
+        "voice": "te-IN-ShrutiNeural",
+        "rate": "+0%"
+      },
+      "en": {
+        "file": "807df6d878-d2b613b7-en-e8ba33949c23060f.mp3",
+        "duration": 16.44,
+        "text": "Isco snatches late Betis win as they edge past Porto. Isco scores an 84th minute penalty to help Real Betis snatch a late 3-2 win against Porto, giving them back to back wins at the start of this season's Champions League.",
+        "text_hash": "f096e521c8d0313ea55ee1fb116373bb638441ecdded2f3c04808de3240f7df3",
+        "cache_key": "e8ba33949c23060f4f846bad9697b0674899b989c3cb6175a4a6ffba39721bd0",
+        "voice": "en-IN-NeerjaNeural",
+        "rate": "+0%"
+      }
+    }
+  },
+  "intros": {
+    "te": {
+      "file": "intro-c432b372-te-5bec7e5d14451669.mp3",
+      "duration": 3.504,
+      "text": "మంచి వార్తలు. ఇప్పుడు వార్త వినండి.",
+      "text_hash": "c1a2c04501bba1920b3c3b7c0ef2937b98b68a450fb42b55d6b2aa49b8df701d",
+      "cache_key": "5bec7e5d14451669cf94fde06d4ac176b95a48a75339d70864769e6eb3c91d0c",
+      "voice": "te-IN-ShrutiNeural",
+      "rate": "+0%"
+    },
+    "en": {
+      "file": "intro-c432b372-en-a899a65f58d2589d.mp3",
+      "duration": 4.704,
+      "text": "Manchi Vaarthalu. Here is your next story.",
+      "text_hash": "34cc8ff6bcbe413eb54f0e8da59a9c871e85bc17282022d74c074e8dea069b9b",
+      "cache_key": "a899a65f58d2589dc8d7e1a1a1d6f99bc042f7a465233a9cd6f6f35c05f8b338",
+      "voice": "en-IN-NeerjaNeural",
+      "rate": "+0%"
+    }
+  },
+  "radio": {
+    "te": {
+      "file": "radio-te-c635eeb0b7e572da.mp3",
+      "duration": 117.576,
+      "order": [
+        "beb21be0b4",
+        "d15c6145b8",
+        "24a3b80898",
+        "36957714f0",
+        "807df6d878"
+      ]
+    },
+    "en": {
+      "file": "radio-en-56d56a7cc97d4c84.mp3",
+      "duration": 115.68,
+      "order": [
+        "beb21be0b4",
+        "d15c6145b8",
+        "24a3b80898",
+        "36957714f0",
+        "807df6d878"
+      ]
+    }
+  },
+  "errors": []
+}
