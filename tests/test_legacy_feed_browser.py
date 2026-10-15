@@ -55,9 +55,10 @@ CONTROLLED_LEGACY_FEED = {
 if pytest is None:
     # Isolate optional browser tests from standard unittest discovery
     pass
-elif sync_playwright is None:
-    pytest.skip("playwright is not installed", allow_module_level=True)
 else:
+    if sync_playwright is None:
+        pytestmark = pytest.mark.skip(reason="playwright is not installed")
+
     @pytest.fixture(scope="session")
     def server():
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:

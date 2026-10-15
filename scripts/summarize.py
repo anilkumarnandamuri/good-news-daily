@@ -182,6 +182,7 @@ def run(items):
             else:
                 pairs = legacy_pairs(item.get("sum_en", ""), item.get("sum_te", ""))
         except (ValueError, TypeError, AttributeError):
+            cache.pop(item["id"], None)
             pairs = None
         if pairs is None and enabled and time.monotonic() < deadline:
             try:
@@ -201,6 +202,7 @@ def run(items):
             item["summary_status"] = "paired"
             complete += 1
         else:
+            cache.pop(item["id"], None)
             item["sum_en"] = item["sum_te"] = ""
             item["summary_status"] = "excerpt"
         item.pop("desc", None)

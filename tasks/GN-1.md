@@ -26,6 +26,12 @@ Smallest correct fix (implement exactly this):
 - [ ] Codex review (artifacts/GN-1/review.md) has no [P0]-[P2] items
 
 ## Review response
+- **[P2] Remove invalidated summaries from the cache — scripts/summarize.py:176-177**:
+  - Root cause: When `summarize.run()` detected a modified description or source for an item whose facts had changed, it raised `ValueError` and set `summary_status = 'excerpt'`, but left the invalidated entry in `cache`. Because the run subsequently popped `desc` from the published item, running the standalone summarizer afterward encountered no `desc`, bypassed the description comparison, and restored the outdated summary from the lingering cache entry.
+  - Fix: Evicted rejected entries from the cache (`cache.pop(item["id"], None)`) in `scripts/summarize.py` both when pair validation/fingerprint checks raise and when `pairs is None` before writing cache. Added automated regression test coverage in `tests/test_summaries.py` asserting that invalidation purges the cache entry and that subsequent rebuilds without `desc` cannot revert to `paired`.
+- **[P2] Skip missing browser dependencies compatibly with unittest — tests/test_legacy_feed_browser.py:58-59**:
+  - Root cause: Calling `pytest.skip(...)` at the module level when `playwright` was missing raised `_pytest.outcomes.Skipped`. Since `Skipped` does not inherit from `unittest.SkipTest`, `python3 -m unittest discover -s tests -v` treated the module-level skip exception as a loader error (`_FailedTest`) in environments with `pytest` installed but `playwright` absent.
+  - Fix: Replaced module-level `pytest.skip(...)` with `pytestmark = pytest.mark.skip(reason="playwright is not installed")` when `sync_playwright is None`. This allows `python3 -m unittest discover` to import the module cleanly without error while properly skipping the tests when running under `pytest`. Added regression test `test_unittest_discovery_succeeds_when_playwright_is_absent` in `tests/test_compatibility.py`.
 - **[P2] Preserve decimal numbers when chunking speech — voice/src/gn-voice.js:21-21**:
   - Root cause: `chunkText` was splitting sentences on punctuation regex `[.!?।॥…]` without shielding decimal points (e.g. `$3.5 million`) or abbreviations/titles (e.g. `Dr.`, `Mr.`, `U.S.`), causing numbers to be split into separate speech utterances.
   - Fix: Protected decimal points (`(?<=\d)\.(?=\d)`), common abbreviations/honorifics, and multi-letter/single-letter initials before sentence splitting, then restored periods on the resulting chunks. Added unit test in `voice/tests/chunker.test.js`.
@@ -41,33 +47,26 @@ Smallest correct fix (implement exactly this):
 
 ## Checkpoint
 - **What changed**:
-  - Implemented transitional legacy feed adapter in `app.js` when loading `data/news.json` to derive `summary_status` ('paired' if `sum_en` and `sum_te` non-empty, otherwise 'excerpt' with cleared summaries) on fetched feed items without modifying raw data or affecting localStorage items.
-  - Fixed speech chunking in `voice/src/gn-voice.js` to preserve decimal numbers and abbreviations without splitting across utterance boundaries.
-  - Created `requirements-test.txt` and isolated browser test imports in `tests/test_legacy_feed_browser.py` from standard `unittest` discovery.
-  - Converted `tests/test_legacy_feed_browser.py` to use a controlled legacy feed fixture via Playwright routing, testing both paired and excerpt legacy behaviors and regenerating screenshots.
-  - Restored 7-day and live-ID summary cache eviction in `scripts/summarize.py` prior to serialization, and added automated cache pruning tests.
-  - Updated `tests/test_artifacts.py` contract test to tolerate legacy feed items without `summary_status` while preserving strict pairs-vs-cache checking for items carrying `summary_status=='paired'`.
-  - Added architectural decisions D003 and D004 in `DECISIONS.md`.
+  - Evicted invalidated entries from the summary cache in `scripts/summarize.py` (`cache.pop(item["id"], None)`) when source or description changes, preventing outdated summaries from silently reverting on standalone rebuilds.
+  - Fixed browser test module `tests/test_legacy_feed_browser.py` to use `pytestmark` skip markers instead of module-level `pytest.skip()`, preventing `ImportError` on `unittest.loader._FailedTest` during `python3 -m unittest discover -s tests -v` when Playwright is absent.
+  - Added regression tests in `tests/test_summaries.py` (verifying cache eviction and non-reversion of changed stories) and `tests/test_compatibility.py` (verifying unittest discovery passes when Playwright is uninstalled).
+  - Maintained green Playwright tests and re-captured desktop (1280px) and mobile (390px) screenshots in `artifacts/GN-1/`.
+  - Added architectural decision D005 in `DECISIONS.md`.
 - **Files**:
-  - `app.js`
-  - `voice/src/gn-voice.js`
-  - `voice/tests/chunker.test.js`
   - `scripts/summarize.py`
-  - `requirements-test.txt`
-  - `tests/test_artifacts.py`
-  - `tests/frontend.test.js`
-  - `tests/test_summaries.py`
   - `tests/test_legacy_feed_browser.py`
+  - `tests/test_summaries.py`
+  - `tests/test_compatibility.py`
   - `DECISIONS.md`
   - `HANDOFF.md`
   - `tasks/GN-1.md`
   - `artifacts/GN-1/gn1-reader-390.png`
   - `artifacts/GN-1/gn1-reader-1280.png`
 - **Verification evidence**:
-  - `python3 -m pytest tests/test_legacy_feed_browser.py -q && python3 -m unittest discover -s tests -p 'test_*.py' && node --test tests/*.test.js` exits 0 (3 passed in pytest, 28 tests in unittest OK, 12 tests in node --test pass).
+  - `python3 -m pytest tests/test_legacy_feed_browser.py -q && python3 -m unittest discover -s tests -p 'test_*.py' && node --test tests/*.test.js` exits 0 (3 passed in pytest, 29 tests in unittest OK, 12 tests in node --test pass).
+  - `python3 -m unittest discover -s tests -v` exits 0 (29 tests OK).
   - `node --test voice/tests/chunker.test.js` exits 0 (5 tests pass).
-  - `python3 -m unittest discover -s tests -v` exits 0 (28 tests OK).
-  - Screenshots `gn1-reader-390.png` (198KB) and `gn1-reader-1280.png` (256KB) re-saved and verified in `artifacts/GN-1/`.
+  - Screenshots `gn1-reader-390.png` and `gn1-reader-1280.png` re-saved and verified.
 - **Open items**:
   - Awaiting review by Codex / Anil.
 
@@ -78,3 +77,5 @@ Smallest correct fix (implement exactly this):
 - 2026-10-15 15:52 PDT all 4 must-fix items addressed and verified by agy/gemini-3.8-flash-high
 - 2026-10-15 15:53 PDT Codex review: 2 must-fix item(s) open
 - 2026-10-15 15:54 PDT run-job resumed
+- 2026-10-15 15:54 PDT Codex review: 2 must-fix item(s); running one fix pass
+- 2026-10-15 16:00 PDT addressed both review-1 must-fix items and added regression coverage; agy/gemini-3.8-flash-high

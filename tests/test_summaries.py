@@ -123,13 +123,23 @@ class SummaryContract(unittest.TestCase):
         self.test_legacy_pairs_migrate_in_order_and_keep_public_strings()
         changed = item()
         changed["title"] = "Different event"
-        self.assertEqual(self.run_items([changed])[0]["summary_status"], "excerpt")
+        result = self.run_items([changed])[0]
+        self.assertEqual(result["summary_status"], "excerpt")
+        self.assertNotIn("library", json.loads(self.cache.read_text()))
+        rebuilt = self.run_items([result])[0]
+        self.assertEqual(rebuilt["summary_status"], "excerpt")
 
     def test_full_description_change_invalidates_cache(self):
         self.test_legacy_pairs_migrate_in_order_and_keep_public_strings()
         changed = item()
         changed["desc"] = "The publisher has corrected the facts in its report."
-        self.assertEqual(self.run_items([changed])[0]["summary_status"], "excerpt")
+        result = self.run_items([changed])[0]
+        self.assertEqual(result["summary_status"], "excerpt")
+        self.assertEqual((result["sum_en"], result["sum_te"]), ("", ""))
+        self.assertNotIn("library", json.loads(self.cache.read_text()))
+        rebuilt = self.run_items([result])[0]
+        self.assertEqual(rebuilt["summary_status"], "excerpt")
+        self.assertEqual((rebuilt["sum_en"], rebuilt["sum_te"]), ("", ""))
 
     def test_opted_in_executable_uses_json_stdin_and_caches_result(self):
         hook = Path(self.tmp.name) / "hook.py"
@@ -165,15 +175,16 @@ class SummaryContract(unittest.TestCase):
 
     def test_cache_evicts_departed_stories_older_than_seven_days(self):
         now = time.time()
+        live_item = item()
+        live_item["id"] = "current_live"
         initial_cache = {
-            "current_live": dict(v=6, pairs=PAIRS[:4], t=now - 10 * 86400, en="en", te="te", n=4),
+            "current_live": dict(v=6, pairs=PAIRS[:4], t=now - 10 * 86400, en="en", te="te", n=4,
+                                 fingerprint=summarize.fingerprint(live_item)),
             "recent_departed": dict(v=6, pairs=PAIRS[:4], t=now - 2 * 86400, en="en", te="te", n=4),
             "old_departed": dict(v=6, pairs=PAIRS[:4], t=now - 8 * 86400, en="en", te="te", n=4),
             "no_timestamp_departed": dict(v=6, pairs=PAIRS[:4], en="en", te="te", n=4),
         }
         self.cache.write_text(json.dumps(initial_cache))
-        live_item = item()
-        live_item["id"] = "current_live"
         self.run_items([live_item])
         saved_cache = json.loads(self.cache.read_text())
         self.assertIn("current_live", saved_cache)

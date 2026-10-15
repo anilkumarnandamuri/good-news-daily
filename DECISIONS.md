@@ -25,3 +25,12 @@
 - Alternatives rejected:
   - Modifying live `data/news.json` or pinning test stories to specific mutable feed indices: Flaky across scheduled data updates.
   - Evicting all departed stories immediately (0-day retention): Breaks readers accessing recently departed stories from bookmarks/history and discards cached translations if a story temporarily drops and reappears.
+
+## D005 — Cache eviction for invalidated summaries and pytestmark browser test skipping (2026-10-15, agy/gemini-3.8-flash-high)
+- Decision: Evict rejected entries from the summary cache upon source or description changes (`cache.pop(item["id"], None)`), and configure missing browser dependency handling via `pytestmark` skip markers rather than raising `pytest.skip` at module import.
+- Why:
+  - If a publisher updates an article's description with corrected facts, failing to evict the invalidated cache entry allowed subsequent standalone builds (where `desc` is no longer present) to fall back to the outdated summary and silently restore invalid facts.
+  - Raising `pytest.skip` at module import level raises `_pytest.outcomes.Skipped`, which is not an instance of `unittest.SkipTest`. In environments where `pytest` is present but `playwright` is absent, running `python3 -m unittest discover` failed on module import. Setting `pytestmark` skips the tests cleanly in `pytest` while allowing `unittest discover` to import the file with zero errors.
+- Alternatives rejected:
+  - Marking invalidated summaries with an invalidation flag instead of deletion: Adds schema complexity when eviction already ensures clean re-summarization or explicit excerpt fallback.
+  - Raising `unittest.SkipTest` at module level: Causes `pytest` to exit with status code 5 (no tests collected) when invoked on the single file.
