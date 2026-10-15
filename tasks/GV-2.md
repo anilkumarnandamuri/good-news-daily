@@ -25,29 +25,40 @@ Resolved in `reader.js`. `stopVoice()` now clears `activePlayer = null`, `active
 ### [P2] Cancel pending playback when the reader changes — reader.js:48-51
 Resolved in `reader.js`. Added `playRequestId` token incremented on every `stop()` and `stopVoice()` invocation. `playVoice()` records `reqId = ++playRequestId` before awaiting `getVoiceModule()` and `getManifest()`. After the awaits resolve, it checks `if (reqId !== playRequestId || R.hidden || !cur || (story && cur.id !== story.id) || !btn.isConnected) return;`. Any stop, story navigation, or reader close immediately invalidates the request token and aborts player instantiation.
 
+### [P2] Stop playback before replacing the reader body — reader.js:102-102
+Resolved in `reader.js`. When asynchronous summary loading resolves in `getSummaries().then()`, `stopVoice()` is now invoked before `renderBody(it)`. This tears down any active playback cleanly (destroying the player, clearing `activeSentenceEls`, resetting the button state to "🔊 Listen", and nulling `activePlayer`), preventing detached playback controls and orphaned audio threads when newly loaded bilingual pairs rerender into the reader. Added `test_voice_reader_stops_playback_on_summary_load` in `tests/test_voice_reader.py` to verify active playback stops and resets the Listen button when summaries resolve.
+
+### [P2] Verify the current route before opening a fetched sample story — reader.js:97-97
+Resolved in `reader.js`. In the `getSampleNews().then()` callback, the current route is now verified against `location.hash` using `const m = location.hash.match(/^#\/s\/([\w-]+)/); if (found && m && m[1] === id && (!cur || cur.id !== id)) open(id, found);`. If the user navigates away or clears the hash while sample story lookup is in flight, the callback drops the resolution and does not reopen or replace the reader. Added `test_voice_reader_sample_lookup_aborts_if_route_changes` in `tests/test_voice_reader.py` to verify the reader remains hidden when sample news resolves after navigation.
+
+### [P2] Keep browser dependencies optional during unittest discovery — tests/test_voice_reader.py:5-6
+Resolved in `tests/test_voice_reader.py`. Replaced unconditional top-level imports of `pytest` and `playwright.sync_api` with `try...except ImportError` guards and `pytestmark = pytest.mark.skip(reason="playwright is not installed")`, mirroring `tests/test_legacy_feed_browser.py`. Updated `tests/test_compatibility.py` to pop `test_voice_reader` during playwright-absent discovery checks. Running `python3 -m unittest discover -s tests -v` now runs cleanly with zero `_FailedTest` errors even when optional browser dependencies are absent.
+
 ### Locator.click timeout in test_voice_reader.py::test_voice_reader_mp3_playback
 Resolved in `styles.css` and `reader.js`. The `.r-listen.on` pulse animation used `@keyframes pulse { 50% { transform: scale(1.03); } }` which infinitely mutated the button's layout bounding box across animation frames, failing Playwright's stability checks during active MP3 playback. Replaced with `@keyframes pulse-listen { 50% { opacity: 0.85; } }` which preserves visual pulsing without geometry thrashing. In addition, `highlightSentence(idx)` now tracks `currentHighlightIdx` and deduplicates calls, avoiding continuous scroll calls on every `timeupdate` tick.
 
 ## Checkpoint
 - **What changed**:
-  - `reader.js`: Cleared `activePlayer`, `activeBtn`, and `window.__readerPlayer` prior to `destroy()` in `stopVoice()`; guarded `statechange`, `progress`, `ended`, and `timeupdate` listeners against destroyed or stale player instances; added `playRequestId` generation token in `playVoice()`, `stop()`, and `stopVoice()` to cancel pending playback if the reader closes or navigates; deduplicated `highlightSentence` calls and removed smooth-scroll jitter on timeupdate.
-  - `styles.css`: Updated `.r-listen.on` animation to `pulse-listen` with opacity pulsing instead of transform scale, ensuring layout stability for interaction during audio playback.
-  - `tasks/GV-2.md`: Set `Status: built`, filled Test command and Checkpoint, added `## Review response` addressing all review items.
-  - `HANDOFF.md` & `DECISIONS.md`: Updated current status, verification evidence, and added decision D006.
+  - `reader.js`: Invoked `stopVoice()` before `renderBody(it)` upon summary fetch resolution; verified `location.hash` still routes to target story id before opening sample stories.
+  - `tests/test_voice_reader.py`: Wrapped `pytest` and `playwright` imports in optional `try...except ImportError` blocks with `pytestmark` skip markers for non-browser discovery; added browser assertions for summary-load playback teardown (`test_voice_reader_stops_playback_on_summary_load`) and route verification abort on sample lookup (`test_voice_reader_sample_lookup_aborts_if_route_changes`).
+  - `tests/test_compatibility.py`: Added `test_voice_reader` module eviction to `test_unittest_discovery_succeeds_when_playwright_is_absent` to verify clean discovery without playwright.
+  - `DECISIONS.md`: Recorded decision D007.
+  - `tasks/GV-2.md` & `HANDOFF.md`: Updated review responses, checkpoints, and handoff state.
 - **Files modified**:
   - `reader.js`
-  - `styles.css`
+  - `tests/test_voice_reader.py`
+  - `tests/test_compatibility.py`
+  - `DECISIONS.md`
   - `tasks/GV-2.md`
   - `HANDOFF.md`
-  - `DECISIONS.md`
 - **Verification evidence**:
-  - `python3 -m pytest tests/test_voice_reader.py` (3 passed in 6.9s)
-  - `node --test tests/*.test.js` (12 passed)
-  - `python3 -m unittest discover -s tests -p 'test_*.py'` (29 passed)
-  - `python3 -m pytest tests/test_legacy_feed_browser.py` (3 passed)
-  - `node --test voice/tests/*.test.js` (5 passed)
+  - `python3 -m pytest tests/test_voice_reader.py` (5 passed in 9.29s)
+  - `node --test tests/*.test.js` (12 passed in 292ms)
+  - `python3 -m unittest discover -s tests -v` (29 passed in 0.11s)
+  - `python3 -m pytest tests/test_legacy_feed_browser.py` (3 passed in 3.03s)
+  - `node --test voice/tests/*.test.js` (5 passed in 173ms)
   - Fresh screenshots verified in `artifacts/GV-2/`: `desktop-1280-en-active.png`, `desktop-1280-te-active.png`, `desktop-mp3-active.png`, `mobile-390-en-active.png`, `mobile-390-te-active.png`
-- **Open items**: None. All P1/P2 items resolved and all test suites pass.
+- **Open items**: None. All must-fix findings resolved and verified.
 
 ## Log
 - 2026-10-15 13:58 PDT run-job started
@@ -60,3 +71,5 @@ Resolved in `styles.css` and `reader.js`. The `.r-listen.on` pulse animation use
 - 2026-10-15 16:24 PDT All must-fix findings resolved, tests passing, screenshots refreshed
 - 2026-10-15 16:27 PDT Codex review: 3 must-fix item(s) open
 - 2026-10-15 16:29 PDT run-job resumed
+- 2026-10-15 16:29 PDT Codex review: 3 must-fix item(s); running one fix pass
+- 2026-10-15 16:38 PDT All 3 new Codex review P2 findings resolved, automated tests passing cleanly with new assertions, screenshots refreshed

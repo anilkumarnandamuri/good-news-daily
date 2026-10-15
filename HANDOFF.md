@@ -1,27 +1,27 @@
 # HANDOFF — good-news
 
 ## Updated
-2026-10-15 16:29 PDT | agy/gemini-3.8-flash-high | branch `job/GV-2` | last commit 16f37b1
+2026-10-15 16:39 PDT | agy/gemini-3.8-flash-high | branch `job/GV-2` | last commit 8a6bbb5
 
 ## Current task / claim
-**GV-2** Integrate voice player into Good News UI using the `pairs` field — status **claimed** by agy/gemini-3.8-flash-high on `job/GV-2` (since 2026-10-15 13:58 PDT). Last note: 2026-10-15 16:29 PDT resumed by agy/gemini-3.8-flash-high
+**GV-2** Integrate voice player into Good News UI using the `pairs` field — status **in-review** by agy/gemini-3.8-flash-high on `job/GV-2` (since 2026-10-15 13:58 PDT). Last note: Resolved Codex review P2s: summary load playback teardown, sample route verification, optional browser test imports Next: Codex re-review
 
 ## Done this session
-- Merged `job/GN-1` (commit `84d099d`) providing transitional legacy feed adapter in `app.js` and tolerant artifact checks, resolving Codex finding P1 #1.
-- Updated `reader.js` to clear `activePlayer = null`, `activeBtn = null`, and `window.__readerPlayer = null` before invoking `player.destroy()` in `stopVoice()`, and added `player.destroyed || player !== activePlayer` guards on all event listeners, resolving recursive teardown in Codex finding P1 #2.
-- Added `playRequestId` token invalidation in `reader.js` (`stop()`, `stopVoice()`, `playVoice()`) to discard pending playback if the reader closes or navigates while voice module or manifest is fetching, resolving Codex finding P2 #3.
-- Updated `styles.css` `.r-listen.on` pulse animation to use opacity instead of transform scale, and deduplicated `highlightSentence` scroll calls against the active index, fixing the Playwright Locator.click stability timeout during active MP3 playback.
-- Verified test suite: `python3 -m pytest tests/test_voice_reader.py` (3 passed), `node --test tests/*.test.js` (12 passed), `python3 -m unittest discover -s tests -p 'test_*.py'` (29 passed), `python3 -m pytest tests/test_legacy_feed_browser.py` (3 passed).
-- Refreshed desktop and mobile screenshots in `artifacts/GV-2/`.
-- Updated `tasks/GV-2.md` with Status: built, Test command, review response, and checkpoint.
-- Appended decision D006 to `DECISIONS.md`.
+- Invoked `stopVoice()` in `reader.js` before `renderBody(it)` when asynchronous summary loading completes for an active story, cleanly tearing down active playback, clearing highlights, and resetting the Listen button state before new bilingual pairs rerender.
+- Verified `location.hash` still matches target story ID in `reader.js` upon `getSampleNews()` resolution, preventing asynchronous lookups from reopening the reader or replacing the active view if the user navigated away.
+- Guarded `pytest` and `playwright.sync_api` imports in `tests/test_voice_reader.py` with `try...except ImportError` blocks and `pytestmark` skip markers, and updated `tests/test_compatibility.py` to pop `test_voice_reader` during playwright-absent discovery checks, ensuring `python3 -m unittest discover -s tests -v` runs without `_FailedTest` errors.
+- Added browser test assertions in `tests/test_voice_reader.py`: `test_voice_reader_stops_playback_on_summary_load` and `test_voice_reader_sample_lookup_aborts_if_route_changes`.
+- Re-verified test suite: `python3 -m pytest tests/test_voice_reader.py` (5 passed), `node --test tests/*.test.js` (12 passed), `python3 -m unittest discover -s tests -v` (29 passed), `python3 -m pytest tests/test_legacy_feed_browser.py` (3 passed).
+- Refreshed all 5 screenshots in `artifacts/GV-2/`.
+- Appended decision D007 to `DECISIONS.md`.
+- Updated `tasks/GV-2.md` with status, test command, review responses, and checkpoint.
 
 ## Verified (with evidence)
-- `python3 -m pytest tests/test_voice_reader.py`: 3 passed in 6.89s (mobile-390, desktop-1280 Web Speech sentence highlighting, desktop MP3 playback).
-- `node --test tests/*.test.js`: 12 passed in 254ms (feed rendering, reader keyboard trap, legacy fallback, summary_status adapter).
-- `python3 -m unittest discover -s tests -p 'test_*.py'`: 29 passed in 0.09s.
-- `python3 -m pytest tests/test_legacy_feed_browser.py`: 3 passed in 2.82s.
-- `node --test voice/tests/*.test.js`: 5 passed in 182ms.
+- `python3 -m pytest tests/test_voice_reader.py`: 5 passed in 9.29s (mobile-390, desktop-1280 sentence highlighting, desktop MP3 playback, summary load teardown, sample route verification).
+- `node --test tests/*.test.js`: 12 passed in 292ms (feed rendering, reader keyboard trap, legacy fallback, summary_status adapter).
+- `python3 -m unittest discover -s tests -v`: 29 passed in 0.11s (including `test_unittest_discovery_succeeds_when_playwright_is_absent`).
+- `python3 -m pytest tests/test_legacy_feed_browser.py`: 3 passed in 3.03s.
+- `node --test voice/tests/*.test.js`: 5 passed in 173ms.
 - Verified fresh screenshots in `artifacts/GV-2/`: `mobile-390-en-active.png`, `mobile-390-te-active.png`, `desktop-1280-en-active.png`, `desktop-1280-te-active.png`, `desktop-mp3-active.png`.
 
 ## Unverified

@@ -47,3 +47,17 @@
 - Alternatives rejected:
   - Using Playwright `force=True` on click: Rejected because real touch/mouse interactions also suffer when target elements oscillate geometry continuously.
   - Relying on setTimeout for async teardown: Brittle across varying network and device speeds.
+
+## D007 — Summary load playback teardown, sample route verification, and optional browser test discovery (2026-10-15, agy/gemini-3.8-flash-high)
+- Decision:
+  1. In `reader.js`, invoke `stopVoice()` before calling `renderBody(it)` when asynchronous summary loading completes for an active story.
+  2. In `reader.js`, verify `location.hash` still matches the target story id before invoking `open(id, found)` after asynchronous `getSampleNews()` resolves.
+  3. In `tests/test_voice_reader.py`, make `pytest` and `playwright` imports optional inside `try...except ImportError` blocks with `pytestmark` skip markers, mirroring `test_legacy_feed_browser.py`, and isolate `test_voice_reader` during playwright-absent discovery checks in `test_compatibility.py`.
+- Why:
+  1. If a reader started playback on an initial render before summaries finished loading, replacing `rBody.innerHTML` without stopping detached the active audio controls, leaving invisible background playback and resetting the visible button to an idle state.
+  2. If a user navigated away or closed the reader while sample news was fetching, the resolved lookup callback previously opened the original story regardless of the URL, corrupting reader state and overriding the user's route.
+  3. Direct module-level imports of `pytest` and `playwright` caused `python3 -m unittest discover -s tests -v` to emit `_FailedTest` errors in basic environments lacking browser dependencies.
+- Alternatives rejected:
+  - Skipping the summary rerender while playing: Leaves outdated excerpt text and missing sentence spans permanently displayed for the session.
+  - Relying on `cur` ID comparison without checking `location.hash`: Fails when the user closes the reader (`cur = null`), incorrectly reopening the story on hash `""`.
+

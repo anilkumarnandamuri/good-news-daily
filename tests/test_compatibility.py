@@ -121,6 +121,8 @@ class RoutineCompatibility(unittest.TestCase):
         with patch.dict(sys.modules, {"playwright": None, "playwright.sync_api": None}):
             sys.modules.pop("test_legacy_feed_browser", None)
             sys.modules.pop("tests.test_legacy_feed_browser", None)
+            sys.modules.pop("test_voice_reader", None)
+            sys.modules.pop("tests.test_voice_reader", None)
             loader = unittest.TestLoader()
             suite = loader.discover(str(ROOT / "tests"), pattern="test_*.py")
             failed_modules = []

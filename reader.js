@@ -94,12 +94,12 @@
 
  function open(id,customIt){
   let it=customIt||DATA.find(x=>x.id===id)||GN.saved().find(x=>x.id===id);
-  if(!it&&isVoiceEnabled()){getSampleNews().then(items=>{const found=items.find(x=>x.id===id);if(found&&(!cur||cur.id!==id))open(id,found)});return}
+  if(!it&&isVoiceEnabled()){getSampleNews().then(items=>{const found=items.find(x=>x.id===id);const m=location.hash.match(/^#\/s\/([\w-]+)/);if(found&&m&&m[1]===id&&(!cur||cur.id!==id))open(id,found)});return}
   if(!it)return;
   if(isVoiceEnabled()){
    const attach=s=>{if(s&&s[it.id]?.pairs){it.pairs=s[it.id].pairs;it.sum_en=it.sum_en||s[it.id].en;it.sum_te=it.sum_te||s[it.id].te;it.summary_status="paired"}};
    if(summariesData)attach(summariesData);
-   else getSummaries().then(s=>{attach(s);if(cur&&cur.id===it.id&&it.pairs)renderBody(it)});
+   else getSummaries().then(s=>{attach(s);if(cur&&cur.id===it.id&&it.pairs){stopVoice();renderBody(it)}});
   }
   if(R.hidden){returnFocus=document.activeElement;returnHref=returnFocus?.closest("a")?.getAttribute("href");
    [...document.body.children].filter(node=>node!==R).forEach(node=>{background.set(node,node.inert);node.inert=true})}
