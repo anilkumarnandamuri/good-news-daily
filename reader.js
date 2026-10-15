@@ -23,11 +23,11 @@
  function getVoiceModule(){if(!voicePromise){voicePromise=import("./voice/src/gn-voice.js").then(m=>{voiceModule=m;return m})}return voicePromise}
  if(isVoiceEnabled()){getSummaries();getManifest();getVoiceModule();getSampleNews()}
 
- let activePlayer=null,activeBtn=null,activeSentenceEls=[];
- function clearHighlight(){if(activeSentenceEls&&activeSentenceEls.length){activeSentenceEls.forEach(el=>{el.classList.remove("is-active","active","highlight");el.removeAttribute("aria-current")})}}
- function highlightSentence(idx){if(!activeSentenceEls||!activeSentenceEls.length)return;activeSentenceEls.forEach((el,i)=>{const on=(i===idx);el.classList.toggle("is-active",on);el.classList.toggle("active",on);el.classList.toggle("highlight",on);if(on){el.setAttribute("aria-current","true");try{el.scrollIntoView({block:"nearest",behavior:"smooth"})}catch(e){}}else{el.removeAttribute("aria-current")}})}
- function stopVoice(){if(activePlayer){try{activePlayer.destroy()}catch(e){}activePlayer=null}if(activeBtn){activeBtn.classList.remove("on");const sp=activeBtn.querySelector("span");if(sp)sp.textContent="🔊 Listen";activeBtn=null}clearHighlight();activeSentenceEls=[];window.__readerPlayer=null}
- function stop(){stopVoice();if("speechSynthesis" in window)speechSynthesis.cancel();if(speaking){speaking.classList.remove("on");speaking.querySelector("span").textContent="🔊 Listen"}speaking=null}
+ let activePlayer=null,activeBtn=null,activeSentenceEls=[],currentHighlightIdx=-1,playRequestId=0;
+ function clearHighlight(){currentHighlightIdx=-1;if(activeSentenceEls&&activeSentenceEls.length){activeSentenceEls.forEach(el=>{el.classList.remove("is-active","active","highlight");el.removeAttribute("aria-current")})}}
+ function highlightSentence(idx){if(!activeSentenceEls||!activeSentenceEls.length)return;if(idx===currentHighlightIdx)return;currentHighlightIdx=idx;activeSentenceEls.forEach((el,i)=>{const on=(i===idx);el.classList.toggle("is-active",on);el.classList.toggle("active",on);el.classList.toggle("highlight",on);if(on){el.setAttribute("aria-current","true");try{el.scrollIntoView({block:"nearest"})}catch(e){}}else{el.removeAttribute("aria-current")}})}
+ function stopVoice(){playRequestId++;const player=activePlayer,btn=activeBtn;activePlayer=null;activeBtn=null;window.__readerPlayer=null;if(btn){btn.classList.remove("on");const sp=btn.querySelector("span");if(sp)sp.textContent="🔊 Listen"}clearHighlight();activeSentenceEls=[];if(player){try{player.destroy()}catch(e){}}}
+ function stop(){playRequestId++;stopVoice();if("speechSynthesis" in window)speechSynthesis.cancel();if(speaking){speaking.classList.remove("on");speaking.querySelector("span").textContent="🔊 Listen"}speaking=null}
  function speak(btn,text,lang){
   if(speaking===btn){stop();return}stop();
   if(!("speechSynthesis" in window)){toast(lang==="te"?"ఈ ఫోన్‌లో వినిపించే సౌకర్యం లేదు":"Reading aloud isn't supported on this browser");return}
@@ -41,18 +41,21 @@
 
  async function playVoice(btn,lang,story){
   if(activeBtn===btn&&activePlayer&&activePlayer.isPlaying){stopVoice();return}stop();
-  const container=btn.closest(".r-sum");activeSentenceEls=container?[...container.querySelectorAll(".r-sentence")]:[];
+  const reqId=++playRequestId;
+  const container=btn.closest(".r-sum");const targetSentenceEls=container?[...container.querySelectorAll(".r-sentence")]:[];
   let sentences=[];
   if(story&&story.pairs&&story.pairs.length){sentences=story.pairs.map(p=>p[lang]||"").filter(Boolean)}
   if(!sentences.length){const txt=(story&&story["sum_"+lang])||(story&&story.lang===lang?story.summary:"")||"";sentences=(txt.match(/[^.!?।॥…]+[.!?।॥…]*|[.!?।॥…]+/gu)||[]).map(s=>s.trim()).filter(Boolean)}
   const {VoicePlayer}=await getVoiceModule();const {manifest,manifestURL}=await getManifest();
+  if(reqId!==playRequestId||R.hidden||!cur||(story&&cur.id!==story.id)||!btn.isConnected)return;
+  activeSentenceEls=targetSentenceEls;
   class ReaderVoicePlayer extends VoicePlayer{_makeQueue(){const ok=super._makeQueue();if(ok&&sentences.length){for(const it of this.queue){if(!it.intro){it.chunks=sentences.slice()}}}return ok}}
   const player=new ReaderVoicePlayer({language:lang,preferAudio:true,radio:false});
   player.setStories([story],{manifest,manifestURL,limit:1});
-  player.audio.addEventListener("timeupdate",()=>{if(player.mode==="audio"&&player.audio.duration>0&&sentences.length){const curT=player.audio.currentTime,dur=player.audio.duration;const totalChars=sentences.reduce((acc,s)=>acc+s.length,0)||1;let accum=0,activeIdx=0;for(let i=0;i<sentences.length;i++){accum+=sentences[i].length;if(curT<=(accum/totalChars)*dur||i===sentences.length-1){activeIdx=i;break}}highlightSentence(activeIdx)}});
-  player.addEventListener("statechange",()=>{if(player.state==="playing"){btn.classList.add("on");const sp=btn.querySelector("span");if(sp)sp.textContent="⏹ Stop";if(player.mode==="speech"){highlightSentence(player.chunkIndex)}else if(player.mode==="audio"){highlightSentence(0)}}else if(player.state==="ended"||player.state==="idle"){stopVoice()}else if(player.state==="error"){toast(player.message||(lang==="te"?"తెలుగు వాయిస్ లేదు":"Speech unavailable"));stopVoice()}});
-  player.addEventListener("progress",()=>{if(player.mode==="speech"){highlightSentence(player.chunkIndex)}});
-  player.addEventListener("ended",()=>stopVoice());
+  player.audio.addEventListener("timeupdate",()=>{if(player===activePlayer&&!player.destroyed&&player.mode==="audio"&&player.audio.duration>0&&sentences.length){const curT=player.audio.currentTime,dur=player.audio.duration;const totalChars=sentences.reduce((acc,s)=>acc+s.length,0)||1;let accum=0,activeIdx=0;for(let i=0;i<sentences.length;i++){accum+=sentences[i].length;if(curT<=(accum/totalChars)*dur||i===sentences.length-1){activeIdx=i;break}}highlightSentence(activeIdx)}});
+  player.addEventListener("statechange",()=>{if(player.destroyed||player!==activePlayer)return;if(player.state==="playing"){btn.classList.add("on");const sp=btn.querySelector("span");if(sp)sp.textContent="⏹ Stop";if(player.mode==="speech"){highlightSentence(player.chunkIndex)}else if(player.mode==="audio"){highlightSentence(0)}}else if(player.state==="ended"||player.state==="idle"){stopVoice()}else if(player.state==="error"){toast(player.message||(lang==="te"?"తెలుగు వాయిస్ లేదు":"Speech unavailable"));stopVoice()}});
+  player.addEventListener("progress",()=>{if(player===activePlayer&&!player.destroyed&&player.mode==="speech"){highlightSentence(player.chunkIndex)}});
+  player.addEventListener("ended",()=>{if(player===activePlayer)stopVoice()});
   activePlayer=player;activeBtn=btn;window.__readerPlayer=player;btn.classList.add("on");const sp=btn.querySelector("span");if(sp)sp.textContent="⏹ Stop";
   highlightSentence(0);player.play();
  }

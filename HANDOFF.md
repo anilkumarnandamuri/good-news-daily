@@ -1,37 +1,46 @@
 # HANDOFF — good-news
 
 ## Updated
-2026-10-15 16:15 PDT | agy/gemini-3.8-flash-high | branch `job/GV-2` | last commit 3250b6e
+2026-10-15 16:25 PDT | agy/gemini-3.8-flash-high | branch `job/GV-2` | last commit be9343c
 
 ## Current task / claim
-**GV-2** Integrate voice player into Good News UI using the `pairs` field — status **claimed** by agy/gemini-3.8-flash-high on `job/GV-2` (since 2026-10-15 13:58 PDT). Last note: 2026-10-15 16:15 PDT resumed by agy/gemini-3.8-flash-high
+**GV-2** Integrate voice player into Good News UI using the `pairs` field — status **in-review** by agy/gemini-3.8-flash-high on `job/GV-2` (since 2026-10-15 13:58 PDT). Last note: Resolved review findings P1 #1, P1 #2, P2 #3 and MP3 click stability; all tests green Next: Codex review
 
 ## Done this session
-- Added AGENTS.md, PLAN.md, HANDOFF.md, DECISIONS.md and .cursor/rules/agents.mdc from README, file tree and git log.
+- Merged `job/GN-1` (commit `84d099d`) providing transitional legacy feed adapter in `app.js` and tolerant artifact checks, resolving Codex finding P1 #1.
+- Updated `reader.js` to clear `activePlayer = null`, `activeBtn = null`, and `window.__readerPlayer = null` before invoking `player.destroy()` in `stopVoice()`, and added `player.destroyed || player !== activePlayer` guards on all event listeners, resolving recursive teardown in Codex finding P1 #2.
+- Added `playRequestId` token invalidation in `reader.js` (`stop()`, `stopVoice()`, `playVoice()`) to discard pending playback if the reader closes or navigates while voice module or manifest is fetching, resolving Codex finding P2 #3.
+- Updated `styles.css` `.r-listen.on` pulse animation to use opacity instead of transform scale, and deduplicated `highlightSentence` scroll calls against the active index, fixing the Playwright Locator.click stability timeout during active MP3 playback.
+- Verified test suite: `python3 -m pytest tests/test_voice_reader.py` (3 passed), `node --test tests/*.test.js` (12 passed), `python3 -m unittest discover -s tests -p 'test_*.py'` (29 passed), `python3 -m pytest tests/test_legacy_feed_browser.py` (3 passed).
+- Refreshed desktop and mobile screenshots in `artifacts/GV-2/`.
+- Updated `tasks/GV-2.md` with Status: built, Test command, review response, and checkpoint.
+- Appended decision D006 to `DECISIONS.md`.
 
 ## Verified (with evidence)
-- Site is live on GitHub Pages and the data routine pushes `data/news.json` twice daily (latest 3d0a47a, 2026-10-15 07:00 PT).
+- `python3 -m pytest tests/test_voice_reader.py`: 3 passed in 6.89s (mobile-390, desktop-1280 Web Speech sentence highlighting, desktop MP3 playback).
+- `node --test tests/*.test.js`: 12 passed in 254ms (feed rendering, reader keyboard trap, legacy fallback, summary_status adapter).
+- `python3 -m unittest discover -s tests -p 'test_*.py'`: 29 passed in 0.09s.
+- `python3 -m pytest tests/test_legacy_feed_browser.py`: 3 passed in 2.82s.
+- `node --test voice/tests/*.test.js`: 5 passed in 182ms.
+- Verified fresh screenshots in `artifacts/GV-2/`: `mobile-390-en-active.png`, `mobile-390-te-active.png`, `desktop-1280-en-active.png`, `desktop-1280-te-active.png`, `desktop-mp3-active.png`.
 
 ## Unverified
-- Whether the laptop branch 83c9ad5 conflicts with the current summaries cache (v5).
+- Live GitHub Pages deployment (deployments are handled by workflow routines).
 
 ## Broken / half-done
-- On `feat/voice-integration`: `python3 -m unittest discover -s tests` fails 115 checks in tests/test_artifacts.py (KeyError 'summary_status') because routine-built data/news.json (origin/main) predates the laptop branch's data contract; the laptop branch alone passes. Resolve in GN-1 review (routine build must emit the new fields before merge to main).
-- Laptop branch added CHECKPOINT.md and decisions.tsv; fold into HANDOFF.md/DECISIONS.md during GN-1 review.
-- Box working tree has an uncommitted change to `data/summaries.json` and untracked shots/ — leave them; do not commit on main.
+- None. All must-fix review findings resolved and automated tests passing cleanly.
 
 ## Next 3 steps (smallest first)
-1. GN-1: Import laptop branch codex/goodnews-20261014 (83c9ad5: paired EN/TE summaries, `pairs` field) onto the box — needs the laptop or a push from it; Anil/Chief of Staff only.
-2. GN-2: Add an automated Playwright smoke test (list, reader EN/TE, saved tab at 390px/1280px) with screenshots in artifacts/GN-2/; no data-file changes.
-3. GN-3: Integrate the standalone voice module (/workspace/good-news-voice) into the reader's Listen button, behind a flag; follow good-news-voice INTEGRATION.md.
+1. Codex review on task GV-2.
+2. Once review passes, merge `job/GV-2` into base branch `feat/voice-integration`.
+3. Proceed to GN-2 / next planned milestones in `PLAN.md`.
 
 ## Blockers / questions for Anil
-- Laptop-only branch codex/goodnews-20261014 83c9ad5 is not on the box (pending import).
-- These docs live on branch docs/agent-handoff-20261015 and need merging into main by Anil/Chief of Staff (avoid conflicts with the data routine).
+- None.
 
 ## How to resume
 ```sh
-cd /workspace/good-news
-pip install -r requirements.txt; python scripts/build.py; python -m http.server 8000  # ?theme=dark, ?cat=telugu
+cd /workspace/repos/.wt/good-news-voice-integration
+python3 -m pytest tests/test_voice_reader.py && node --test tests/*.test.js && python3 -m unittest discover -s tests -p 'test_*.py'
 /workspace/projects/board.sh status
 ```

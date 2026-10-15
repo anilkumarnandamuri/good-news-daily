@@ -34,3 +34,16 @@
 - Alternatives rejected:
   - Marking invalidated summaries with an invalidation flag instead of deletion: Adds schema complexity when eviction already ensures clean re-summarization or explicit excerpt fallback.
   - Raising `unittest.SkipTest` at module level: Causes `pytest` to exit with status code 5 (no tests collected) when invoked on the single file.
+
+## D006 — Voice player re-entrancy teardown, async cancellation, and opacity pulse animation (2026-10-15, agy/gemini-3.8-flash-high)
+- Decision:
+  1. Clear `activePlayer = null`, `activeBtn = null`, and `window.__readerPlayer = null` before invoking `player.destroy()` in `stopVoice()`, and guard event listeners with `player.destroyed || player !== activePlayer` checks.
+  2. Invalidate pending `playVoice` asynchronous continuations across module/manifest loading by incrementing a `playRequestId` token on `stop()` / `stopVoice()` and aborting execution if `reqId !== playRequestId || R.hidden || !cur || cur.id !== story.id || !btn.isConnected`.
+  3. Change `.r-listen.on` pulse animation to use `opacity: 0.85` instead of `transform: scale(1.03)`, and deduplicate `highlightSentence` scroll calls against the active highlight index.
+- Why:
+  1. Synchronous `destroy()` -> `stop()` -> `statechange` ('idle') previously re-entered `stopVoice()` while `activePlayer` was non-null, leading to call-stack exhaustion.
+  2. Navigating away, closing the reader, or toggling playback while the voice module or manifest was fetching allowed stale continuations to instantiate background audio over subsequent stories.
+  3. Infinite CSS keyframe `transform: scale(1.03)` kept the button's layout bounding box unstable across frames, preventing Playwright actionability checks from clicking the stop button during active MP3 playback. Opacity pulsing provides equivalent visual feedback without geometry mutation or layout thrashing.
+- Alternatives rejected:
+  - Using Playwright `force=True` on click: Rejected because real touch/mouse interactions also suffer when target elements oscillate geometry continuously.
+  - Relying on setTimeout for async teardown: Brittle across varying network and device speeds.
