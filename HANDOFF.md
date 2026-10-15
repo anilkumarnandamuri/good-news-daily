@@ -1,4 +1,39 @@
-# Checkpoint
+# HANDOFF — good-news-voice
+
+## Updated
+2026-10-15 13:41 PT | Grok Bot (agent-handoff setup) | branch `docs/agent-handoff-20261015` | last commit 993b96b
+
+## Current task / claim
+None. Next unclaimed: **GV-1**.
+
+## Done this session
+- Added AGENTS.md, PLAN.md, HANDOFF.md, DECISIONS.md and .cursor/rules/agents.mdc from README, file tree and git log.
+
+## Verified (with evidence)
+- Node and Python unit tests passed at the 2026-10-14 23:00 PT checkpoint (per CHECKPOINT.md).
+
+## Unverified
+- Browser smoke suite completion; mobile/dark screenshots not yet inspected.
+
+## Broken / half-done
+- `.local-git/` is a stale side history (7eacff5) from when `.git` was read-only; its tree is identical to `.git` master 993b96b. `.git` is writable again (2026-10-15) and is canonical; `.local-git` can be deleted after Anil confirms.
+- python http.server has no byte-range seeking (tests accelerate playback instead).
+
+## Next 3 steps (smallest first)
+1. GV-1: Finish browser smoke checks (tests/browser_smoke.py), inspect mobile/dark screenshots in artifacts/GV-1/, fix findings, commit.
+2. GV-2: Integrate into good-news (see GN-3) once GV-1 is verified.
+
+## Blockers / questions for Anil
+- No GitHub repo; decide whether it merges into good-news-daily or gets its own repo.
+
+## How to resume
+```sh
+cd /workspace/good-news-voice
+python3 -m http.server 8000  # http://127.0.0.1:8000/demo/
+/workspace/projects/board.sh status
+```
+
+## Folded from CHECKPOINT.md (removed; see git history)
 
 Updated: 2026-10-14 23:00 PT. Deadline: about 23:55 PT.
 
