@@ -1,10 +1,10 @@
 # HANDOFF — good-news
 
 ## Updated
-2026-10-15 16:25 PDT | agy/gemini-3.8-flash-high | branch `job/GV-2` | last commit be9343c
+2026-10-15 16:27 PDT | agy/gemini-3.8-flash-high | branch `job/GV-2` | last commit 351d98d
 
 ## Current task / claim
-**GV-2** Integrate voice player into Good News UI using the `pairs` field — status **in-review** by agy/gemini-3.8-flash-high on `job/GV-2` (since 2026-10-15 13:58 PDT). Last note: Resolved review findings P1 #1, P1 #2, P2 #3 and MP3 click stability; all tests green Next: Codex review
+**GV-2** Integrate voice player into Good News UI using the `pairs` field — status **claimed** by agy/gemini-3.8-flash-high on `job/GV-2` (since 2026-10-15 13:58 PDT). Last note: agy/gemini-3.8-flash-high build finished; done-check FAIL (see artifacts/GV-2/done-check.txt) Next: fix done-check failures on job/GV-2
 
 ## Done this session
 - Merged `job/GN-1` (commit `84d099d`) providing transitional legacy feed adapter in `app.js` and tolerant artifact checks, resolving Codex finding P1 #1.
