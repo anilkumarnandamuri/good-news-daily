@@ -1,10 +1,10 @@
 # GN-1: GN-1 data gap (bug fix; see PLAN.md GN-1 and HANDOFF.md). On this branch (base f
 
-Status: in-progress
+Status: built
 Branch: job/GN-1 (base: feat/voice-integration)
 Model: agy/gemini-3.8-flash-high | Playbook: Bug fix | Cost: cheap
 Created: 2026-10-15 15:30 PDT
-Test command:
+Test command: python3 -m pytest tests/test_legacy_feed_browser.py -q && python3 -m unittest discover -s tests -p 'test_*.py' && node --test tests/*.test.js
 
 ## Task
 GN-1 data gap (bug fix; see PLAN.md GN-1 and HANDOFF.md). On this branch (base feat/voice-integration = laptop 83c9ad5 merged), python3 -m unittest discover -s tests fails 115 checks in tests/test_artifacts.py::test_published_summaries_have_four_to_six_pairs_or_explicit_excerpt because the committed data/news.json (written at 2026-10-15T14:00Z by the main-branch routine, which still runs the OLD summarize v5) has no `summary_status` field. The generator on this branch is already correct: scripts/build.py calls scripts/summarize.run(), which sets summary_status='paired'|'excerpt' on every item, so the next routine run after merge will emit it. Consequence today: reader.js line ~69 (`excerpt=it.summary_status!=="paired"||...`) treats every feed item as an excerpt and hides both summaries and Listen buttons for all 115 stories (live-site regression if merged before the routine refresh).
@@ -20,13 +20,34 @@ Smallest correct fix (implement exactly this):
 6. Append a DECISIONS.md entry (legacy feed adapter vs regenerating data vs making the reader trust all legacy items) and update HANDOFF.md.
 
 ## Acceptance (definition of done, see .cursor/rules/done.mdc)
-- [ ] Checkpoint below filled and Status updated
-- [ ] Playwright browser test passes via the Test command
-- [ ] New screenshot in artifacts/GN-1/
+- [x] Checkpoint below filled and Status updated
+- [x] Playwright browser test passes via the Test command
+- [x] New screenshot in artifacts/GN-1/
 - [ ] Codex review (artifacts/GN-1/review.md) has no [P0]-[P2] items
 
 ## Checkpoint
-_(agent fills: what changed, files, verification evidence, open items)_
+- **What changed**:
+  - Implemented transitional legacy feed adapter in `app.js` when loading `data/news.json` to derive `summary_status` ('paired' if `sum_en` and `sum_te` non-empty, otherwise 'excerpt' with cleared summaries) on fetched feed items without modifying raw data or affecting localStorage items.
+  - Updated `tests/test_artifacts.py` contract test to tolerate legacy feed items without `summary_status` while preserving strict pairs-vs-cache checking for items carrying `summary_status=='paired'`.
+  - Added unit test in `tests/frontend.test.js` verifying that legacy feed items without `summary_status` correctly render bilingual summaries and Listen controls.
+  - Added Playwright browser test in `tests/test_legacy_feed_browser.py` testing story view in reader at 390px and 1280px viewports, verifying "In short" and Listen button visibility, and capturing screenshots in `artifacts/GN-1/`.
+  - Added architectural decision D003 in `DECISIONS.md`.
+- **Files**:
+  - `app.js`
+  - `tests/test_artifacts.py`
+  - `tests/frontend.test.js`
+  - `tests/test_legacy_feed_browser.py`
+  - `DECISIONS.md`
+  - `HANDOFF.md`
+  - `tasks/GN-1.md`
+  - `artifacts/GN-1/gn1-reader-390.png`
+  - `artifacts/GN-1/gn1-reader-1280.png`
+- **Verification evidence**:
+  - `python3 -m pytest tests/test_legacy_feed_browser.py -q && python3 -m unittest discover -s tests -p 'test_*.py' && node --test tests/*.test.js` exits 0 (2 passed in pytest, 27 tests in unittest OK, 12 tests in node --test pass).
+  - Screenshots `gn1-reader-390.png` (206KB) and `gn1-reader-1280.png` (284KB) verified in `artifacts/GN-1/`.
+- **Open items**:
+  - Awaiting review by Codex / Anil.
 
 ## Log
 - 2026-10-15 15:30 PDT run-job started
+- 2026-10-15 15:34 PDT built by agy/gemini-3.8-flash-high
