@@ -1,6 +1,6 @@
 {
- "generated": "2026-10-14T16:29:54.898381+00:00",
- "count": 111,
+ "generated": "2026-10-15T01:51:32.371038+00:00",
+ "count": 112,
  "feeds": [
   {
    "feed": "https://www.goodnewsnetwork.org/feed/",
@@ -69,7 +69,7 @@
    "feed": "https://www.thehindu.com/sci-tech/health/feeder/default.rss",
    "source": "The Hindu",
    "entries": 60,
-   "kept": 12,
+   "kept": 13,
    "status": 200
   },
   {
@@ -83,7 +83,7 @@
    "feed": "https://www.thehindu.com/news/national/andhra-pradesh/feeder/default.rss",
    "source": "The Hindu",
    "entries": 60,
-   "kept": 10,
+   "kept": 11,
    "status": 200
   },
   {
@@ -104,21 +104,21 @@
    "feed": "https://tv9telugu.com/feed",
    "source": "TV9 Telugu",
    "entries": 59,
-   "kept": 14,
+   "kept": 15,
    "status": 200
   },
   {
    "feed": "https://telugu.oneindia.com/rss/feeds/telugu-news-fb.xml",
    "source": "Oneindia Telugu",
    "entries": 30,
-   "kept": 3,
+   "kept": 2,
    "status": 200
   },
   {
    "feed": "https://www.ntnews.com/feed",
    "source": "Namasthe Telangana",
    "entries": 200,
-   "kept": 16,
+   "kept": 15,
    "status": 200
   },
   {
@@ -132,7 +132,7 @@
    "feed": "https://telugu.news18.com/commonfeeds/v1/tel/rss/andhra-pradesh.xml",
    "source": "News18 Telugu",
    "entries": 200,
-   "kept": 27,
+   "kept": 26,
    "status": 200
   },
   {
@@ -146,7 +146,7 @@
    "feed": "https://telugu.news18.com/commonfeeds/v1/tel/rss/sports.xml",
    "source": "News18 Telugu",
    "entries": 200,
-   "kept": 2,
+   "kept": 3,
    "status": 200
   },
   {
@@ -159,7 +159,7 @@
   {
    "feed": "https://telugu.asianetnews.com/rss",
    "source": "Asianet News Telugu",
-   "entries": 143,
+   "entries": 145,
    "kept": 10,
    "status": 200
   },
@@ -167,53 +167,248 @@
    "feed": "https://ntvtelugu.com/feed",
    "source": "NTV Telugu",
    "entries": 60,
-   "kept": 8,
+   "kept": 7,
    "status": 200
   },
   {
    "feed": "https://www.manatelangana.news/feed/",
    "source": "Mana Telangana",
-   "entries": 137,
+   "entries": 131,
    "kept": 10,
    "status": 301
   },
   {
    "feed": "https://feeds.bbci.co.uk/sport/rss.xml",
    "source": "BBC Sport",
-   "entries": 79,
-   "kept": 17,
+   "entries": 65,
+   "kept": 20,
    "status": 200
   },
   {
    "feed": "https://www.thehindu.com/sport/feeder/default.rss",
    "source": "The Hindu",
    "entries": 60,
-   "kept": 19,
+   "kept": 22,
    "status": 200
   },
   {
    "feed": "https://www.thehindu.com/news/national/feeder/default.rss",
    "source": "The Hindu",
    "entries": 60,
-   "kept": 8,
+   "kept": 2,
    "status": 200
   }
  ],
  "items": [
   {
-   "id": "ddd5b1b4ab",
-   "title": "States should evaluate natural resources before pitching for data centres: NITI Aayog",
+   "id": "beb21be0b4",
+   "title": "Ind vs WI: తేలిపోయిన భారత బౌలర్లు.. భారత్‌పై వెస్టిండీస్ ఘన విజయం..",
+   "source": "NTV Telugu",
+   "summary": "హైదరాబాద్‌లోని ఉప్పల్ రాజీవ్ గాంధీ అంతర్జాతీయ స్టేడియం వేదికగా జరిగిన నాల్గవ టీ20 మ్యాచ్‌లో వెస్టిండీస్ జట్టు అద్భుతమైన ప్రదర్శనతో విజయం సాధించింది. ఐదు మ్యాచ్‌ల సిరీస్‌లో భాగంగా జరిగిన ఈ హోరాహోరీ పోరులో కరీబియన్ జట్టు…",
+   "link": "https://ntvtelugu.com/news/india-vs-west-indies-4th-t20-hyderabad-match-report-1025973.html",
+   "published": "2026-10-15T01:09:12+00:00",
+   "category": "telugu",
+   "subcategory": null,
+   "lang": "te",
+   "image": "https://ntvtelugu.com/wp-content/uploads/2026/10/dddd-1024x576.jpg",
+   "score": 0.76,
+   "sum_en": "West Indies won the fourth T20I at the Uppal Rajiv Gandhi International Stadium in Hyderabad by an impressive margin. The Caribbean team defeated India by 24 runs in this fierce battle that took place as part of the five-match series. The win tied the series at 2-2. Batting first, the West Indies scored a huge score of 247 runs for the loss of three wickets in the allotted twenty overs.",
+   "sum_te": "హైదరాబాద్‌లోని ఉప్పల్ రాజీవ్ గాంధీ అంతర్జాతీయ స్టేడియం వేదికగా జరిగిన నాల్గవ టీ20 మ్యాచ్‌లో వెస్టిండీస్ జట్టు అద్భుతమైన ప్రదర్శనతో విజయం సాధించింది. ఐదు మ్యాచ్‌ల సిరీస్‌లో భాగంగా జరిగిన ఈ హోరాహోరీ పోరులో కరీబియన్ జట్టు భారత్‌ను 24 పరుగుల తేడాతో ఓడించింది. ఈ విజయంతో సిరీస్ 2-2తో సమమైంది. మొదట బ్యాటింగ్ చేసిన వెస్టిండీస్ జట్టు నిర్ణీత ఇరవై ఓవర్లలో మూడు వికెట్ల నష్టానికి 247 పరుగుల భారీ స్కోరు సాధించింది."
+  },
+  {
+   "id": "d15c6145b8",
+   "title": "Dog that hunts invasive 'sea vomit' honoured as animal of the year",
+   "source": "BBC News",
+   "summary": "Sgiath is thought to be the UK's first sea squirt-hunting dog and has been trained to sniff out the marine pest.",
+   "link": "https://www.bbc.co.uk/news/articles/cvwy761zyx7eo?at_medium=RSS&at_campaign=rss",
+   "published": "2026-10-14T23:35:40+00:00",
+   "category": "environment",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/9680/live/9db34b10-c720-11f1-b881-4391ac746e04.jpg",
+   "score": 0.734,
+   "sum_en": "Dog that hunts invasive 'sea vomit' honoured as animal of the year. Sgiath is thought to be the UK's first sea squirt-hunting dog and has been trained to sniff out the marine pest.",
+   "sum_te": "దాడి చేసే 'సముద్ర వాంతి'ని వేటాడే కుక్క సంవత్సరపు జంతువుగా గౌరవించబడింది. Sgiath UK యొక్క మొట్టమొదటి సముద్రపు ఉన్ని-వేట కుక్కగా భావించబడుతుంది మరియు సముద్రపు తెగులును తొలగించడానికి శిక్షణ పొందింది."
+  },
+  {
+   "id": "24a3b80898",
+   "title": "Stuttgart ease to comfortable win against Slovan Bratislava",
+   "source": "BBC Sport",
+   "summary": "Stuttgart maintan their perfect start to this season's Champions League as they eased past Slovan Bratislava 3-0 in Slovakia, whilst the home side have lost both of their opening matches.",
+   "link": "https://www.bbc.co.uk/sport/football/videos/cv70p3lwkdlxo?at_medium=RSS&at_campaign=rss",
+   "published": "2026-10-14T23:00:07+00:00",
+   "category": "sports",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/a15b/live/c3385280-c816-11f1-9a39-31b474234113.jpg",
+   "score": 1.026,
+   "sum_en": "Stuttgart ease to comfortable win against Slovan Bratislava. Stuttgart maintan their perfect start to this season's Champions League as they eased past Slovan Bratislava 3-0 in Slovakia, whilst the home side have lost both of their opening matches.",
+   "sum_te": "స్లొవాన్ బ్రాటిస్లావాపై స్టట్ ‌ గార్ట్ సులువుగా విజయం సాధించింది. స్లోవేకియాలో స్లోవాన్ బ్రాటిస్లావాపై 3-0 తేడాతో గెలుపొందినందున, ఈ సీజన్ ఛాంపియన్స్ లీగ్‌లో స్టుట్‌గార్ట్ తమ సంపూర్ణ ఆరంభాన్ని కొనసాగించారు, అదే సమయంలో స్వదేశీ జట్టు వారి రెండు ప్రారంభ మ్యాచ్‌లలో ఓడిపోయింది."
+  },
+  {
+   "id": "36957714f0",
+   "title": "Shakhtar leave it late to complete comeback win against AEK Athens",
+   "source": "BBC Sport",
+   "summary": "Shakhtar Donetsk score twice in the final stages to snatch victory against AEK Athens, coming from behind to win 3-1 at Stamford Bridge.",
+   "link": "https://www.bbc.co.uk/sport/football/videos/cwly4ngnd8qjo?at_medium=RSS&at_campaign=rss",
+   "published": "2026-10-14T22:28:42+00:00",
+   "category": "sports",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/5a69/live/1f3f6090-c81d-11f1-9a39-31b474234113.jpg",
+   "score": 0.925,
+   "sum_en": "Shakhtar leave it late to complete comeback win against AEK Athens. Shakhtar Donetsk score twice in the final stages to snatch victory against AEK Athens, coming from behind to win 3-1 at Stamford Bridge.",
+   "sum_te": "AEK ఏథెన్స్‌పై పూర్తి పునరాగమన విజయానికి షాఖ్తర్ ఆలస్యంగా బయలుదేరాడు. AEK ఏథెన్స్‌పై స్టాంఫోర్డ్ బ్రిడ్జ్‌లో 3-1 తేడాతో విజయం సాధించడానికి షాఖ్తర్ డోనెట్స్క్ చివరి దశలో రెండుసార్లు స్కోర్ చేశాడు."
+  },
+  {
+   "id": "807df6d878",
+   "title": "Isco snatches late Betis win as they edge past Porto",
+   "source": "BBC Sport",
+   "summary": "Isco scores an 84th minute penalty to help Real Betis snatch a late 3-2 win against Porto, giving them back to back wins at the start of this season's Champions League.",
+   "link": "https://www.bbc.co.uk/sport/football/videos/cmn4e91e4dk7o?at_medium=RSS&at_campaign=rss",
+   "published": "2026-10-14T21:51:42+00:00",
+   "category": "sports",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/13f1/live/b04016c0-c813-11f1-a64c-550be9e3c66b.jpg",
+   "score": 1.248,
+   "sum_en": "Isco snatches late Betis win as they edge past Porto. Isco scores an 84th minute penalty to help Real Betis snatch a late 3-2 win against Porto, giving them back to back wins at the start of this season's Champions League.",
+   "sum_te": "ఇస్కో పోర్టోను అధిగమించి బెటిస్ విజయాన్ని అందుకుంది. ఈ సీజన్ ఛాంపియన్స్ లీగ్ ప్రారంభంలో రియల్ బెటిస్ పోర్టోపై 3-2 తేడాతో విజయం సాధించడంలో సహాయపడటానికి ఇస్కో 84వ నిమిషంలో పెనాల్టీని స్కోర్ చేశాడు."
+  },
+  {
+   "id": "a3e78e46b7",
+   "title": "Bodo/Glimt impress in win over Dortmund",
+   "source": "BBC Sport",
+   "summary": "Bodo/Glimt bounce back from their thrashing at Bayern with a fine 1-0 win in the Champions League over Borussia Dortmund.",
+   "link": "https://www.bbc.co.uk/sport/football/videos/cqly0nd6xnp1o?at_medium=RSS&at_campaign=rss",
+   "published": "2026-10-14T21:28:39+00:00",
+   "category": "sports",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/28ce/live/d12a4c20-c813-11f1-bc2e-018d645d8d21.jpg",
+   "score": 1.096,
+   "sum_en": "Bodo/Glimt bounce back from their thrashing at Bayern with a fine 1-0 win in the Champions League over Borussia Dortmund.",
+   "sum_te": "బోడో/గ్లిమ్ట్ బోరుస్సియా డార్ట్ ‌ మండ్ ‌ పై ఛాంపియన్స్ లీగ్ ‌ లో 1-0 తేడాతో విజయం సాధించి బేయర్న్ ‌ ను ఓడించడం నుండి తిరిగి బౌన్స్ అవుతారు."
+  },
+  {
+   "id": "a166db21df",
+   "title": "Sabah beat Slavia Prague to secure historic Champions League win",
+   "source": "BBC Sport",
+   "summary": "Azerbaijan champions Sabah FK make history in Baku as they beat Slavia Prague 2-0 to secure their first Champions League win in the club's history.",
+   "link": "https://www.bbc.co.uk/sport/football/videos/c6lyr7l0xqyqo?at_medium=RSS&at_campaign=rss",
+   "published": "2026-10-14T21:01:02+00:00",
+   "category": "sports",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/c085/live/cf37f0e0-c735-11f1-a64c-550be9e3c66b.jpg",
+   "score": 1.276,
+   "sum_en": "Azerbaijan champions Sabah FK make history in Baku as they beat Slavia Prague 2-0 to secure their first Champions League win in the club's history.",
+   "sum_te": "అజర్‌బైజాన్ ఛాంపియన్స్ సబా ఎఫ్‌కె బాకులో చరిత్ర సృష్టించింది, వారు స్లావియా ప్రేగ్‌ను 2-0తో ఓడించి క్లబ్ చరిత్రలో వారి మొదటి ఛాంపియన్స్ లీగ్ విజయాన్ని సాధించారు."
+  },
+  {
+   "id": "1a1d76465c",
+   "title": "Gordon scores as 'brilliant Barcelona' thrash Galatasaray",
+   "source": "BBC Sport",
+   "summary": "Anthony Gordon scores his first Champions League goal for Barcelona as the Spanish side come from behind to thrash Galatasaray 4-1 in Istanbul, and make it two wins from two in this season's Champions League.",
+   "link": "https://www.bbc.co.uk/sport/football/videos/c9gk5lve2enjo?at_medium=RSS&at_campaign=rss",
+   "published": "2026-10-14T21:00:43+00:00",
+   "category": "sports",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/3d56/live/aa7cdb60-c74b-11f1-9a39-31b474234113.jpg",
+   "score": 1.001,
+   "sum_en": "Anthony Gordon scores his first Champions League goal for Barcelona as the Spanish side come from behind to thrash Galatasaray 4-1 in Istanbul, and make it two wins from two in this season's Champions League.",
+   "sum_te": "ఆంథోనీ గోర్డాన్ బార్సిలోనా కోసం తన మొదటి ఛాంపియన్స్ లీగ్ గోల్ చేశాడు, ఎందుకంటే స్పానిష్ జట్టు ఇస్తాంబుల్‌లో 4-1తో గలాటసరేను ఓడించి, ఈ సీజన్ ఛాంపియన్స్ లీగ్‌లో రెండు విజయాలు సాధించింది."
+  },
+  {
+   "id": "31e081aec0",
+   "title": "Brilliant Barcola scores first hat-trick to get lift-off at Liverpool",
+   "source": "BBC Sport",
+   "summary": "Liverpool's summer signing Bradley Barcola scores his first senior hat-trick, and his first goals for Liverpool, as he helps his side beat LASK 6-3 in Austria to make it two wins from two in this season's Champions…",
+   "link": "https://www.bbc.co.uk/sport/football/videos/cmx237q7nl21o?at_medium=RSS&at_campaign=rss",
+   "published": "2026-10-14T21:00:28+00:00",
+   "category": "sports",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/153f/live/420d7eb0-c7fd-11f1-9a39-31b474234113.jpg",
+   "score": 1.332,
+   "sum_en": "Brilliant Barcola scores first hat-trick to get lift-off at Liverpool. Liverpool's summer signing Bradley Barcola scores his first senior hat-trick, and his first goals for Liverpool, as he helps his side beat LASK 6-3 in Austria to make it two wins from two in this season's Champions League.",
+   "sum_te": "బ్రిలియంట్ బార్కోలా లివర్‌పూల్‌లో లిఫ్ట్-ఆఫ్ పొందడానికి మొదటి హ్యాట్రిక్ స్కోర్ చేసింది. లివర్‌పూల్ యొక్క వేసవి సంతకం బ్రాడ్లీ బార్కోలా తన మొదటి సీనియర్ హ్యాట్రిక్ స్కోర్ చేశాడు మరియు లివర్‌పూల్ కోసం అతని మొదటి గోల్స్ చేశాడు, ఈ సీజన్ ఛాంపియన్స్ లీగ్‌లో ఆస్ట్రియాలో లాస్క్‌ని 6-3తో ఓడించి తన జట్టు రెండు విజయాలు సాధించడంలో అతనికి సహాయపడింది."
+  },
+  {
+   "id": "c5a5a7239b",
+   "title": "CMFRI’s STI hub helps set up 84 micro-enterprises in eight districts",
    "source": "The Hindu",
-   "summary": "The NITI Aayog framework calls for States to prepare 20-30-year seasonal assessments of water availability, protect existing users, and ensure developers fund grid assets built exclusively for their projects",
-   "link": "https://www.thehindu.com/news/national/states-should-evaluate-natural-resources-before-pitching-for-data-centres-niti-aayog/article71584261.ece",
-   "published": "2026-10-14T15:51:56+00:00",
+   "summary": "Initiative directly benefits 469 people, including 220 women and six transpersons; household incomes of beneficiaries rise by 30% to 35%, according to CMFRI communication",
+   "link": "https://www.thehindu.com/news/national/kerala/cmfris-sti-hub-helps-set-up-84-micro-enterprises-in-eight-districts/article71583975.ece",
+   "published": "2026-10-14T19:13:22+00:00",
    "category": "india",
    "subcategory": null,
    "lang": "en",
-   "image": "https://th-i.thgim.com/public/incoming/omll8s/article71584701.ece/alternates/LANDSCAPE_1200/2026-10-09T020234Z_1181107674_RC27ONAITUUP_RTRMADP_3_AMAZON-INDIA-DATA-CENTRE.JPG",
-   "score": 0.707,
-   "sum_en": "The NITI Aayog framework calls for States to prepare 20-30-year seasonal assessments of water availability, protect existing users, and ensure developers fund grid assets built exclusively for their projects. NITI Aayog-Deloitte framework links data-centre approvals to verified electricity, water, and infrastructure, urging 20-30 year state plans and public-benefit checks.",
-   "sum_te": "నీతి ఆయోగ్ ఫ్రేమ్ ‌ వర్క్ నీటి లభ్యతపై 20-30 సంవత్సరాల కాలానుగుణ మదింపులను సిద్ధం చేయాలని, ఇప్పటికే ఉన్న వినియోగదారులను రక్షించాలని మరియు డెవలపర్లు తమ ప్రాజెక్టుల కోసం ప్రత్యేకంగా నిర్మించిన ఫండ్ గ్రిడ్ ఆస్తులను నిర్ధారించాలని రాష్ట్రాలను కోరుతుంది. NITI ఆయోగ్-డెలాయిట్ ఫ్రేమ్‌వర్క్ ధృవీకరించబడిన విద్యుత్, నీరు మరియు మౌలిక సదుపాయాలకు డేటా-సెంటర్ ఆమోదాలను లింక్ చేస్తుంది, 20-30 సంవత్సరాల రాష్ట్ర ప్రణాళికలు మరియు ప్రజా-ప్రయోజనాల తనిఖీలను ప్రోత్సహిస్తుంది."
+   "image": "https://th-i.thgim.com/public/incoming/po7t2h/article71585472.ece/alternates/LANDSCAPE_1200/CMFRI.jpg",
+   "score": 0.706,
+   "sum_en": "Initiative directly benefits 469 people, including 220 women and six transpersons; household incomes of beneficiaries rise by 30% to 35%, according to CMFRI communication. CMFRI’s STI hub boosts 84 micro-enterprises in Kerala, benefiting 469 people and raising household incomes by 30–35%, empowering women and marginalized groups.",
+   "sum_te": "చొరవ 220 మంది మహిళలు మరియు ఆరుగురు ట్రాన్స్‌పర్సన్‌లతో సహా 469 మందికి నేరుగా ప్రయోజనం చేకూరుస్తుంది; CMFRI కమ్యూనికేషన్ ప్రకారం లబ్ధిదారుల కుటుంబ ఆదాయం 30% నుండి 35% పెరిగింది. CMFRI యొక్క STI హబ్ కేరళలో 84 మైక్రో-ఎంటర్‌ప్రైజెస్‌ను ప్రోత్సహిస్తుంది, 469 మందికి ప్రయోజనం చేకూరుస్తుంది మరియు గృహ ఆదాయాలను 30-35% పెంచింది, మహిళలు మరియు అట్టడుగు వర్గాలకు సాధికారత కల్పిస్తుంది."
+  },
+  {
+   "id": "ebbcbe4f42",
+   "title": "Teen Triathlete Raises More Than $30,000 to Donate Bikes and Riding Lessons to Low-Income Families",
+   "source": "Good News Network",
+   "summary": "Continuing GNN’s coverage of youth nonprofit leaders, the Pedal Forward Foundation in Georgia has distributed hundreds of bicycles to low income families, and taught hundreds of children how to ride them. It’s founder,…",
+   "link": "https://www.goodnewsnetwork.org/teen-triathlete-raises-more-than-30000-to-donate-bikes-and-riding-lessons-to-low-income-families/",
+   "published": "2026-10-14T18:30:16+00:00",
+   "category": "community",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://www.goodnewsnetwork.org/wp-content/uploads/2026/10/Jonathan-Thai-credit-screengrab-via-Pedal-Forward.jpg",
+   "score": 0.333,
+   "sum_en": "Continuing GNN’s coverage of youth nonprofit leaders, the Pedal Forward Foundation in Georgia has distributed hundreds of bicycles to low income families, and taught hundreds of children how to ride them. It’s founder, Jonathan Thai, was inspired to step up and serve his community after the local REI closed down a community bike-riding workshop. At just 17 years old, the Alpharetta resident has already raised $30,000, securing 400 donated bicycles, and distributed 500 helmets.",
+   "sum_te": "యూత్ లాభాపేక్ష లేని నాయకుల గురించి GNN యొక్క కవరేజీని కొనసాగిస్తూ, జార్జియాలోని పెడల్ ఫార్వర్డ్ ఫౌండేషన్ తక్కువ ఆదాయ కుటుంబాలకు వందల కొద్దీ సైకిళ్లను పంపిణీ చేసింది మరియు వందలాది మంది పిల్లలకు వాటిని ఎలా తొక్కాలో నేర్పింది. దీని వ్యవస్థాపకుడు, జోనాథన్ థాయ్, స్థానిక REI కమ్యూనిటీ బైక్-రైడింగ్ వర్క్‌షాప్‌ను మూసివేసిన తర్వాత తన కమ్యూనిటీని పెంచడానికి మరియు సేవ చేయడానికి ప్రేరేపించబడ్డాడు. కేవలం 17 సంవత్సరాల వయస్సులో, ఆల్ఫారెట్టా నివాసి ఇప్పటికే $30,000 సేకరించారు, విరాళంగా ఇచ్చిన 400 సైకిళ్లను భద్రపరిచారు మరియు 500 హెల్మెట్‌లను పంపిణీ చేశారు."
+  },
+  {
+   "id": "c9472e5b6b",
+   "title": "TANKER Foundation invites nominees for annual award",
+   "source": "The Hindu",
+   "summary": "",
+   "link": "https://www.thehindu.com/sci-tech/health/tanker-foundation-invites-nominees-for-annual-award/article71583268.ece",
+   "published": "2026-10-14T18:13:42+00:00",
+   "category": "health",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://www.thehindu.com/theme/images/og-image.png",
+   "score": 0.662,
+   "sum_en": "TANKER Foundation invites nominees for annual award. TANKER Foundation invites nominations for 2027 Love For Service and Young Investigator awards in India, with prizes, deadlines, and contact details.",
+   "sum_te": "TANKER ఫౌండేషన్ వార్షిక అవార్డు కోసం నామినీలను ఆహ్వానిస్తుంది. TANKER ఫౌండేషన్ భారతదేశంలో 2027 లవ్ ఫర్ సర్వీస్ మరియు యంగ్ ఇన్వెస్టిగేటర్ అవార్డులకు బహుమతులు, గడువులు మరియు సంప్రదింపు వివరాలతో నామినేషన్లను ఆహ్వానిస్తుంది."
+  },
+  {
+   "id": "43402ba513",
+   "title": "ఉప్పల్‌లో విండీస్ ఘన విజయం",
+   "source": "Mana Telangana",
+   "summary": "భారత్‌తో బుధవారం ఉప్పల్‌లోని రాజీవ్ గాంధీ అంతర్జాతీయ క్రికెట్ స్టేడియంలో జరిగిన నాలుగో టి20 మ్యాచ్‌లో వెస్టిండీస్ 24 పరుగులతో ఘన విజయం సాధించింది. ఈ గెలుపుతో విండీస్ 22తో సిరీస్‌ను సమం చేసింది. తొలుత బ్యాటింగ్ చేసిన…",
+   "link": "https://www.manatelangana.news/telangana-breaking-news/west-indies-defeats-india-by-24-runs-1641981",
+   "published": "2026-10-14T17:58:53+00:00",
+   "category": "telugu",
+   "subcategory": null,
+   "lang": "te",
+   "image": "https://www.manatelangana.news/h-upload/2026/10/14/2290121-west-indies-defeats-india-b.webp",
+   "score": 0.76,
+   "sum_en": "West Indies won by 24 runs in the fourth T20 match against India at the Rajiv Gandhi International Cricket Stadium in Uppal on Wednesday. With this win, West Indies leveled the series at 22. Batting first, West Indies scored 247 runs for the loss of 3 wickets in 20 overs. Team India then chased down a hundred and were bowled out for 223 runs in 19.3 overs. Arshdeep Singh retired with an injury. This ended India's innings. Team India's opener Sanju Samson, who took up the batting with a difficult target, gave a devastating start.",
+   "sum_te": "భారత్‌తో బుధవారం ఉప్పల్‌లోని రాజీవ్ గాంధీ అంతర్జాతీయ క్రికెట్ స్టేడియంలో జరిగిన నాలుగో టి20 మ్యాచ్‌లో వెస్టిండీస్ 24 పరుగులతో ఘన విజయం సాధించింది. ఈ గెలుపుతో విండీస్ 22తో సిరీస్‌ను సమం చేసింది. తొలుత బ్యాటింగ్ చేసిన వెస్టిండీస్ 20 ఓవర్లలో 3 వికెట్ల నష్టానికి 247 పరుగులు చేసింది. తర్వాత లక్షఛేదనకు దిగిన టీమిండియా 19.3 ఓవర్లలో 223 పరుగులకు ఆలౌటైంది.అర్ష్‌దీప్ సింగ్  గాయంతో రిటైర్‌హర్ట్‌గా వెనుదిరిగాడు. దీంతో భారత్ ఇన్నింగ్స్ ముగిసింది. క్లిష్టమైన లక్షంతో బ్యాటింగ్ చేపట్టిన టీమిండియా ఓపెనర్ సంజు శాంసన్ విధ్వంసక ఆరంభాన్ని అందించాడు."
+  },
+  {
+   "id": "8372d8d6f4",
+   "title": "APSRTC గుడ్ న్యూస్.. విశాఖ To భోగాపురం.. కొత్తగా నెలవారీ పాస్‌లు",
+   "source": "TV9 Telugu",
+   "summary": "విశాఖపట్నం నుంచి భోగాపురం అంతర్జాతీయ విమానాశ్రయానికి వెళ్లే ఏపీఎస్‌ఆర్టీసీ ఏరో ఎక్స్‌ప్రెస్‌ ఏసీ బస్సుల్లో నెలవారీ పాస్‌లు అందుబాటులోకి వచ్చాయి. 10 రోజుల ప్రయాణ ఛార్జీ చెల్లించి 30 రోజుల పాటు ప్రయాణించే అవకాశం…",
+   "link": "https://tv9telugu.com/videos/visakhapatnam-to-bhogapuram-airport-bus-pass-travel-for-30-days-by-paying-just-10-days-fare-video-1934450.html",
+   "published": "2026-10-14T17:03:51+00:00",
+   "category": "telugu",
+   "subcategory": null,
+   "lang": "te",
+   "image": "https://images.tv9telugu.com/wp-content/uploads/2026/10/apsrtc-3.jpg",
+   "score": 0.8,
+   "sum_en": "APSRTC Aero Express AC buses going from Visakhapatnam to Bhogapuram International Airport have made monthly passes available. They have provided an opportunity to travel for 30 days by paying 10 days travel charge. The pass prices range from Rs.1,000 to Rs.7,000 depending on the boarding point. Airport employees and passengers are advised to use this facility.",
+   "sum_te": "విశాఖపట్నం నుంచి భోగాపురం అంతర్జాతీయ విమానాశ్రయానికి వెళ్లే ఏపీఎస్‌ఆర్టీసీ ఏరో ఎక్స్‌ప్రెస్‌ ఏసీ బస్సుల్లో నెలవారీ పాస్‌లు అందుబాటులోకి వచ్చాయి. 10 రోజుల ప్రయాణ ఛార్జీ చెల్లించి 30 రోజుల పాటు ప్రయాణించే అవకాశం కల్పించారు. బోర్డింగ్‌ పాయింట్‌ను బట్టి పాస్‌ ధరలు రూ.1,000 నుంచి రూ.7,000 వరకు ఉన్నాయి. విమానాశ్రయ ఉద్యోగులు, ప్రయాణికులు ఈ సదుపాయాన్ని వినియోగించుకోవాలని అధికారులు సూచించారు."
   },
   {
    "id": "f32be6d060",
@@ -261,6 +456,21 @@
    "sum_te": "ఇందిరమ్మ ఇండ్లు లబ్ధిదారులకు సూపర్ గుడ్ న్యూస్, కేంద్రం నుంచి మరో రూ. 72,000, సర్కార్ కీలక నిర్ణయం. తెలంగాణలో పేదలకు ‘ఇందిరమ్మ ఇండ్లు’ పథకానికి సంబంధించి ఒక అత్యంత కీలకమైన, శుభవార్త వెలువడింది."
   },
   {
+   "id": "ebaa7e72c3",
+   "title": "CM invites investments from UK, assures policy continuity and support",
+   "source": "The Hindu",
+   "summary": "Mr. Revanth Reddy interacts with high level delegation from the UK",
+   "link": "https://www.thehindu.com/news/national/telangana/cm-invites-investments-from-uk-assures-policy-continuity-and-support/article71584733.ece",
+   "published": "2026-10-14T15:31:58+00:00",
+   "category": "india",
+   "subcategory": null,
+   "lang": "en",
+   "image": "https://th-i.thgim.com/public/incoming/bl0t72/article71584859.ece/alternates/LANDSCAPE_1200/South%20Zone%20Regional%2014.jpg",
+   "score": 0.612,
+   "sum_en": "Revanth Reddy interacts with high level delegation from the UK. Telangana invites UK investment with policy continuity and a thriving talent pool, highlighting growth, collaboration, and the Invest Telangana Global Summit 2026.",
+   "sum_te": "రేవంత్ రెడ్డి UK నుండి ఉన్నత స్థాయి ప్రతినిధులతో సంభాషించారు. తెలంగాణా విధాన కొనసాగింపు మరియు అభివృద్ధి చెందుతున్న టాలెంట్ పూల్‌తో UK పెట్టుబడిని ఆహ్వానిస్తుంది, వృద్ధి, సహకారం మరియు ఇన్వెస్ట్ తెలంగాణ గ్లోబల్ సమ్మిట్ 2026ని హైలైట్ చేస్తుంది."
+  },
+  {
    "id": "e820b45116",
    "title": "Govt promoting Telangana as best destination for global investments: CM Revanth",
    "source": "The Hindu",
@@ -306,6 +516,21 @@
    "sum_te": "జీతాలు పెరగక చాలా రంగాల్లో ఉద్యోగులు ఇబ్బందులు ఎదుర్కొంటున్నారు. మరికొన్ని రంగాలను ఉద్యోగాల తొలగింపు భయం వెంటాడుతుంది. ఇక, మరికొన్ని రంగాల్లో ఉద్యోగాలను AI దెబ్బకొడుతుంది. భారత్‌లో 2026-27 ఆర్థిక సంవత్సరంలో ఉద్యోగుల జీతాలు సగటున 9.1 శాతం పెరిగే అవకాశం ఉందని గ్లోబల్ ప్రొఫెషనల్ సర్వీసెస్ సంస్థ ఏఆన్  తన వార్షిక సర్వేలో వెల్లడించింది."
   },
   {
+   "id": "3d56ee26c6",
+   "title": "బెంగాల్‌, గుజరాత్‌ గెలుపు",
+   "source": "Namasthe Telangana",
+   "summary": "రంజీ ట్రోఫీని బెంగాల్‌, మహారాష్ట్ర, గుజరాత్‌ విజయంతో ప్రారంభించాయి. ఎలైట్‌ గ్రూప్‌ ‘సీ’లో భాగంగా కోల్‌కతాలో ఢిల్లీతో జరిగిన పోరులో ఆల్‌రౌండ్‌ షోతో అదరగొట్టిన బెంగాల్‌.. ప్రత్యర్థిని 9 వికెట్ల తేడాతో చిత్తుచేసింది.",
+   "link": "https://www.ntnews.com/sports/ranji-trophy-bengal-maharashtra-and-gujarat-begin-campaigns-with-wins-2536791",
+   "published": "2026-10-14T15:30:01+00:00",
+   "category": "telugu",
+   "subcategory": null,
+   "lang": "te",
+   "image": "https://d2e1hu1ktur9ur.cloudfront.net/wp-content/uploads/2026/10/01-355-1024x576.jpg",
+   "score": 0.64,
+   "sum_en": "Bengal, Maharashtra and Gujarat started the Ranji Trophy with victory. As a part of elite group 'C', Bengal, who was impressed with an all-round show in the fight against Delhi in Kolkata. Defeated the opponent by 9 wickets.",
+   "sum_te": "రంజీ ట్రోఫీని బెంగాల్‌, మహారాష్ట్ర, గుజరాత్‌ విజయంతో ప్రారంభించాయి. ఎలైట్‌ గ్రూప్‌ ‘సీ’లో భాగంగా కోల్‌కతాలో ఢిల్లీతో జరిగిన పోరులో ఆల్‌రౌండ్‌ షోతో అదరగొట్టిన బెంగాల్‌. ప్రత్యర్థిని 9 వికెట్ల తేడాతో చిత్తుచేసింది."
+  },
+  {
    "id": "fc59fcf4fd",
    "title": "Kapra Lake set for revival with farmers’ support",
    "source": "The Hindu",
@@ -321,19 +546,19 @@
    "sum_te": "స్థానిక రైతులు స్వచ్ఛందంగా తన పూర్తి ట్యాంక్ స్థాయి ప్రాంతంలో 70 ఎకరాలను పునరుద్ధరణ కోసం అప్పగించారు; HYDRAA ఈ ప్రాజెక్టు కోసం ₹ 35 కోట్లు ఖర్చు చేస్తోంది; 112.80 ఎకరాల చిత్తడి నేల వలస పక్షులకు కీలకమైన ఆవాసంగా ఉంది. హైదరాబాద్ ‌ లోని కప్రా సరస్సును పునరుద్ధరించడానికి HYDRAA ₹ 35 కోట్లు ఖర్చు చేస్తోంది, స్థానిక రైతులు స్వచ్ఛందంగా దాని ఫుల్ ట్యాంక్ స్థాయి ప్రాంతంలో 70 ఎకరాలను అప్పగించారు మరియు 60% అభివృద్ధి పనులు పూర్తయ్యాయి."
   },
   {
-   "id": "b4e74c6731",
-   "title": "KUHS Research Day: focus on geriatric care, indigenous medical devices, says ICMR official",
-   "source": "The Hindu",
-   "summary": "Dr. Sanghamitra Pati urges young researchers to pursue socially relevant research; 428 undergraduate students receive Research Appreciation Awards",
-   "link": "https://www.thehindu.com/news/national/kerala/kuhs-research-day-focus-on-geriatric-care-indigenous-medical-devices-says-icmr-official/article71584378.ece",
-   "published": "2026-10-14T15:25:22+00:00",
-   "category": "india",
+   "id": "dcd664710a",
+   "title": "దసరా వచ్చింది.. ఆఫర్లు తెచ్చింది.. అంబరాన్నంటిన బొనాంజా సంబురాలు – 8వ లక్కీ డ్రా",
+   "source": "Namasthe Telangana",
+   "summary": "నగరంలో నమస్తే తెలంగాణ..తెలంగాణ టుడే దినపత్రికల ఆధ్వర్యంలో ప్రతి ఏడాది దసరా నవరాత్రి ఉత్సవాల పండుగ సందర్భంగా అందిస్తున్న దసరా బొనాంజా స్కీంకు కొనుగోలుదారుల నుంచి విశేష స్పందన లభించింది. పది వసంతాలు పూర్తిచేసుకున్న ఈ దసరా…",
+   "link": "https://www.ntnews.com/hyderabad/dasara-bonanza-celebrates-10-years-with-exciting-shopping-offers-and-prizes-2536939",
+   "published": "2026-10-14T15:27:30+00:00",
+   "category": "telugu",
    "subcategory": null,
-   "lang": "en",
-   "image": "https://th-i.thgim.com/public/incoming/2sit2s/article71584825.ece/alternates/LANDSCAPE_1200/KUHS.jpg",
-   "score": 0.796,
-   "sum_en": "Sanghamitra Pati urges young researchers to pursue socially relevant research; 428 undergraduate students receive Research Appreciation Awards. ICMR urges more geriatric-focused research at KUHS, highlighting aging care, indigenous medical devices, and collaboration, with 428 awards given.",
-   "sum_te": "సంఘమిత్ర పతి యువ పరిశోధకులను సామాజిక సంబంధిత పరిశోధనలను కొనసాగించాలని కోరారు; 428 అండర్ గ్రాడ్యుయేట్ విద్యార్థులు రీసెర్చ్ అప్రిషియేషన్ అవార్డులను అందుకుంటారు. 428 అవార్డులతో పాటు వృద్ధాప్య సంరక్షణ, స్వదేశీ వైద్య పరికరాలు మరియు సహకారాన్ని హైలైట్ చేస్తూ, KUHSలో వృద్ధాప్య-కేంద్రీకృత పరిశోధనలను ICMR కోరింది."
+   "lang": "te",
+   "image": "https://d2e1hu1ktur9ur.cloudfront.net/wp-content/uploads/2026/10/02-52-1024x576.jpg",
+   "score": 0.76,
+   "sum_en": "Dussehra is here, it brings offers, a bonanza like Ambara – 8th lucky draw. The Dussehra Bonanza scheme offered every year during the festival of Dussehra Navratri under the auspices of Telangana Today dailies has received a great response from the buyers.",
+   "sum_te": "దసరా వచ్చింది, ఆఫర్లు తెచ్చింది, అంబరాన్నంటిన బొనాంజా సంబురాలు – 8వ లక్కీ డ్రా. తెలంగాణ టుడే దినపత్రికల ఆధ్వర్యంలో ప్రతి ఏడాది దసరా నవరాత్రి ఉత్సవాల పండుగ సందర్భంగా అందిస్తున్న దసరా బొనాంజా స్కీంకు కొనుగోలుదారుల నుంచి విశేష స్పందన లభించింది."
   },
   {
    "id": "9abe5bbd41",
@@ -351,19 +576,19 @@
    "sum_te": "దసరా పండుగ రోజున దేశవ్యాప్తంగా విజయదశమి వేడుకలు జరుపుకుంటూ, చెడుపై మంచి సాధించిన విజయానికి గుర్తుగా రాక్షస రాజైన రాముడి చేతిలో హతుడైన రావణాసురుడి పుతలాలు దహనం చేస్తారు. అయితే మనదేశంలోనే ఒక గ్రామంలో మాత్రం ఈ రోజున ఉత్సాహానికి బదులుగా శోకఛాయలు అలముకుంటాయి."
   },
   {
-   "id": "a2e30b7576",
-   "title": "Sugarcane farmers end rasta roko, launch march to Hubballi seeking justice",
+   "id": "28b1f2211e",
+   "title": "Vangaveeti Radhakrishna joins Jana Sena Party",
    "source": "The Hindu",
-   "summary": "They announce that they are stopping the road blockade in public interest",
-   "link": "https://www.thehindu.com/news/national/karnataka/sugarcane-farmers-end-rasta-roko-launch-march-to-hubballi-seeking-justice/article71584062.ece",
-   "published": "2026-10-14T14:52:42+00:00",
+   "summary": "JSP president Pawan Kalyan welcomes him into the party and asks him to make efforts to realise the party’s ideals",
+   "link": "https://www.thehindu.com/news/national/andhra-pradesh/vangaveeti-radhakrishna-joins-jana-sena-party/article71584155.ece",
+   "published": "2026-10-14T14:33:27+00:00",
    "category": "india",
    "subcategory": null,
    "lang": "en",
-   "image": "https://th-i.thgim.com/public/incoming/3jwanw/article71584687.ece/alternates/LANDSCAPE_1200/9727_14_10_2026_18_55_17_1_15BGMHUBBALLICHALO1.JPEG",
-   "score": 0.733,
-   "sum_en": "They announce that they are stopping the road blockade in public interest. Sugarcane farmers suspend protests, begin Hubballi march seeking fair MSP, prices, and timely payments from Union and State governments.",
-   "sum_te": "ప్రజా ప్రయోజనాల దృష్ట్యా రోడ్డు దిగ్బంధనాన్ని విరమిస్తున్నట్లు ప్రకటించారు. చెరకు రైతులు నిరసనలను నిలిపివేస్తారు, న్యాయమైన కనీస మద్దతు ధర, ధరలు మరియు కేంద్ర మరియు రాష్ట్ర ప్రభుత్వాల నుండి సకాలంలో చెల్లింపులు కోరుతూ హుబ్బల్లి మార్చ్ ‌ ను ప్రారంభిస్తారు."
+   "image": "https://th-i.thgim.com/public/incoming/vq9i05/article71584149.ece/alternates/LANDSCAPE_1200/10215_14_10_2026_18_39_29_1_WHATSAPPIMAGE2026_10_14AT63649PM.JPEG",
+   "score": 0.619,
+   "sum_en": "JSP president Pawan Kalyan welcomes him into the party and asks him to make efforts to realise the party’s ideals. Vangaveeti Radhakrishna joins Jana Sena Party as Pawan Kalyan welcomes him and urges commitment to JSP’s ideals.",
+   "sum_te": "JSP అధ్యక్షుడు పవన్ కళ్యాణ్ ఆయనను పార్టీలోకి స్వాగతించారు మరియు పార్టీ ఆశయాలను సాధించడానికి కృషి చేయాలని కోరారు. పవన్ కళ్యాణ్ తనకు స్వాగతం పలుకుతూ, జేఎస్పీ ఆశయాలకు కట్టుబడి ఉండాలని కోరడంతో వంగవీటి రాధాకృష్ణ జనసేన పార్టీలో చేరారు."
   },
   {
    "id": "fc68372e3a",
@@ -381,19 +606,34 @@
    "sum_te": "సందర్శకుడు భారీ మొదటి ఇన్నింగ్స్ ఆధిక్యాన్ని అంగీకరిస్తాడు, కానీ ఓటమి నుండి తనను తాను రక్షించుకోవడానికి ఎక్కువసేపు బ్యాటింగ్ చేయడానికి ముందు కాదు; ఆట డ్రాగా ముగియడంతో రెండవ వ్యాసం రెండింటికి 62 వద్ద ముగుస్తుంది. రంజీ ట్రోఫీ మ్యాచ్ ‌ ను డ్రాగా ముగించడానికి జార్ఖండ్ మొదటి ఇన్నింగ్స్ ఆధిక్యంలో కేరళ సర్వాటే 95 పరుగుల ఆధిక్యంలో నిలిచింది."
   },
   {
-   "id": "616ff0430a",
-   "title": "వైల్డ్‌ లైఫ్ ఫోటోగ్రాఫర్ ఆఫ్ ది ఇయర్-2026 అవార్డులు సాధించిన కొన్ని ఫోటోలు",
-   "source": "BBC Telugu",
-   "summary": "\"నేను గత 20 ఏళ్లుగా జంతువుల ఫోటోలు తీస్తున్నా. కానీ నా కెరీర్ లో ఇదే అత్యంత హృదయవిదారకమైన, ఆసక్తికరమైన, నాటకీయమైన అనుభవం'' అని బెస్ట్ ఫోటో గ్రాఫర్ అవార్డు సాధించిన వెరోనేసి అన్నారు.",
-   "link": "https://www.bbc.com/telugu/articles/c63el5jdy1l3o?at_medium=RSS&at_campaign=rss",
-   "published": "2026-10-14T14:17:23+00:00",
+   "id": "6b17e94c6d",
+   "title": "యోధాస్‌, నైట్స్‌ ఘన విజయం",
+   "source": "Namasthe Telangana",
+   "summary": "ఆర్చరీ ప్రీమియర్‌ లీగ్‌ (ఏపీఎల్‌) రెండో సీజన్‌లో పృథ్వీరాజ్‌ యోధాస్‌ మరో విజయం సాధించింది. బుధవారం రాత్రి జరిగిన మ్యాచ్‌లో యోధాస్‌ 5-1తో చేరో ఆర్చర్స్‌పై ఘన విజయం సాధించింది.",
+   "link": "https://www.ntnews.com/sports/prithviraj-yodhas-secured-another-victory-in-the-second-season-of-the-archery-premier-league-2536804",
+   "published": "2026-10-14T14:23:37+00:00",
    "category": "telugu",
    "subcategory": null,
    "lang": "te",
-   "image": "https://ichef.bbci.co.uk/ace/ws/240/cpsprodpb/fad0/live/914f5b80-c7d3-11f1-9e10-4dcbd31d4273.jpg",
-   "score": 1.04,
-   "sum_en": "\"I have been photographing animals for the past 20 years. But it was the most heartwarming, interesting, dramatic experience of my career, ”said Veronese, winner of the Best Photographer Award.",
-   "sum_te": "\"నేను గత 20 ఏళ్లుగా జంతువుల ఫోటోలు తీస్తున్నా. కానీ నా కెరీర్ లో ఇదే అత్యంత హృదయవిదారకమైన, ఆసక్తికరమైన, నాటకీయమైన అనుభవం'' అని బెస్ట్ ఫోటో గ్రాఫర్ అవార్డు సాధించిన వెరోనేసి అన్నారు."
+   "image": "https://d2e1hu1ktur9ur.cloudfront.net/wp-content/uploads/2026/10/Prithviraj-Yodhas-1024x576.jpg",
+   "score": 0.64,
+   "sum_en": "PrithvirajYoddhas scored another victory in the second season of the Archery Premier League. Yodhas won 5-1 against Chero Archers in the Wednesday night match.",
+   "sum_te": "ఆర్చరీ ప్రీమియర్‌ లీగ్‌  రెండో సీజన్‌లో పృథ్వీరాజ్‌ యోధాస్‌ మరో విజయం సాధించింది. బుధవారం రాత్రి జరిగిన మ్యాచ్‌లో యోధాస్‌ 5-1తో చేరో ఆర్చర్స్‌పై ఘన విజయం సాధించింది."
+  },
+  {
+   "id": "0ed8484746",
+   "title": "IND vs WI 4th T20I: పవర్ ప్లేలో వెస్టిండీస్ విధ్వంసం.. 10 ఏళ్ల రికార్డ్ బ్రేక్..!",
+   "source": "TV9 Telugu",
+   "summary": "భారత్ vs వెస్టిండీస్ 4వ T20Iలో వెస్టిండీస్ బ్యాటర్లు భారత్‌పై విధ్వంసం సృష్టించారు. పవర్‌ప్లేలో 79/1 పరుగులు చేసి కొత్త రికార్డు నెలకొల్పారు. ఇది గతంలో లాడర్‌హిల్‌లో చేసిన 78/0 రికార్డును అధిగమించింది. శై హోప్ దూకుడుతో…",
+   "link": "https://tv9telugu.com/sports/cricket-news/ind-vs-wi-4th-t20i-west-indies-powerplay-record-shai-hope-1934331.html",
+   "published": "2026-10-14T14:14:22+00:00",
+   "category": "telugu",
+   "subcategory": null,
+   "lang": "te",
+   "image": "https://images.tv9telugu.com/wp-content/uploads/2026/10/west-indies-powerplay-record.jpg",
+   "score": 0.64,
+   "sum_en": "India vs West Indies 4th T20I West Indies batsmen wreak havoc on India. He scored 79/1 in the Powerplay and set a new record. This surpassed Lauderhill's previous record of 78/0. With the aggression of Shai Hope, West Indies scored a huge score in the powerplay and threw a tough challenge to Team India.",
+   "sum_te": "భారత్ vs వెస్టిండీస్ 4వ T20Iలో వెస్టిండీస్ బ్యాటర్లు భారత్‌పై విధ్వంసం సృష్టించారు. పవర్‌ప్లేలో 79/1 పరుగులు చేసి కొత్త రికార్డు నెలకొల్పారు. ఇది గతంలో లాడర్‌హిల్‌లో చేసిన 78/0 రికార్డును అధిగమించింది. శై హోప్ దూకుడుతో వెస్టిండీస్ పవర్‌ప్లేలోనే భారీ స్కోరు సాధించి టీమిండియాకు గట్టి సవాల్ విసిరింది."
   },
   {
    "id": "11223c114a",
@@ -456,36 +696,6 @@
    "sum_te": "క్లిఫ్టన్‌విల్లే యొక్క లీగ్ కప్ విజయాన్ని NIFL తారుమారు చేసింది. ఫైనల్‌లో ఇద్దరు అనర్హులను బరిలోకి దింపినందుకు మహిళల లీగ్ కప్ టైటిల్‌ను తొలగించిన తర్వాత క్లిఫ్టన్‌విల్లే యొక్క దేశీయ ట్రెబుల్ ఆశలు ముగిశాయి."
   },
   {
-   "id": "00ab47acea",
-   "title": "Indiramma Housing: ఇందిరమ్మ ఇళ్ల లబ్ధిదారులకు తీపికబురు.. ఒక ఇంటికి అదనంగా రూ.72,000 ఆర్థిక సాయం!",
-   "source": "TV9 Telugu",
-   "summary": "Indiramma Housing: ఈ డేటా ఎంట్రీ ప్రక్రియను వేగంగా పూర్తి చేసి, అర్హులైన లబ్ధిదారుల బ్యాంక్ ఖాతాల్లో నేరుగా అదనపు ఆర్థిక సహాయం జమ అయ్యేలా అధికారులు చర్యలు తీసుకుంటున్నారు. రాష్ట్ర ప్రభుత్వ సాయంతో పాటు కేంద్రం నుంచి అందే…",
-   "link": "https://tv9telugu.com/business/good-news-for-indiramma-housing-scheme-beneficiaries-additional-rs72000-financial-assistance-per-house-1934225.html",
-   "published": "2026-10-14T12:21:46+00:00",
-   "category": "telugu",
-   "subcategory": "community",
-   "lang": "te",
-   "image": "https://images.tv9telugu.com/wp-content/uploads/2026/10/indiramma-housing-1.jpg",
-   "score": 1.16,
-   "sum_en": "The beneficiaries of Indiramma Houses will receive an additional financial assistance of Rs.72,000 per house. Officials are taking steps to speed up the data entry process and direct deposit of additional financial assistance into the bank accounts of eligible beneficiaries.",
-   "sum_te": "ఇందిరమ్మ ఇళ్ల లబ్ధిదారులకు తీపికబురు, ఒక ఇంటికి అదనంగా రూ.72,000 ఆర్థిక సాయం. ఈ డేటా ఎంట్రీ ప్రక్రియను వేగంగా పూర్తి చేసి, అర్హులైన లబ్ధిదారుల బ్యాంక్ ఖాతాల్లో నేరుగా అదనపు ఆర్థిక సహాయం జమ అయ్యేలా అధికారులు చర్యలు తీసుకుంటున్నారు."
-  },
-  {
-   "id": "8ed7db30e0",
-   "title": "Arc Of Life, Born To Rise, Excellent Lass and Kiss Of Grey excel",
-   "source": "The Hindu",
-   "summary": "",
-   "link": "https://www.thehindu.com/sport/races/arc-of-life-born-to-rise-excellent-lass-and-kiss-of-grey-excel/article71583677.ece",
-   "published": "2026-10-14T12:18:28+00:00",
-   "category": "sports",
-   "subcategory": null,
-   "lang": "en",
-   "image": "https://www.thehindu.com/theme/images/og-image.png",
-   "score": 0.866,
-   "sum_en": "Arc Of Life, Born To Rise, Excellent Lass and Kiss Of Grey excel.",
-   "sum_te": "ఆర్క్ ఆఫ్ లైఫ్, బర్న్ టు రైజ్, ఎక్సలెంట్ లాస్ అండ్ కిస్ ఆఫ్ గ్రే ఎక్సెల్."
-  },
-  {
    "id": "b5c6718106",
    "title": "Railway Employees Bonus : పండుగ వేళ రైల్వే ఉద్యోగులకు గుడ్ న్యూస్.. ఖాతాల్లో రూ.17,951 బోనస్.. కేంద్రం కీలక ప్రకటన",
    "source": "10TV",
@@ -529,21 +739,6 @@
    "score": 1.04,
    "sum_en": "The Union Cabinet has approved 78 days of productivity linked bonus as a Diwali gift to railway employees. 11.4 lakh employees will get a bonus of Rs.17,951 each.",
    "sum_te": "రైల్వే ఉద్యోగులకు దీపావళి కానుకగా 78 రోజుల ప్రొడక్టివిటీ లింక్డ్ బోనస్‌కు కేంద్ర కేబినెట్ ఆమోదం తెలిపింది. 11.4 లక్షల మంది ఉద్యోగులకు ఒక్కొక్కరికి రూ.17,951 బోనస్ అందనుంది."
-  },
-  {
-   "id": "731432099b",
-   "title": "Indian Railways: కేంద్రం సంచలన నిర్ణయం.. రైల్వే ఉద్యోగులకు పండుగ బోనస్‌..10 లక్షల మందికి బెనిఫిట్",
-   "source": "TV9 Telugu",
-   "summary": "Indian Railways: పగలు, రాత్రి అవిశ్రాంతంగా పనిచేసే కష్టజీవులైన రైల్వే ఉద్యోగులకు ఈ బోనస్ ఒక దీపావళి కానుక. మనం మన కుటుంబాలతో పండుగలు జరుపుకుంటుండగా, ఈ ఉద్యోగులు పొలాల్లో, రైల్వే ట్రాక్‌లపై, ఇంజిన్ల లోపల, వర్క్‌షాపులలో…",
-   "link": "https://tv9telugu.com/business/indian-railways-78-days-salary-as-festive-bonus-for-11-4-lakh-railway-employees-1934187.html",
-   "published": "2026-10-14T11:04:17+00:00",
-   "category": "telugu",
-   "subcategory": null,
-   "lang": "te",
-   "image": "https://images.tv9telugu.com/wp-content/uploads/2026/10/railway-employees.jpg",
-   "score": 1.16,
-   "sum_en": "This bonus is a Diwali gift for the hardworking railway employees who work tirelessly day and night. While we celebrate festivals with our families, these employees are at their best in the fields, on the railway tracks, inside the engines and in the workshops round the clock.",
-   "sum_te": "పగలు, రాత్రి అవిశ్రాంతంగా పనిచేసే కష్టజీవులైన రైల్వే ఉద్యోగులకు ఈ బోనస్ ఒక దీపావళి కానుక. మనం మన కుటుంబాలతో పండుగలు జరుపుకుంటుండగా, ఈ ఉద్యోగులు పొలాల్లో, రైల్వే ట్రాక్‌లపై, ఇంజిన్ల లోపల, వర్క్‌షాపులలో 24 గంటలూ తమ అత్యుత్తమ పనితీరును."
   },
   {
    "id": "ec802195f1",
@@ -606,21 +801,6 @@
    "sum_te": "హైదరాబాద్‌లో ఇంటిగ్రేటెడ్ క్యాబిన్ ఎక్సలెన్స్ సెంటర్‌ను అభివృద్ధి చేసేందుకు ఫ్రెంచ్ సంస్థతో GMR ఏరో టెక్నిక్ అవగాహన ఒప్పందం కుదుర్చుకుంది."
   },
   {
-   "id": "0e8be08d40",
-   "title": "Winger Feyi-Waboso should be fit for England",
-   "source": "BBC Sport",
-   "summary": "England winger Immanuel Feyi-Waboso should be fit to feature in next month's Nations Championship matches.",
-   "link": "https://www.bbc.co.uk/sport/rugby-union/articles/cq78p72g1nd4o?at_medium=RSS&at_campaign=rss",
-   "published": "2026-10-14T09:27:21+00:00",
-   "category": "sports",
-   "subcategory": null,
-   "lang": "en",
-   "image": "https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/de6e/live/a5c6d650-c7ac-11f1-86ef-693282d0a891.jpg",
-   "score": 0.813,
-   "sum_en": "England winger Immanuel Feyi-Waboso should be fit to feature in next month's Nations Championship matches.",
-   "sum_te": "వచ్చే నెలలో జరిగే నేషన్స్ ఛాంపియన్‌షిప్ మ్యాచ్‌లలో ఇంగ్లండ్ వింగర్ ఇమ్మాన్యుయేల్ ఫెయి-వాబోసో ఫిట్‌గా ఉండాలి."
-  },
-  {
    "id": "34cdb78b89",
    "title": "Dussehra 2026 Date : ఈసారి దసరా పండుగ 20న లేక 21వ తేదీనా..? క్లారిటీ వచ్చేసింది.. పూజకు, రావణ దహనానికి ముహూర్తం ఇదే..",
    "source": "10TV",
@@ -634,21 +814,6 @@
    "score": 1.28,
    "sum_en": "Dussehra festival is celebrated in Telugu states with grandeur. Dussehra festival is celebrated in the evening on the last day of Devi Navratri festival.",
    "sum_te": "తెలుగు రాష్ట్రాల్లో దసరా పండుగను అంగరంగవైభవంగా జరుపుకుంటారు. దేవి నవరాత్రి ఉత్సవాల చివరి రోజు సాయంత్రం దసరా పండుగను జరుపుకుంటారు."
-  },
-  {
-   "id": "07c6e5478d",
-   "title": "Sahibzada Farhan: అభిషేక్ శర్మ, విరాట్ కోహ్లీ రికార్డులు బద్దలు.. పాకిస్థాన్ కొత్త కెప్టెన్ వీర విహారం..",
-   "source": "NTV Telugu",
-   "summary": "పాకిస్థాన్ క్రికెట్ జట్టు ఆటగాడు సాహిబ్జాదా ఫర్హాన్ శ్రీలంకతో జరిగిన మూడు మ్యాచ్‌ల టీ20 సిరీస్‌లో అద్భుతమైన ప్రదర్శనతో సరికొత్త రికార్డులు సృష్టించాడు. ఈ సిరీస్‌ను పాకిస్థాన్ 2-1 తేడాతో గెలుచుకోగా, తొలిసారి పూర్తి…",
-   "link": "https://ntvtelugu.com/news/sahibzada-farhan-breaks-abhishek-sharma-record-equals-virat-kohli-1025768.html",
-   "published": "2026-10-14T08:29:56+00:00",
-   "category": "telugu",
-   "subcategory": null,
-   "lang": "te",
-   "image": "https://ntvtelugu.com/wp-content/uploads/2026/10/Pakistan-5-1024x576.jpg",
-   "score": 1.16,
-   "sum_en": "Pakistan cricket team player Sahibzada Farhan created new records with his brilliant performance in the three-match T20 series against Sri Lanka. Pakistan won the series by 2-1 and Farhan, who acted as a full-fledged T20 captain for the first time, had a rare victory in his account. He scored 238 runs in all three matches.",
-   "sum_te": "పాకిస్థాన్ క్రికెట్ జట్టు ఆటగాడు సాహిబ్జాదా ఫర్హాన్ శ్రీలంకతో జరిగిన మూడు మ్యాచ్‌ల టీ20 సిరీస్‌లో అద్భుతమైన ప్రదర్శనతో సరికొత్త రికార్డులు సృష్టించాడు. ఈ సిరీస్‌ను పాకిస్థాన్ 2-1 తేడాతో గెలుచుకోగా, తొలిసారి పూర్తి స్థాయి టీ20 కెప్టెన్‌గా వ్యవహరించిన ఫర్హాన్ అరుదైన విజయాలను తన ఖాతాలో వేసుకున్నాడు. మూడు మ్యాచ్‌లలోనూ అర్ధశతకాలు బాది మొత్తం 238 పరుగులు సాధించాడు."
   },
   {
    "id": "77b29a6d07",
@@ -666,19 +831,19 @@
    "sum_te": "ఈ సీజన్‌లో హెయిర్ 30 నుండి 35% పండుగ వృద్ధిని సాధిస్తుందని CEO N S సతీష్ చెప్పారు. హైయర్ తన దేశీయ తయారీని పూణే మరియు గ్రేటర్ నోయిడాలో కలిగి ఉంది, ఇది దేశవ్యాప్తంగా నెట్‌వర్క్‌కు సరఫరా చేస్తుంది, పూణే ప్రీమియం మరియు పెద్ద-సామర్థ్య తయారీకి ప్రాథమిక కేంద్రంగా పనిచేస్తుంది."
   },
   {
-   "id": "02176fa7ab",
-   "title": "పండుగ వేళ టయోటా ధమాకా ఆఫర్.. Toyota Glanza Facelift విడుదల.. రూ. 6.99 లక్షల నుంచే ప్రారంభం..",
-   "source": "NTV Telugu",
-   "summary": "Toyota Glanza Facelift: పండుగల సీజన్ హడావుడి నడుస్తుండగా జపనీస్ కార్ల తయారీ దిగ్గజం టయోటా భారత మార్కెట్లోకి ఒక ధమాకా ఆఫర్‌ను మోసుకొచ్చింది. దేశంలో నవరాత్రులతో పండుగల సందడి మొదలవ్వడంతో వాహన తయారీ సంస్థలు కొత్త మోడళ్లను…",
-   "link": "https://ntvtelugu.com/automobiles/toyota-glanza-facelift-launch-price-features-adas-1025759.html",
-   "published": "2026-10-14T08:07:48+00:00",
+   "id": "211281bd83",
+   "title": "సింగరేణి జీఎం కార్యాలయంలో ఘనంగా బతుకమ్మ సంబరాలు",
+   "source": "Namasthe Telangana",
+   "summary": "తెలంగాణ సంస్కృతి, సంప్రదాయాలకు ప్రతీకగా నిలిచే బతుకమ్మ పండుగను పురస్కరించుకుని సింగరేణి కొత్తగూడెం ఏరియా జీఎం కార్యాలయంలో బతుకమ్మ సంబరాలను ఘనంగా నిర్వహించారు. రంగురంగుల పూలతో బతుకమ్మలను అలంకరించి, సంప్రదాయ...",
+   "link": "https://www.ntnews.com/khammam/badradri-kothagudem/bathukamma-celebrations-held-on-a-grand-scale-at-the-singareni-gm-office-2536615",
+   "published": "2026-10-14T08:15:48+00:00",
    "category": "telugu",
    "subcategory": null,
    "lang": "te",
-   "image": "https://ntvtelugu.com/wp-content/uploads/2026/10/toyota-glanza-facelift-1024x576.jpg",
-   "score": 1.04,
-   "sum_en": "With the festive season in full swing, Japanese car manufacturing giant Toyota has brought a bang for the buck in the Indian market. As the festive season begins with Navratri in the country, automakers are busy launching new models. In this background, Toyota has launched the Toyota Glanza facelift model, which is known as the cheapest car in its portfolio, in a grand manner in the Indian market today. This hatchback comes with an attractive look and a powerful engine starting at Rs. 6.99 lakhs. The price of the top model ex-showroom is Rs.",
-   "sum_te": "పండుగల సీజన్ హడావుడి నడుస్తుండగా జపనీస్ కార్ల తయారీ దిగ్గజం టయోటా భారత మార్కెట్లోకి ఒక ధమాకా ఆఫర్‌ను మోసుకొచ్చింది. దేశంలో నవరాత్రులతో పండుగల సందడి మొదలవ్వడంతో వాహన తయారీ సంస్థలు కొత్త మోడళ్లను మార్కెట్లోకి తీసుకురావడంలో బిజీగా ఉన్నాయి. ఈ నేపథ్యంలో టయోటా తన పోర్ట్‌ఫోలియోలోనే అత్యంత చౌకైన కారుగా పేరుగాంచిన టయోటా గ్లాంజా  ఫేస్‌లిఫ్ట్ మోడల్‌ను ఈరోజే ఇండియన్ మార్కెట్‌లో గ్రాండ్‌గా లాంచ్ చేసింది. ఆకర్షణీయమైన లుక్, పవర్‌ఫుల్ ఇంజిన్‌తో వచ్చిన ఈ హ్యాచ్‌బ్యాక్ ప్రారంభ ధరను రూ. 6.99 లక్షలుగా నిర్ణయించారు. ఇక టాప్ మోడల్ ధర ఎక్స్-షోరూమ్‌లో రూ."
+   "image": "https://d2e1hu1ktur9ur.cloudfront.net/wp-content/uploads/2026/10/gm-venkataramana-1024x640.jpg",
+   "score": 0.76,
+   "sum_en": "Bathukamma celebrations were solemnly held at Singareni Kothagudem Area GM's office to celebrate Bathukamma, a symbol of Telangana's culture and traditions.",
+   "sum_te": "తెలంగాణ సంస్కృతి, సంప్రదాయాలకు ప్రతీకగా నిలిచే బతుకమ్మ పండుగను పురస్కరించుకుని సింగరేణి కొత్తగూడెం ఏరియా జీఎం కార్యాలయంలో బతుకమ్మ సంబరాలను ఘనంగా నిర్వహించారు."
   },
   {
    "id": "61956becdd",
@@ -709,21 +874,6 @@
    "score": 1.232,
    "sum_en": "Wildlife photographer of the year 2026, the winning images. This year’s competition has attracted a record-breaking number of entries.",
    "sum_te": "వన్యప్రాణి ఫోటోగ్రాఫర్ ఆఫ్ ది ఇయర్ 2026, విజేత చిత్రాలు. ఈ సంవత్సరం పోటీ రికార్డు స్థాయిలో ఎంట్రీలను ఆకర్షించింది."
-  },
-  {
-   "id": "40860acb34",
-   "title": "విశాఖ స్టీల్ ప్లాంట్ భూముల వేలంలో కొత్త రికార్డ్- ఆదాయం ఎవరికి..!!",
-   "source": "Oneindia Telugu",
-   "summary": "Visakhapatnam Steel Plant: RINL-owned plots have received an overwhelming response in the e-auction, selling like hotcakes. విశాఖపట్నం స్టీల్‌ప్లాంటు కు చెందిన ప్లాట్లు ఈ-వేలంలో హాట్‌కేకుల్లా అమ్ముడుపోయాయి.",
-   "link": "https://telugu.oneindia.com/news/andhra-pradesh/visakhapatnam-steel-plant-plots-sold-like-hotcakes-in-e-auction-here-the-details-510647.html",
-   "published": "2026-10-14T06:35:30+00:00",
-   "category": "telugu",
-   "subcategory": null,
-   "lang": "te",
-   "image": "https://imagesvs.oneindia.com/webp/te/img/2026/10/viskhapatnamin-20401791959555.jpg",
-   "score": 0.8,
-   "sum_en": "New Record in Visakhapatnam Steel Plant Land Auction- For Whom Income. The plot of Visakhapatnam Steel Plant was sold ashotcakes at the e-auction.",
-   "sum_te": "విశాఖ స్టీల్ ప్లాంట్ భూముల వేలంలో కొత్త రికార్డ్- ఆదాయం ఎవరికి. విశాఖపట్నం స్టీల్‌ప్లాంటు కు చెందిన ప్లాట్లు ఈ-వేలంలో హాట్‌కేకుల్లా అమ్ముడుపోయాయి."
   },
   {
    "id": "9d85195859",
@@ -771,6 +921,21 @@
    "sum_te": "కేరళం సీనియర్ సిటిజన్స్ బిల్లు, 2026, దేశంలోనే మొట్టమొదటిసారిగా రూపొందించబడిన చట్టం, వృద్ధుల హక్కులు మరియు శ్రేయస్సును పరిరక్షించే దిశగా ఒక స్వాగతమైన చర్య. కేరళ యొక్క అగ్రగామి సీనియర్ సిటిజన్స్ బిల్లు 2026 వయస్సు-తగిన, హక్కుల-ఆధారిత సంరక్షణ, వృద్ధాప్యం-స్థానంలో మరియు గౌరవం మరియు స్వాతంత్ర్యం కోసం బలమైన రక్షణలను సూచించింది."
   },
   {
+   "id": "6dd6c20edc",
+   "title": "రోగుల‌కు నాణ్యమైన వైద్య సేవలు అందించాలి : డీఎంహెచ్ఓ డా.రాహుల్",
+   "source": "Namasthe Telangana",
+   "summary": "ప్రాథమిక ఆరోగ్య కేంద్రాలకు వచ్చే రోగుల‌కు నాణ్యమైన వైద్య సేవలు అందేలా బాధ్యతాయుతంగా విధులు నిర్వర్తించాలని న‌ల్ల‌గొండ జిల్లా వైద్య & ఆరోగ్య శాఖాధికారి డాక్టర్ రాహుల్ సిబ్బందికి సూచించారు. బుధవారం చండూరు మండల కేంద్రంలోని…",
+   "link": "https://www.ntnews.com/nalgonda/quality-medical-services-must-be-provided-to-patients-2536370",
+   "published": "2026-10-14T03:52:21+00:00",
+   "category": "telugu",
+   "subcategory": "health",
+   "lang": "te",
+   "image": "https://d2e1hu1ktur9ur.cloudfront.net/wp-content/uploads/2026/10/doctor-rahul-1024x640.jpg",
+   "score": 0.64,
+   "sum_en": "DMHO Dr.Rahul. Nallagonda District Medical & Health Officer Dr. Rahul instructed the staff to perform their duties responsibly to provide quality medical services to the patients coming to the primary health centers.",
+   "sum_te": "డీఎంహెచ్ఓ డా.రాహుల్. ప్రాథమిక ఆరోగ్య కేంద్రాలకు వచ్చే రోగుల‌కు నాణ్యమైన వైద్య సేవలు అందేలా బాధ్యతాయుతంగా విధులు నిర్వర్తించాలని న‌ల్ల‌గొండ జిల్లా వైద్య & ఆరోగ్య శాఖాధికారి డాక్టర్ రాహుల్ సిబ్బందికి సూచించారు."
+  },
+  {
    "id": "237d2b6f84",
    "title": "Apple unveils HomeView smart display in renewed home push",
    "source": "The Hindu",
@@ -816,21 +981,6 @@
    "sum_te": "సచిన్ టెండూల్కర్ రికార్డును అధిగమించడానికి జో రూట్ ‌ కు 1,644 పరుగులు అవసరం. వారి సంబంధిత దేశాలు ఉత్పత్తి చేసిన గొప్ప బ్యాటర్‌ల మధ్య ఆసక్తికరమైన క్యాచ్-మీ-ఇఫ్-యు-కెన్ హామీ ఇవ్వబడుతుంది. టెండూల్కర్ మరియు రూట్ వారసత్వం, దీర్ఘాయువు, కెప్టెన్సీ ఒత్తిళ్లు మరియు క్రికెట్ గొప్పతనం యొక్క అభివృద్ధి చెందుతున్న వేగాన్ని పరిశీలించండి."
   },
   {
-   "id": "f313480124",
-   "title": "Hunt and Hodgkinson inspire Finucane's gold hunt - watch World Championships on BBC",
-   "source": "BBC Sport",
-   "summary": "Welsh cyclist Emma Finucane - born in the same year as Keely Hodgkinson and Amy Hunt - seeks glory at the Track World Championships.",
-   "link": "https://www.bbc.co.uk/sport/cycling/articles/c6kglymw738vo?at_medium=RSS&at_campaign=rss",
-   "published": "2026-10-13T19:02:27+00:00",
-   "category": "sports",
-   "subcategory": null,
-   "lang": "en",
-   "image": "https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/2e55/live/02f29e50-c3ce-11f1-8fc5-335d62f6730b.png",
-   "score": 0.976,
-   "sum_en": "Hunt and Hodgkinson inspire Finucane's gold hunt - watch World Championships on BBC. Welsh cyclist Emma Finucane - born in the same year as Keely Hodgkinson and Amy Hunt - seeks glory at the Track World Championships.",
-   "sum_te": "హంట్ మరియు హాడ్కిన్సన్ ఫినుకేన్ యొక్క బంగారు వేటను ప్రేరేపించారు - BBCలో ప్రపంచ ఛాంపియన్‌షిప్‌లను చూడండి. వెల్ష్ సైక్లిస్ట్ ఎమ్మా ఫినుకేన్ - కీలీ హాడ్కిన్సన్ మరియు అమీ హంట్‌ల వలె అదే సంవత్సరంలో జన్మించారు - ట్రాక్ వరల్డ్ ఛాంపియన్‌షిప్‌లో కీర్తిని కోరుకుంటారు."
-  },
-  {
    "id": "09d92b84a0",
    "title": "Italian Bio-methane Plant Comes Online, Providing Renewable Gas to Over 3,000 Homes",
    "source": "Good News Network",
@@ -859,21 +1009,6 @@
    "score": 0.8,
    "sum_en": "In the e-auction of Visakha Steel Plant HB Colony land, the price of a yard was Rs.1.80 lakh, and the revenue of Rs.366 crore was collected in the first phase.",
    "sum_te": "విశాఖ స్టీల్ ప్లాంట్ హెచ్‌బీ కాలనీ భూముల ఈ-వేలంలో గజం ధర రూ.1.80 లక్షలు పలకగా, తొలి విడతలోనే రూ.366 కోట్ల ఆదాయం సమకూరింది."
-  },
-  {
-   "id": "01d8131e2d",
-   "title": "దసరా బొనాంజాతో ముందే పండుగ",
-   "source": "Namasthe Telangana",
-   "summary": "దసరా పర్వదినాన్ని పురస్కరించుకొని నమస్తే తెలంగాణ, తెలంగాణ టుడే దినపత్రికలు సంయుక్తంగా నిర్వహిస్తున్న షాపింగ్‌ బొనాంజా వినియోగదారులను ప్రత్యేక ఆఫర్లతో ఆకట్టుకుంటున్నది. అక్టోబర్‌ 6 నుంచి 14వ తేదీ వరకు జరగనునన్న ఈ దసరా…",
-   "link": "https://www.ntnews.com/hyderabad/dasara-shopping-bonanza-lucky-draw-winners-announced-at-harsha-toyota-2535880",
-   "published": "2026-10-13T15:18:33+00:00",
-   "category": "telugu",
-   "subcategory": null,
-   "lang": "te",
-   "image": "https://d2e1hu1ktur9ur.cloudfront.net/wp-content/uploads/2026/10/nt-1-1024x576.jpg",
-   "score": 0.92,
-   "sum_en": "Dussehra is pre-festival with bonanza. The shopping bonanza organized by Namaste Telangana and Telangana Today dailies in celebration of Dussehra is impressing the customers with special offers.",
-   "sum_te": "దసరా బొనాంజాతో ముందే పండుగ. దసరా పర్వదినాన్ని పురస్కరించుకొని నమస్తే తెలంగాణ, తెలంగాణ టుడే దినపత్రికలు సంయుక్తంగా నిర్వహిస్తున్న షాపింగ్‌ బొనాంజా వినియోగదారులను ప్రత్యేక ఆఫర్లతో ఆకట్టుకుంటున్నది."
   },
   {
    "id": "36dfd782d5",
@@ -919,21 +1054,6 @@
    "score": 0.975,
    "sum_en": "Veterinarians, farmers, achievers honoured at Krishna Rao Memorial annual awards ceremony. Former Himachal Pradesh Governor Bandaru Dattatreya calls for promoting dairy, sheep and poultry farming to boost farmers’ incomes and strengthen the livestock sector.",
    "sum_te": "కృష్ణారావు స్మారక వార్షిక అవార్డుల ప్రదానోత్సవంలో పశువైద్యులు, రైతులు, సాధకులను సన్మానించారు. రైతుల ఆదాయాలను పెంచడానికి మరియు పశుసంవర్ధక రంగాన్ని బలోపేతం చేయడానికి పాడి, గొర్రెలు మరియు కోళ్ల పెంపకాన్ని ప్రోత్సహించాలని హిమాచల్ ప్రదేశ్ మాజీ గవర్నర్ బండారు దత్తాత్రేయ పిలుపునిచ్చారు."
-  },
-  {
-   "id": "2d0a17ef86",
-   "title": "ఖమ్మంలో సంబురంగా బతుకమ్మ వేడుకలు",
-   "source": "Namasthe Telangana",
-   "summary": "ఖమ్మం కమాన్‌బజార్‌, అక్టోబర్‌ 13 : ఖమ్మం జిల్లాలో బతుకమ్మ వేడుకలు సంబురంగా కొనసాగుతున్నాయి. మంగళవారం ఖమ్మం నగరంలోని బీఆర్‌ఎస్‌ జిల్లా కార్యాలయ(తెలంగాణ భవన్‌) ఆవరణలో బతుకమ్మ వేడుకలు ఘనంగా నిర్వహించారు. రంగురంగుల పూలతో…",
-   "link": "https://www.ntnews.com/telangana/grand-bathukamma-celebrations-held-at-brs-telangana-bhavan-in-khammam-2535932",
-   "published": "2026-10-13T14:42:41+00:00",
-   "category": "telugu",
-   "subcategory": null,
-   "lang": "te",
-   "image": "https://d2e1hu1ktur9ur.cloudfront.net/wp-content/uploads/2026/10/bathukamma-2-1024x576.jpg",
-   "score": 1.04,
-   "sum_en": "Bathukamma celebrations continue in full swing in Khammam district. Bathukamma celebrations were held atthe BRS district office premises in Khammam city on Tuesday. Bathukammas are made with colorful flowers. Bathukammas were brought together and sang songs.",
-   "sum_te": "ఖమ్మం జిల్లాలో బతుకమ్మ వేడుకలు సంబురంగా కొనసాగుతున్నాయి. మంగళవారం ఖమ్మం నగరంలోని బీఆర్‌ఎస్‌ జిల్లా కార్యాలయ ఆవరణలో బతుకమ్మ వేడుకలు ఘనంగా నిర్వహించారు. రంగురంగుల పూలతో బతుకమ్మలను తయారు చేశారు. బతుకమ్మలను ఒక్కచోట చేర్చి పాటలు పాడారు."
   },
   {
    "id": "d842ca7ac8",
@@ -1071,21 +1191,6 @@
    "sum_te": "165 మిలియన్ల సంవత్సరాల నాటి శిలాజము అసాధారణమైన జురాసిక్ ప్రెడేటర్ ‌ ను వెల్లడించింది, ఇది క్షీరదాలు వాటి అత్యంత ముఖ్యమైన పరిణామ ప్రయోజనాల్లో ఒకదాన్ని ఎలా అభివృద్ధి చేశాయో వివరించడంలో సహాయపడుతుంది. కేవలం 20 అంగుళాల పొడవు మాత్రమే ఉన్నప్పటికీ, మెగాకాడ సుంగేయ్ ప్రారంభ క్షీరద బంధువులలో హెవీ వెయిట్, పురాతన జలమార్గాల ద్వారా ఈత కొట్టడం మరియు ప్రత్యేక దంతాలతో వేటాడటం. దాని అధునాతన మ్రింగడం శరీర నిర్మాణ శాస్త్రం క్షీరదాల పరిణామంలో కీలకమైన అభివృద్ధి అయిన పాలను సురక్షితంగా పోషించే సామర్థ్యం వైపు ఒక ప్రారంభ దశను వెల్లడిస్తుంది."
   },
   {
-   "id": "60eabfb2a1",
-   "title": "Can a video game really help zoos?",
-   "source": "BBC News",
-   "summary": "The second instalment of Planet Zoo champions raising animals to be released into wildlife reserves.",
-   "link": "https://www.bbc.co.uk/news/videos/cwg7x2jj4050o?at_medium=RSS&at_campaign=rss",
-   "published": "2026-10-13T10:40:13+00:00",
-   "category": "environment",
-   "subcategory": null,
-   "lang": "en",
-   "image": "https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/9c75/live/f6a7c6f0-c6ef-11f1-9a39-31b474234113.jpg",
-   "score": 0.724,
-   "sum_en": "Can a video game really help zoos. The second instalment of Planet Zoo champions raising animals to be released into wildlife reserves.",
-   "sum_te": "వీడియో గేమ్ నిజంగా జంతుప్రదర్శనశాలలకు సహాయపడుతుందా? ప్లానెట్ జూ ఛాంపియన్‌ల రెండవ విడత జంతువులను పెంచడం వన్యప్రాణుల నిల్వలలోకి విడుదల చేయబడుతుంది."
-  },
-  {
    "id": "0ea56da9bb",
    "title": "టిసిఎస్‌లో 80% ఉద్యోగాలకు ఎఐ స్కిల్స్ తప్పనిసరి",
    "source": "Mana Telangana",
@@ -1161,21 +1266,6 @@
    "sum_te": "డేవిస్‌లోని కాలిఫోర్నియా విశ్వవిద్యాలయంలో తన మొదటి సంవత్సరంలో, లియామ్ బే ఏరియాలోని తన కుటుంబం యొక్క ఇంటి నుండి క్యాంపస్‌కు మరియు తిరిగి తిరిగి రోజుకు మూడు గంటలు ప్రయాణించాడు. రౌండ్-ట్రిప్ రైలు టిక్కెట్లు ఖరీదైనవి, కానీ సెంట్రల్ వ్యాలీ కళాశాల పట్టణంలో అపార్ట్‌మెంట్‌ను అద్దెకు తీసుకున్నంత ధర కాదు. క్యాంపస్ అపార్ట్‌మెంట్‌ల నుండి చర్చి బేస్‌మెంట్‌ల వరకు, యువత నిర్వహించే షెల్టర్‌లు తక్కువ-ధరతో కూడిన హౌసింగ్‌ను అందిస్తాయి."
   },
   {
-   "id": "eab315a807",
-   "title": "Shubman Gill and Shafali Verma honoured with ICC ‘Player of the Month’",
-   "source": "The Hindu",
-   "summary": "This is the fifth time players from the same national board have swept the men's and women's awards in a month, with Indian cricketers achieving the feat on two previous occasions",
-   "link": "https://www.thehindu.com/sport/cricket/shubman-gill-and-shafali-verma-honoured-with-icc-player-of-the-month/article71578352.ece",
-   "published": "2026-10-13T07:27:59+00:00",
-   "category": "sports",
-   "subcategory": null,
-   "lang": "en",
-   "image": "https://th-i.thgim.com/public/news/national/panxna/article71578379.ece/alternates/LANDSCAPE_1200/Gill-Verma.jpg",
-   "score": 0.855,
-   "sum_en": "This is the fifth time players from the same national board have swept the men's and women's awards in a month, with Indian cricketers achieving the feat on two previous occasions. Shubman Gill and Shafali Verma win ICC Player of the Month honors for India after standout ODI and Asia Cup/Asian Games performances.",
-   "sum_te": "ఒక నెలలో ఒకే జాతీయ బోర్డ్‌కు చెందిన క్రీడాకారులు పురుషులు మరియు మహిళల అవార్డులను కైవసం చేసుకోవడం ఇది ఐదవసారి, గతంలో రెండు సందర్భాలలో భారత క్రికెటర్లు ఈ ఘనత సాధించారు. అద్భుతమైన ODI మరియు ఆసియా కప్/ఆసియన్ గేమ్స్ ప్రదర్శనల తర్వాత భారతదేశం తరపున శుభమాన్ గిల్ మరియు షఫాలీ వర్మ ICC ప్లేయర్ ఆఫ్ ది మంత్ గౌరవాలను గెలుచుకున్నారు."
-  },
-  {
    "id": "42c3cd3ed2",
    "title": "PM Kisan 24th Installment: రైతులకు గుడ్ న్యూస్.. పీఎం కిసాన్ 24వ విడత డబ్బులు ఖాతాలోకి ఎప్పుడంటే?",
    "source": "Asianet News Telugu",
@@ -1236,21 +1326,6 @@
    "sum_te": "యూరప్ యొక్క సెంటినెల్ -3 సి ఉపగ్రహం ప్రయోగించిన రెండు వారాల తర్వాత భూమి యొక్క ఉత్కంఠభరితమైన చిత్రాలను తిరిగి ఇచ్చింది, మంచుతో నిండిన ఆల్ప్స్, స్తంభింపచేసిన ఆర్కిటిక్ ద్వీపాలు మరియు అద్భుతమైన మణి కరేబియన్ జలాలను వెల్లడించింది. దీని మొదటి కొలతలు పెరుగుతున్న సముద్రాలను ట్రాక్ చేయడం, మంచు పలకలను కరిగించడం మరియు మన గ్రహం యొక్క రూపాన్ని మార్చే ఇతర మార్పులకు కూడా మంచి ఫలితాలను చూపుతాయి."
   },
   {
-   "id": "f0002dee6c",
-   "title": "Coventry thrash Newcastle to claim first home win of season",
-   "source": "BBC Sport",
-   "summary": "Coventry City stun Newcastle United with an emphatic 4-1 victory as they win their first Premier League game at home in 25 years.",
-   "link": "https://www.bbc.co.uk/sport/football/videos/c65y71z4rjj2o?at_medium=RSS&at_campaign=rss",
-   "published": "2026-10-12T21:35:07+00:00",
-   "category": "sports",
-   "subcategory": null,
-   "lang": "en",
-   "image": "https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/615d/live/7ef559e0-c683-11f1-a64c-550be9e3c66b.jpg",
-   "score": 1.216,
-   "sum_en": "Coventry City stun Newcastle United with an emphatic 4-1 victory as they win their first Premier League game at home in 25 years.",
-   "sum_te": "కోవెంట్రీ సిటీ న్యూకాజిల్ యునైటెడ్‌ను 4-1 తేడాతో ఓడించి, 25 సంవత్సరాల తర్వాత స్వదేశంలో వారి మొదటి ప్రీమియర్ లీగ్ గేమ్‌ను గెలుచుకుంది."
-  },
-  {
    "id": "07bf947b7a",
    "title": "Scientists uncover the 2.3-billion-year-old secret that helped keep Earth habitable",
    "source": "ScienceDaily",
@@ -1309,21 +1384,6 @@
    "score": 0.852,
    "sum_en": "A softball diamond in Montana was the scene of a larger-than-life family reunion. Like something out of Field of Dreams, a teen softball player had lined up against an out-of-state team for an August match—and her long-lost biological sister was on the opposite roster. Samantha Rensvold was adopted as an infant. Rensvold had not seen the opposing player—18-year-old Kyann Dean—whom a teammate came over to explain looked exactly like her.",
    "sum_te": "మోంటానాలోని ఒక సాఫ్ట్‌బాల్ డైమండ్ జీవితం కంటే పెద్ద కుటుంబం పునఃకలయిక దృశ్యం. ఫీల్డ్ ఆఫ్ డ్రీమ్స్ ‌ లో ఉన్నట్లుగా, టీన్ సాఫ్ట్ ‌ బాల్ ఆటగాడు ఆగస్టు మ్యాచ్ కోసం వెలుపల ఉన్న జట్టుకు వ్యతిరేకంగా వరుసలో ఉన్నాడు మరియు ఆమె దీర్ఘకాలంగా కోల్పోయిన జీవసంబంధమైన సోదరి వ్యతిరేక జాబితాలో ఉంది. సమంతా రెన్స్‌వోల్డ్‌ను శిశువుగా దత్తత తీసుకున్నారు. రెన్స్‌వోల్డ్ ప్రత్యర్థి ఆటగాడు-18 ఏళ్ల క్యాన్ డీన్‌ను చూడలేదు-ఒక సహచరుడు ఆమెలాగే ఉన్నట్లు వివరించడానికి వచ్చారు."
-  },
-  {
-   "id": "2bb9873def",
-   "title": "ఆరు రాష్ట్రాలకు కొత్త గవర్నర్ల నియామకం",
-   "source": "Mana Telangana",
-   "summary": "రాష్ట్రపతి ద్రౌపది ముర్ము సోమవారం ఆరు రాష్ట్రాలకు కొత్త గవర్నర్లను నియమించారు. గవర్నర్ల బదిలీలు, కొత్త నియామాకాల్లో భాగంగా కేరళం గవర్నర్ రాజేంద్ర విశ్వనాథ్ ఆర్లేకర్‌ను తమిళనాడుకు బదిలీ చేశారు. ఓం ప్రకాశ్ మాథుర్‌ను కేరళ…",
-   "link": "https://www.manatelangana.news/telangana-breaking-news/president-murmu-appoints-new-governors-for-6-states-1641110",
-   "published": "2026-10-12T17:42:16+00:00",
-   "category": "telugu",
-   "subcategory": null,
-   "lang": "te",
-   "image": "https://www.manatelangana.news/h-upload/2026/10/12/2288022-president-murmu-appoints-ne.webp",
-   "score": 0.92,
-   "sum_en": "President Draupadi Murmu on Monday appointed new governors for six states. As part of transfers of governors and new appointments, Kerala Governor Rajendra Vishwanath Arlekar has been transferred to Tamil Nadu. Om Prakash Mathur appointed as Governor of Kerala. Rashtrapati Bhavan issued a statement to this effect on Monday. Accordingly, Dushyant Gautam was appointed as the new Governor of Sikkim. BJP leader Braj Mohan Ram from Jharkhand has been appointed as the Governor of Odisha.",
-   "sum_te": "రాష్ట్రపతి ద్రౌపది ముర్ము సోమవారం ఆరు రాష్ట్రాలకు కొత్త గవర్నర్లను నియమించారు. గవర్నర్ల బదిలీలు, కొత్త నియామాకాల్లో భాగంగా కేరళం గవర్నర్ రాజేంద్ర విశ్వనాథ్ ఆర్లేకర్‌ను తమిళనాడుకు బదిలీ చేశారు. ఓం ప్రకాశ్ మాథుర్‌ను కేరళ గవర్నర్‌గా నియమించారు. ఈ మేరకు రాష్ట్రపతి భవన్ సోమవారంనాడు ఒక ప్రకటన విడుదల చేసింది. ఆ ప్రకారం సిక్కిం కొత్త గవర్నర్‌గా దుష్యంత్ గౌతమ్ నియమితులయ్యారు. జార్ఖాండ్‌కు చెందిన బీజేపీ నేత బ్రజ్ మోహన్ రామ్‌ను ఒడిశా గవర్నర్‌గా నియమించారు."
   },
   {
    "id": "d3d16fa528",
@@ -1536,21 +1596,6 @@
    "sum_te": "వనిల్లాకు విలక్షణమైన రుచిని ఇచ్చే సమ్మేళనం వనిలిన్, అంటువ్యాధులతో పోరాడటానికి, మంటను తగ్గించడానికి మరియు గాయం నయం చేయడంలో సహాయపడే శక్తివంతమైన లక్షణాలను కలిగి ఉందని శాస్త్రవేత్తలు కనుగొన్నారు. చవకైన, విస్తృతంగా లభించే పదార్ధం ఒక రోజు అధునాతన గాయం చికిత్సలు మరియు పునరుత్పత్తి ఔషధాలలో ముఖ్యమైన భాగం కావచ్చు."
   },
   {
-   "id": "a28e961b67",
-   "title": "How 'big star' Doku delivered for Man City in win at Liverpool",
-   "source": "BBC Sport",
-   "summary": "Speaking on Match of the Day, Wayne Rooney and Toby Alderweireld analyse how Jeremy Doku changed the game in Manchester City's favour, after coming on as a substitute in his side's 3-0 win against Liverpool at Anfield.",
-   "link": "https://www.bbc.co.uk/sport/football/videos/c8g47knxqvgdo?at_medium=RSS&at_campaign=rss",
-   "published": "2026-10-11T23:00:57+00:00",
-   "category": "sports",
-   "subcategory": null,
-   "lang": "en",
-   "image": "https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/af25/live/b56c8a40-c5c3-11f1-a64c-550be9e3c66b.jpg",
-   "score": 0.977,
-   "sum_en": "How 'big star' Doku delivered for Man City in win at Liverpool. Speaking on Match of the Day, Wayne Rooney and Toby Alderweireld analyse how Jeremy Doku changed the game in Manchester City's favour, after coming on as a substitute in his side's 3-0 win against Liverpool at Anfield.",
-   "sum_te": "లివర్‌పూల్‌లో మ్యాన్ సిటీ విజయంలో డోకు ఎలా 'బిగ్ స్టార్' అందించాడు. మ్యాచ్ ఆఫ్ ది డేలో మాట్లాడుతూ, వేన్ రూనీ మరియు టోబీ ఆల్డెర్వీరెల్డ్ జెరెమీ డోకు మాంచెస్టర్ సిటీకి అనుకూలంగా ఆటను ఎలా మార్చారో విశ్లేషిస్తారు, అన్ ‌ ఫీల్డ్ ‌ లో లివర్ ‌ పూల్ ‌ పై తన జట్టు 3-0 తేడాతో గెలిచిన తరువాత."
-  },
-  {
    "id": "582f5fb11c",
    "title": "New Way to Relieve Arthritic Knees Without Drugs or Surgery by Changing Your Gait",
    "source": "Good News Network",
@@ -1564,21 +1609,6 @@
    "score": 0.809,
    "sum_en": "Scientists are reporting that a simple adjustment to how people walk can relieve knee arthritis pain as effectively as prescription drugs—while also slowing the deterioration of cartilage. Nearly a quarter of people over the age of 40 experience painful osteoarthritis, due to degrading joint-cushioning cartilage—and there is currently no way of reversing this damage.",
    "sum_te": "శాస్త్రవేత్తలు నివేదిస్తున్నారు, ప్రజలు ఎలా నడవాలి అనేదానికి ఒక సాధారణ సర్దుబాటు మోకాలి ఆర్థరైటిస్ నొప్పిని ప్రిస్క్రిప్షన్ ఔషధాల వలె ప్రభావవంతంగా ఉపశమనం చేస్తుంది-మృదులాస్థి క్షీణతను కూడా తగ్గిస్తుంది. జాయింట్-కుషనింగ్ మృదులాస్థిని క్షీణింపజేయడం వల్ల 40 ఏళ్లు పైబడిన వారిలో దాదాపు నాలుగింట ఒక వంతు మంది బాధాకరమైన ఆస్టియో ఆర్థరైటిస్‌ను అనుభవిస్తున్నారు-మరియు ప్రస్తుతం ఈ నష్టాన్ని తిప్పికొట్టడానికి మార్గం లేదు."
-  },
-  {
-   "id": "09c1cb310f",
-   "title": "History made as Zheng becomes first Chinese woman to win China Open",
-   "source": "BBC Sport",
-   "summary": "Zheng Qinwen makes history in Beijing as she beats Mirra Andreeva in straight sets to win the China Open, becoming the first Chinese woman to win the tournament.",
-   "link": "https://www.bbc.co.uk/sport/tennis/videos/cje36023xr42o?at_medium=RSS&at_campaign=rss",
-   "published": "2026-10-11T20:21:51+00:00",
-   "category": "sports",
-   "subcategory": null,
-   "lang": "en",
-   "image": "https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/02b8/live/e7da37b0-c5b0-11f1-9a39-31b474234113.jpg",
-   "score": 1.354,
-   "sum_en": "Zheng Qinwen makes history in Beijing as she beats Mirra Andreeva in straight sets to win the China Open, becoming the first Chinese woman to win the tournament.",
-   "sum_te": "జెంగ్ క్విన్వెన్ బీజింగ్‌లో చరిత్ర సృష్టించింది, ఆమె మిర్రా ఆండ్రీవాను వరుస సెట్లలో ఓడించి చైనా ఓపెన్‌ను గెలుచుకుంది, టోర్నమెంట్‌ను గెలుచుకున్న మొదటి చైనా మహిళగా నిలిచింది."
   },
   {
    "id": "d37bfdb822",
@@ -1849,21 +1879,6 @@
    "score": 0.989,
    "sum_en": "A young pilot flew a commercial jet alongside her father as captain for the first time—while her mother worked in the cabin crew on the same flight. 22-year-old Zoë took to the skies with both her parents aboard the Dutch airline KLM flying out of Amsterdam.",
    "sum_te": "ఒక యువ పైలట్ మొదటిసారిగా తన తండ్రితో కలిసి కమర్షియల్ జెట్‌ను కెప్టెన్‌గా నడిపింది-ఆమె తల్లి అదే విమానంలో క్యాబిన్ సిబ్బందిలో పనిచేసింది. 22 ఏళ్ల Zoë ఆమ్‌స్టర్‌డామ్ నుండి ఎగురుతున్న డచ్ విమానయాన సంస్థ KLM లో తన తల్లిదండ్రులిద్దరితో కలిసి ఆకాశంలోకి వెళ్లింది."
-  },
-  {
-   "id": "19634e1bbe",
-   "title": "NPR-Inspired Homework Leads Teen to Find Hidden Message a Decade After a Stranger’s Kindness",
-   "source": "Good News Network",
-   "summary": "From Seattle’s chapter of National Public Radio comes the remarkable story of the kindness of strangers immortalized in an origami crane. Published through KUOW’s “My Unsung Hero” series, the story begins with a…",
-   "link": "https://www.goodnewsnetwork.org/npr-inspired-homework-leads-teen-to-find-hidden-message-a-decade-after-a-strangers-kindness/",
-   "published": "2026-10-09T18:30:46+00:00",
-   "category": "community",
-   "subcategory": null,
-   "lang": "en",
-   "image": "https://www.goodnewsnetwork.org/wp-content/uploads/2026/10/courtesy-of-Mika-Matsuda-supplied-to-KUOW.jpg",
-   "score": 1.371,
-   "sum_en": "From Seattle’s chapter of National Public Radio comes the remarkable story of the kindness of strangers immortalized in an origami crane. Published through KUOW’s “My Unsung Hero” series, the story begins with a 7-year-old in Japan who had just gotten a new bike.",
-   "sum_te": "సీటెల్ యొక్క నేషనల్ పబ్లిక్ రేడియో యొక్క అధ్యాయం నుండి ఓరిగామి క్రేన్‌లో అమరత్వం పొందిన అపరిచితుల దయ యొక్క గొప్ప కథ వస్తుంది. KUOW యొక్క “మై అన్ ‌ సంగ్ హీరో” సిరీస్ ద్వారా ప్రచురించబడిన ఈ కథ, జపాన్ ‌ లో 7 ఏళ్ల వయస్సులో కొత్త బైక్ సంపాదించిన ఒక వ్యక్తితో ప్రారంభమవుతుంది."
   }
  ]
 }
