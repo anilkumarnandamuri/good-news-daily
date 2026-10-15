@@ -128,6 +128,7 @@ export class VoicePlayer extends EventTarget {
   /** Manifest file paths are relative to manifestURL, not the page. */
   setStories(data, { manifest = {}, manifestURL = globalThis.document?.baseURI, limit = this.options.limit } = {}) {
     const stories = selectStories(data, limit);
+    ++this.loadId; // An explicit replacement wins over an older pending fetch.
     this.stop();
     this.stories = stories;
     this.manifest = manifest;
@@ -183,6 +184,7 @@ export class VoicePlayer extends EventTarget {
   }
   setRate(value) {
     this.rate = clamp(value, 0.6, 1.4, 0.9);
+    this.audio.defaultPlaybackRate = this.rate;
     this.audio.playbackRate = this.rate;
     this._save();
     if (this.isPlaying && this.mode === 'speech') { this.pause(); this.play(); }
@@ -302,6 +304,7 @@ export class VoicePlayer extends EventTarget {
   _playAudio(item) {
     const id = ++this.runId;
     this.mode = 'audio';
+    this.audio.defaultPlaybackRate = this.rate;
     this.audio.playbackRate = this.rate;
     this.audio.volume = this.volume;
     this.audio.onended = () => { if (id === this.runId) this._advance(); };
@@ -309,12 +312,12 @@ export class VoicePlayer extends EventTarget {
       if (id === this.runId && this.state !== 'paused') this._state('playing', this._playingMessage(item));
     };
     this.audio.onpause = () => {
-      if (id === this.runId && this.isPlaying && !this.audio.ended) this._state('paused', 'పాజ్ చేయబడింది · Paused. Press play to continue.');
+      if (id === this.runId && this.isPlaying && this.audio.paused && !this.audio.ended) this._state('paused', 'పాజ్ చేయబడింది · Paused. Press play to continue.');
     };
     this.audio.onwaiting = () => { if (id === this.runId && this.isPlaying) this._state('loading', 'లోడ్ అవుతోంది · Loading audio…'); };
     this.audio.ontimeupdate = this.audio.onloadedmetadata = () => { if (id === this.runId) this._updateProgress(); };
     const failed = error => {
-      if (id !== this.runId) return;
+      if (id !== this.runId || !this.isPlaying) return;
       if (error?.name === 'NotAllowedError') {
         this._state('paused', 'వినడానికి ప్లే నొక్కండి · Tap play to allow audio.');
         return;
@@ -328,6 +331,8 @@ export class VoicePlayer extends EventTarget {
     this.audio.onerror = failed;
     this._state('loading', 'లోడ్ అవుతోంది · Loading audio…');
     if (this.audio.src !== item.audio.url) this.audio.src = item.audio.url;
+    // Loading a new source can reset playbackRate to defaultPlaybackRate.
+    this.audio.playbackRate = this.rate;
     try { this.audio.play()?.catch(failed); } catch (error) { failed(error); }
   }
   _playSpeech(item) {
