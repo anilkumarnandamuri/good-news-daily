@@ -58,3 +58,4 @@ Resolved in `styles.css` and `reader.js`. The `.r-listen.on` pulse animation use
 - 2026-10-15 16:15 PDT run-job resumed
 - 2026-10-15 16:15 PDT Codex review: 3 must-fix item(s); running one fix pass
 - 2026-10-15 16:24 PDT All must-fix findings resolved, tests passing, screenshots refreshed
+- 2026-10-15 16:27 PDT Codex review: 3 must-fix item(s) open
