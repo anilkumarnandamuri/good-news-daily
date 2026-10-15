@@ -9,7 +9,7 @@ Standalone bilingual (EN/TE) voice module for Good News Daily: pre-built MP3 per
 
 ## Milestones
 - [x] **GV-0** Existing work as of 2026-10-15 13:41 PT: Responsive bilingual player + demo (queue, highlight, light/dark); Sample MP3s for 5 stories in both languages, intros, radio mixes; 4 Node chunker/schema tests + 3 Python builder tests; Fixed playback-rate reset on source change; README/API/INTEGRATION docs; first milestone e181290 (in .local-git) — done (history) 993b96b
-- [~] **GV-1** Finish browser smoke checks (tests/browser_smoke.py), inspect mobile/dark screenshots in artifacts/GV-1/, fix findings, commit. — claimed by agy/claude-sonnet-5-5-medium 2026-10-15 13:45 PDT (job/GV-1)
+- [~] **GV-1** Finish browser smoke checks (tests/browser_smoke.py), inspect mobile/dark screenshots in artifacts/GV-1/, fix findings, commit. — in-review 2026-10-15 13:47 PDT by agy/claude-sonnet-5-5-medium (job/GV-1 @ 7217958)
 - [ ] **GV-2** Integrate into good-news (see GN-3) once GV-1 is verified.
 
 ## Definition of done
