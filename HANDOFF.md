@@ -1,10 +1,10 @@
 # HANDOFF — good-news-voice
 
 ## Updated
-2026-10-15 13:41 PT | Grok Bot (agent-handoff setup) | branch `docs/agent-handoff-20261015` | last commit 993b96b
+2026-10-15 13:45 PDT | agy/claude-sonnet-5-5-medium | branch `job/GV-1` | last commit c1dbeb6
 
 ## Current task / claim
-None. Next unclaimed: **GV-1**.
+**GV-1** Finish browser smoke checks (tests/browser_smoke.py), inspect mobile/dark screenshots in artifacts/GV-1/, fix findings, commit. — status **claimed** by agy/claude-sonnet-5-5-medium on `job/GV-1` (since 2026-10-15 13:45 PDT). Last note: 2026-10-15 13:45 PDT claimed by agy/claude-sonnet-5-5-medium
 
 ## Done this session
 - Added AGENTS.md, PLAN.md, HANDOFF.md, DECISIONS.md and .cursor/rules/agents.mdc from README, file tree and git log.
