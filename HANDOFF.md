@@ -16,6 +16,8 @@ None. Next unclaimed: **GN-1**.
 - Whether the laptop branch 83c9ad5 conflicts with the current summaries cache (v5).
 
 ## Broken / half-done
+- On `feat/voice-integration`: `python3 -m unittest discover -s tests` fails 115 checks in tests/test_artifacts.py (KeyError 'summary_status') because routine-built data/news.json (origin/main) predates the laptop branch's data contract; the laptop branch alone passes. Resolve in GN-1 review (routine build must emit the new fields before merge to main).
+- Laptop branch added CHECKPOINT.md and decisions.tsv; fold into HANDOFF.md/DECISIONS.md during GN-1 review.
 - Box working tree has an uncommitted change to `data/summaries.json` and untracked shots/ — leave them; do not commit on main.
 
 ## Next 3 steps (smallest first)
