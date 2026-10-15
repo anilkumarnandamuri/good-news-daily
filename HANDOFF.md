@@ -1,10 +1,10 @@
 # HANDOFF — good-news-voice
 
 ## Updated
-2026-10-15 13:47 PDT | agy/claude-sonnet-5-5-medium | branch `job/GV-1` | last commit 7217958
+2026-10-15 13:48 PDT | agy/claude-sonnet-5-5-medium | branch `job/GV-1` | last commit bf99b53
 
 ## Current task / claim
-**GV-1** Finish browser smoke checks (tests/browser_smoke.py), inspect mobile/dark screenshots in artifacts/GV-1/, fix findings, commit. — status **in-review** by agy/claude-sonnet-5-5-medium on `job/GV-1` (since 2026-10-15 13:45 PDT). Last note: smoke checks + screenshot matrix built Next: Codex review
+**GV-1** Finish browser smoke checks (tests/browser_smoke.py), inspect mobile/dark screenshots in artifacts/GV-1/, fix findings, commit. — status **in-review** by agy/claude-sonnet-5-5-medium on `job/GV-1` (since 2026-10-15 13:45 PDT). Last note: agy/claude-sonnet-5-5-medium build + Codex review passed done-check Next: Chief of Staff review/merge of job/GV-1
 
 ## Done this session
 - Ran tests/browser_smoke.py: all existing checks passed, no product bugs found.
