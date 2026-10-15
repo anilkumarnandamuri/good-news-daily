@@ -117,6 +117,22 @@ class RoutineCompatibility(unittest.TestCase):
         self.assertIn("sum_en", item)
         self.assertIn("sum_te", item)
 
+    def test_unittest_discovery_succeeds_when_playwright_is_absent(self):
+        with patch.dict(sys.modules, {"playwright": None, "playwright.sync_api": None}):
+            sys.modules.pop("test_legacy_feed_browser", None)
+            sys.modules.pop("tests.test_legacy_feed_browser", None)
+            loader = unittest.TestLoader()
+            suite = loader.discover(str(ROOT / "tests"), pattern="test_*.py")
+            failed_modules = []
+            def check_suite(s):
+                for t in s:
+                    if isinstance(t, unittest.TestSuite):
+                        check_suite(t)
+                    elif isinstance(t, unittest.loader._FailedTest):
+                        failed_modules.append(t)
+            check_suite(suite)
+            self.assertEqual(failed_modules, [], f"Discovery failed for modules: {failed_modules}")
+
 
 if __name__ == "__main__":
     unittest.main()

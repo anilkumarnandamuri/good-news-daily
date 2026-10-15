@@ -182,6 +182,7 @@ def run(items):
             else:
                 pairs = legacy_pairs(item.get("sum_en", ""), item.get("sum_te", ""))
         except (ValueError, TypeError, AttributeError):
+            cache.pop(item["id"], None)
             pairs = None
         if pairs is None and enabled and time.monotonic() < deadline:
             try:
@@ -194,15 +195,21 @@ def run(items):
             cache[item["id"]] = dict(pairs=pairs, en=" ".join(p["en"] for p in pairs),
                 te=" ".join(p["te"] for p in pairs), n=len(pairs), v=VERSION,
                 fingerprint=fingerprint(item), method=method,
-                description_fingerprint=description_fingerprint(item) or old.get("description_fingerprint"))
+                description_fingerprint=description_fingerprint(item) or old.get("description_fingerprint"),
+                t=old.get("t") or int(time.time()))
             item["sum_en"] = cache[item["id"]]["en"]
             item["sum_te"] = cache[item["id"]]["te"]
             item["summary_status"] = "paired"
             complete += 1
         else:
+            cache.pop(item["id"], None)
             item["sum_en"] = item["sum_te"] = ""
             item["summary_status"] = "excerpt"
         item.pop("desc", None)
+    live = {i["id"] for i in items}
+    now = time.time()
+    cache = {k: v for k, v in cache.items()
+             if k in live or (isinstance(v, dict) and isinstance(v.get("t"), (int, float)) and now - v["t"] < 7 * 86400)}
     CACHE.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=CACHE.parent, delete=False) as staged:
         try:

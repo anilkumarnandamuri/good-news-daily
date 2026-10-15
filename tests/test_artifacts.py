@@ -39,7 +39,15 @@ class ArtifactContracts(unittest.TestCase):
         complete = 0
         for item in data["items"]:
             with self.subTest(story=item["id"]):
-                if item["summary_status"] == "paired":
+                if "summary_status" not in item:
+                    has_en = isinstance(item.get("sum_en"), str) and bool(item.get("sum_en"))
+                    has_te = isinstance(item.get("sum_te"), str) and bool(item.get("sum_te"))
+                    self.assertEqual(has_en, has_te)
+                    if has_en and has_te:
+                        complete += 1
+                    else:
+                        self.assertEqual((item.get("sum_en", ""), item.get("sum_te", "")), ("", ""))
+                elif item["summary_status"] == "paired":
                     pairs = summarize.legacy_pairs(item["sum_en"], item["sum_te"])
                     self.assertEqual(pairs, cache[item["id"]]["pairs"])
                     complete += 1

@@ -157,3 +157,16 @@ test('legacy saved summaries use the explicit excerpt fallback',async()=>{
  assert.match(e.nodes.get('rBody').innerHTML,/Publisher excerpt/);assert.ok(!e.nodes.get('rBody').innerHTML.includes('A short old summary.'));
  const shared=decodeURIComponent(e.nodes.get('rWa').href);assert.ok(!shared.includes(legacy.sum_en));assert.ok(!shared.includes(legacy.sum_te));assert.ok(shared.includes(legacy.title));
 });
+
+test('feed item without summary_status but with both summaries renders the summaries',async()=>{
+ const legacyItem={...stories[0],id:'legacy-feed-item',sum_en:'A complete English summary.',sum_te:'పూర్తి తెలుగు సారాంశం.'};delete legacyItem.summary_status;
+ const e=environment({news:[legacyItem]});
+ e.run('sticky.js');e.run('app.js');e.run('reader.js');await flush();
+ e.ctx.location.hash='#/s/legacy-feed-item';e.dispatch('hashchange');
+ assert.equal(e.nodes.get('reader').hidden,false);
+ assert.ok(!e.nodes.get('rBody').innerHTML.includes('Publisher excerpt'));
+ assert.ok(e.nodes.get('rBody').innerHTML.includes('A complete English summary.'));
+ assert.ok(e.nodes.get('rBody').innerHTML.includes('పూర్తి తెలుగు సారాంశం.'));
+ assert.match(e.nodes.get('rBody').innerHTML,/In short/);
+});
+
