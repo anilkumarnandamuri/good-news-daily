@@ -1,10 +1,10 @@
 # HANDOFF — good-news
 
 ## Updated
-2026-10-15 15:53 PDT | agy/gemini-3.8-flash-high | branch `job/GN-1` | last commit 54bf5f7
+2026-10-15 15:53 PDT | agy/gemini-3.8-flash-high | branch `job/GN-1` | last commit 567e6b4
 
 ## Current task / claim
-**GN-1** Import laptop branch codex/goodnews-20261014 (83c9ad5: paired EN/TE summaries, `pairs` field) onto the box — needs the laptop or a push from it; Anil/Chief of Staff only. — status **in-review** by agy/gemini-3.8-flash-high on `job/GN-1` (since 2026-10-15 15:30 PDT). Last note: Fixed all 4 review-1 must-fix items (chunker decimals, browser test dependency isolation, controlled feed fixture, cache eviction) Next: Codex review
+**GN-1** Import laptop branch codex/goodnews-20261014 (83c9ad5: paired EN/TE summaries, `pairs` field) onto the box — needs the laptop or a push from it; Anil/Chief of Staff only. — status **claimed** by agy/gemini-3.8-flash-high on `job/GN-1` (since 2026-10-15 15:30 PDT). Last note: agy/gemini-3.8-flash-high build finished; done-check FAIL (see artifacts/GN-1/done-check.txt) Next: fix done-check failures on job/GN-1
 
 ## Done this session
 - Implemented transitional legacy feed adapter in `app.js` when loading `data/news.json` so stories without `summary_status` have it derived ('paired' when `sum_en` and `sum_te` non-empty, otherwise 'excerpt') without modifying routine-owned data files or affecting saved localStorage stories.
