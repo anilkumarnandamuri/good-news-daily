@@ -6,9 +6,11 @@
  let DATA=[],NAV={},cur=null,fromList=false,speaking=null,returnFocus=null,returnHref=null;
  const background=new Map();
  const ago=iso=>{const m=(Date.now()-new Date(iso))/6e4;if(m<60)return Math.max(1,m|0)+" min ago";if(m<1440)return (m/60|0)+" hours ago";return (m/1440|0)+" days ago"};
- // font size
- let fs=Number(GN.LS.get("rfs",1.15));const setFs=v=>{fs=Math.min(1.8,Math.max(1,Number.isFinite(v)?v:1.15));GN.LS.set("rfs",fs);R.style.setProperty("--rfs",fs)};setFs(fs);
- document.getElementById("rSm").onclick=()=>setFs(fs-.15);document.getElementById("rLg").onclick=()=>setFs(fs+.15);
+ // The root scale also adjusts list text when the reader closes.
+ const smaller=document.getElementById("rSm"),larger=document.getElementById("rLg");
+ function paintSize(){const s=GN.textScale.get();for(const [b,disabled] of [[smaller,s<=GN.textScale.min],[larger,s>=GN.textScale.max]]){b.disabled=disabled;b.setAttribute("aria-disabled",String(disabled))}}
+ function resize(delta){const s=GN.textScale.set(GN.textScale.get()+delta);paintSize();toast("Text size "+Math.round(s*100)+"%")}
+ smaller.onclick=()=>resize(-GN.textScale.step);larger.onclick=()=>resize(GN.textScale.step);paintSize();
  document.getElementById("rBack").onclick=()=>{fromList?history.back():(location.hash="")};
  document.getElementById("rShare").onclick=async()=>{const u=location.href;try{if(navigator.share)await navigator.share({title:cur&&cur.title,url:u});else{await navigator.clipboard.writeText(u);toast("Link copied ✓")}}catch(e){}};
  function toast(t){const d=document.createElement("div");d.className="r-toast";d.textContent=t;d.setAttribute("role","status");R.appendChild(d);setTimeout(()=>d.remove(),2600)}

@@ -64,3 +64,9 @@
 - Alternatives rejected:
   - Relaxing `validate_pairs` to 1–6 pairs globally: Violates the contract that LLM-generated summaries must contain 4–6 sentence pairs.
   - Dropping short stories to `summary_status = 'excerpt'`: Regresses story summaries compared to the live v5 routine.
+
+## D009 — GN-5: One persisted root text scale and compact photo cards (2026-10-15, Codex)
+- Decision: Default to a 100% root / 1rem body. Apply one GN.textScale setting in sticky.js before app and reader initialization, bounded to 0.85–1.6 in 0.15 steps and rounded to two decimals. Reader A−/A+ update the root, announce the percentage, and disable at bounds; remove the header pill and reader multiplier. Prefer gn_textScale, migrate gn_rfs or legacy rfs (1.15 becomes 1), and delete obsolete size keys. Restore 300px mobile / 400px desktop Today's 5 cards, bottom photo gradients, and three-line list/Today's 5 headlines; cap hero height at 360px mobile / 400px desktop.
+- Why: The forced 125% root, default large-text mode, and separate reader multiplier compounded text growth. Opaque body panels and removed clamps hid photos and enlarged the first screen. A single early scale restores predictable behavior while retaining focus styles and 44px targets.
+- Alternatives rejected: Keeping two size controls or a reader-only multiplier; keeping the opaque panels or 400px minimum mobile cards. Browser tests reuse the existing local-server fixture with the repo feed, as requested, rather than routing a synthetic feed.
+- Workflow: The explicit GN-5 instruction to work only in this directory and not commit overrides the general board checkpoint/commit instructions. GN-5 was already claimed on job/GN-5; no board mutation or commit was performed. Browser validation and screenshots remain pending because this sandbox denies socket creation for the local server.

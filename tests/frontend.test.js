@@ -34,7 +34,7 @@ function environment({news=[],search='',storageBlocked=false}={}){
   appendChild(el){this.children.push(el)}
   remove(){this.isConnected=false}
  }
- for(const id of ['hero','feed','tabs','theme','textSize','date','streak','gen','reader','rBody','rBack','rSave','rSm','rLg','rShare','main','push','pushBtn','pushHint'])nodes.set(id,new Element(id,['theme','textSize','rBack','rSave','rSm','rLg','rShare','pushBtn'].includes(id)?'button':'div'));
+ for(const id of ['hero','feed','tabs','theme','date','streak','gen','reader','rBody','rBack','rSave','rSm','rLg','rShare','main','push','pushBtn','pushHint'])nodes.set(id,new Element(id,['theme','rBack','rSave','rSm','rLg','rShare','pushBtn'].includes(id)?'button':'div'));
  nodes.get('reader').hidden=true;nodes.get('pushBtn').label=new Element();
  document={activeElement:new Element(),documentElement:new Element(),body:new Element(),title:'',getElementById:id=>nodes.get(id),
   querySelector(selector){if(selector==='#tabs button')return nodes.get('tabs').children[0];if(selector.startsWith('#'))return nodes.get(selector.slice(1));const m=selector.match(/data-k="([^"]+)"/);return m?nodes.get('tabs').children.find(b=>b.dataset.k===m[1]):null},
@@ -44,7 +44,7 @@ function environment({news=[],search='',storageBlocked=false}={}){
   navigator:{userAgent:'Test desktop',platform:'Linux',maxTouchPoints:0},location:{search,hash:'',href:'http://local/',origin:'http://local',pathname:'/'},history:{back(){ctx.location.hash='';listeners.get('hashchange')?.forEach(f=>f())}},
   matchMedia(q){if(!media.has(q))media.set(q,{matches:false,addEventListener(_,fn){this.change=fn}});return media.get(q)},
   addEventListener(k,fn){if(!listeners.has(k))listeners.set(k,[]);listeners.get(k).push(fn)},
-  localStorage:{getItem(k){if(storageBlocked)throw new Error('Storage disabled');return stored.get(k)??null},setItem(k,v){if(storageBlocked)throw new Error('Storage disabled');stored.set(k,v)}},
+  localStorage:{getItem(k){if(storageBlocked)throw new Error('Storage disabled');return stored.get(k)??null},removeItem(k){if(storageBlocked)throw new Error('Storage disabled');stored.delete(k)},setItem(k,v){if(storageBlocked)throw new Error('Storage disabled');stored.set(k,v)}},
   fetch:async url=>({ok:true,json:async()=>url.includes('thoughts')?[]:{generated:'2026-10-14T00:00:00Z',items:news}}),
   scrollTo(){},setTimeout(){},requestAnimationFrame:f=>f()};
  ctx.window=ctx;vm.createContext(ctx);
@@ -97,13 +97,31 @@ test('feed uses lazy dimensioned images and changing category retains the catego
  assert.ok(!e.nodes.get('feed').innerHTML.includes('background-image:url'));
 });
 
-test('large text defaults on, persists, and works with storage blocked',async()=>{
+test('single text scale defaults to normal, clamps, persists, and tolerates blocked storage',()=>{
+ assert.ok(!source('index.html').includes('id="textSize"'));
  for(const storageBlocked of [false,true]){
-  const e=environment({news:stories,storageBlocked});e.run('sticky.js');e.run('app.js');await flush();
-  assert.equal(e.ctx.document.documentElement.dataset.text,'large');
-  e.nodes.get('textSize').click();assert.equal(e.ctx.document.documentElement.dataset.text,'standard');
-  if(!storageBlocked)assert.equal(e.stored.get('gn_largeText'),'false');
+  const e=environment({storageBlocked});e.run('sticky.js');e.run('reader.js');
+  const scale=e.ctx.GN.textScale,html=e.ctx.document.documentElement;
+  assert.equal(scale.get(),1);assert.equal(html.style.fontSize,'100%');
+  e.nodes.get('rLg').click();assert.equal(scale.get(),1.15);assert.equal(html.style.fontSize,'115%');
+  const toast=e.nodes.get('reader').children.at(-1);assert.equal(toast.textContent,'Text size 115%');assert.equal(toast.getAttribute('role'),'status');
+  e.nodes.get('rSm').click();e.nodes.get('rSm').click();assert.equal(scale.get(),.85);
+  assert.equal(e.nodes.get('rSm').disabled,true);assert.equal(e.nodes.get('rSm').getAttribute('aria-disabled'),'true');
+  for(let i=0;i<10;i++)e.nodes.get('rLg').click();
+  assert.equal(scale.get(),1.6);assert.equal(e.nodes.get('rLg').disabled,true);assert.equal(e.nodes.get('rLg').getAttribute('aria-disabled'),'true');
+  assert.equal(e.nodes.get('rSm').disabled,false);
+  if(!storageBlocked){assert.equal(e.stored.get('gn_textScale'),'1.6');e.run('sticky.js');assert.equal(e.ctx.GN.textScale.get(),1.6)}
+  for(let i=0;i<10;i++)e.nodes.get('rSm').click();assert.equal(e.ctx.GN.textScale.get(),.85);
  }
+});
+
+test('text scale migrates merge defaults and legacy choices, preserving newer settings',()=>{
+ for(const key of ['gn_rfs','rfs'])for(const [old,want] of [[1.15,1],[1.3,1.3],[.2,.85],[9,1.6],['invalid',1]]){
+  const e=environment();e.stored.set(key,JSON.stringify(old));e.stored.set('gn_largeText','true');e.run('sticky.js');
+  assert.equal(e.ctx.GN.textScale.get(),want);assert.equal(e.stored.get('gn_textScale'),String(want));
+  for(const removed of ['gn_largeText','gn_rfs','rfs'])assert.equal(e.stored.has(removed),false);
+ }
+ const e=environment();e.stored.set('gn_textScale','1.45');e.stored.set('gn_rfs','1.15');e.run('sticky.js');assert.equal(e.ctx.GN.textScale.get(),1.45);
 });
 
 test('layout rerenders only at its media-query breakpoint',async()=>{
@@ -139,7 +157,7 @@ test('reader traps forward and reverse keyboard focus and preserves save action'
 test('old theme and reader size preferences migrate without overwriting newer choices',async()=>{
  const e=environment({news:stories});e.stored.set('theme','dark');e.stored.set('rfs','1.3');
  e.run('sticky.js');e.run('app.js');e.run('reader.js');await flush();
- assert.equal(e.ctx.document.documentElement.dataset.theme,'dark');assert.equal(e.nodes.get('reader').values.get('--rfs'),1.3);
+ assert.equal(e.ctx.document.documentElement.dataset.theme,'dark');assert.equal(e.ctx.document.documentElement.style.fontSize,'130%');
  const second=environment({news:stories});second.stored.set('theme','dark');second.stored.set('gn_theme','"light"');
  second.run('sticky.js');second.run('app.js');await flush();assert.equal(second.ctx.document.documentElement.dataset.theme,'light');
 });

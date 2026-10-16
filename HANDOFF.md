@@ -1,44 +1,45 @@
 # HANDOFF — good-news
 
 ## Updated
-2026-10-15 21:28 PDT | codex/gpt-6.1-sol | branch `job/GN-5` | last commit 5bdf08c
+2026-10-15 21:30 PDT | Codex | branch `job/GN-5` | changes intentionally uncommitted
 
 ## Current task / claim
-**GN-5** Fix mobile text-size regressions from 2026-10-15 merge: default normal ~16px body (was forced 125% root + Large text on by default), one unified working text-size control (A-/A+ with bounds+persistence; Large-text pill removed from the header), compact Today's 5 / hero cards on the first screen at 384px; Playwright assertions. — status **claimed** by codex/gpt-6.1-sol on `job/GN-5` (since 2026-10-15 21:28 PDT). Last note: 2026-10-15 21:28 PDT claimed by codex/gpt-6.1-sol
+**GN-5** — implementation ready for review; browser verification pending. Existing claim retained on `job/GN-5`. PLAN.md and the external board were not changed: the user explicitly limited work to this directory and prohibited commits.
 
 ## Done this session
-- Fixed Codex review [P1] finding (Routine regression gate: short new items regress to excerpt-only):
-  - Updated `validate_pairs(pairs, min_sentences=MIN_SENTENCES, max_sentences=MAX_SENTENCES)` to accept an optional `min_sentences` parameter while defaulting to 4 (`MIN_SENTENCES`), preserving strict 4–6 sentence pair validation for `llm_pairs()` and `legacy_pairs()`.
-  - In `extract_and_translate()`, when 1–3 sentences are extracted and translated, validated the pairs with `validate_pairs(pairs, min_sentences=1)` and marked the item with `summary_status = 'summary'`, while 4–6 sentences are marked `summary_status = 'paired'`.
-  - In `run()`, when `status == 'summary'`, stored `generated["en"]`, `generated["te"]`, and `generated["pairs"]` in cache under `summary_status = 'summary'`, enabling instant reuse on subsequent runs without network calls or re-translation.
-  - Updated `_tok` in `scripts/summarize.py` to `re.findall(r"[\w\u0C00-\u0C7F]{3,}", text.casefold())` matching the v5 tokenization logic so Telugu sentences with Unicode combining vowel marks are properly recognized and extracted.
-  - Added comprehensive offline unit tests in `tests/test_summaries.py` covering: 1-sentence EN fallback -> summary, 2-sentence TE fallback -> summary, 5-sentence fallback -> paired, empty translation -> excerpt, cached summary reuse without translate, and LLM hook 4–6 pair strictness.
-  - Appended decision D008 in `DECISIONS.md` and updated `README.md` and `tasks/GN-4.md`.
-  - Re-ran Playwright browser tests and regenerated screenshots in `artifacts/GN-4/` (`gn4-summary-390.png` and `gn4-summary-1280.png`).
+- Restored normal root/body typography, smaller metadata/pills, 300px mobile Today's 5 cards, 400px wider cards, photo gradients and three-line headlines. Hero height is 360px mobile and 400px wider; image markup, focus styles and touch targets retained.
+- Removed the header Large text control and its app/CSS logic.
+- Added GN.textScale in sticky.js: early root application, 0.85–1.6 bounds, 0.15 steps, two-decimal rounding, GN.LS persistence and legacy migration/cleanup. Reader A−/A+ use this single setting with disabled/aria-disabled bounds and role=status percentage toasts. Removed --rfs multipliers.
+- Updated frontend unit checks; added tests/test_text_size_browser.py for real-feed 384x832 DPR3 touch/mobile and 1280x900 desktop, typography/layout assertions, reader size changes, hash reload persistence, bounds and screenshot capture.
+- Updated README.md and appended D009 in DECISIONS.md.
 
 ## Verified (with evidence)
-- `python3 -m unittest discover -s tests -p 'test_*.py' && node --test tests/*.test.js && node --test voice/tests/*.test.js && python3 -m pytest tests/test_legacy_feed_browser.py -q` all pass (43 unittest pass, 13 node frontend pass, 5 node voice pass, 5 playwright browser pass).
-- `/workspace/tools/agent-workflow/done-check.sh /workspace/repos/.wt/good-news-gn4 GN-4` passes task file, browser test, and screenshot checks.
-- Mobile (`artifacts/GN-4/gn4-summary-390.png`) and desktop (`artifacts/GN-4/gn4-summary-1280.png`) screenshots verified.
-- `data/news.json`, `data/summaries.json`, `scripts/build.py`, `push.js`, `OneSignalSDKWorker.js`, `scripts/send_push.py`, `scripts/digest.py` verified byte-identical to origin/main baseline.
+- `python3 -m unittest discover -s tests -p 'test_*.py'`: 43 passed.
+- `node --test tests/*.test.js`: passed; direct execution confirms 14 frontend tests passed.
+- `node --test voice/tests/*.test.js`: passed; direct execution confirms 5 voice tests passed.
+- `python3 -m pytest tests/ -q`: 43 passed, 156 subtests passed, 7 browser setup errors from sandbox socket denial.
+- Targeted GN-5 browser run: both parameterizations hit the same socket denial before browser launch.
+- `git diff --check`: passed. No changes to data/*.json, scripts/, push.js, OneSignalSDKWorker.js, or voice/ source.
 
 ## Unverified
-- None.
+- Browser layout, interaction assertions and screenshots: the shared http.server fixture cannot create an AF_INET socket (`PermissionError: [Errno 1] Operation not permitted`). No GN-5 screenshots were generated; no visual acceptance is claimed.
 
 ## Broken / half-done
-- None.
+- Implementation complete; browser acceptance remains pending in a socket-enabled environment. No known application failure from available checks.
 
 ## Next 3 steps (smallest first)
-1. Codex review for GN-4 (`artifacts/GN-4/review.md`).
-2. GN-2: Add an automated Playwright smoke test (list, reader EN/TE, saved tab at 390px/1280px) with screenshots in artifacts/GN-2/; no data-file changes.
-3. GV-2: Integrate voice player into Good News UI using the `pairs` field behind `?voice=1`.
+1. Run `python3 -m pytest tests/test_text_size_browser.py -q` in a socket-enabled environment.
+2. Inspect artifacts/GN-5/gn5-landing-384.png, gn5-reader-384.png, gn5-reader-Aplus-384.png and gn5-landing-1280.png, then run the full pytest suite.
+3. Review GN-5 and update the external board through the authorized workflow; commit only when explicitly authorized.
 
 ## Blockers / questions for Anil
-- None.
+- Sandbox socket creation blocks browser tests and screenshots. No product clarification needed.
 
 ## How to resume
 ```sh
-cd /workspace/good-news
-python3 -m unittest discover -s tests -p 'test_*.py' && node --test tests/*.test.js && node --test voice/tests/*.test.js && python3 -m pytest tests/test_legacy_feed_browser.py -q
-/workspace/projects/board.sh status
+cd /workspace/repos/.wt/good-news-gn5
+python3 -m unittest discover -s tests -p 'test_*.py'
+node --test tests/*.test.js
+node --test voice/tests/*.test.js
+python3 -m pytest tests/ -q
 ```
