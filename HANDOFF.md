@@ -1,10 +1,10 @@
 # HANDOFF — good-news
 
 ## Updated
-2026-10-15 21:11 PDT | agy/gemini-3.8-flash-high | branch `job/GV-2` | last commit 3ee2d1b
+2026-10-15 21:55 PDT | agy/gemini-3.8-flash-high | branch `job/GV-2` | last commit 469202d
 
 ## Current task / claim
-**GV-2** Integrate voice player into Good News UI using the `pairs` field — status **in-review** by agy/gemini-3.8-flash-high on `job/GV-2` (since 2026-10-15 13:58 PDT). Last note: Voice module failure recovery, fixed feed fixtures routing, 13 browser tests passing Next: Codex review on GV-2
+**GV-2** Integrate voice player into Good News UI using the `pairs` field — status **claimed** by agy/gemini-3.8-flash-high on `job/GV-2` (since 2026-10-15 13:58 PDT). Last note: fix pass 469202d resolved 2 prior P2s; fresh Codex review found 2 new P2s (reader.js:133,135); awaiting Anil Next: Codex fix pass for 2 new P2s if Anil approves
 
 ## Done this session
 - Fixed Codex review [P2] finding (Handle an unavailable voice module before extending its class — reader.js:62-65):
