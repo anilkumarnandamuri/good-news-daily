@@ -77,3 +77,4 @@ Test command for the task file: python3 -m unittest discover -s tests -p 'test_*
    - **Fix**: Updated line 50 of `tools/routine_sim.py` to `ok = n_sum >= b_sum or (n_total > 0 and n_sum == n_total)`, explicitly requiring a non-empty simulated feed before accepting the all-stories-summarized condition. Added unit test `test_routine_sim_gate_rejects_empty_feed` in `tests/test_compatibility.py`.
 
 - 2026-10-15 19:51 PDT Codex review: 0 must-fix item(s) open
+- 2026-10-15 19:56 PDT run-job resumed
