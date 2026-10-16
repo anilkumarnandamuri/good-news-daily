@@ -117,8 +117,8 @@
   if(story&&story.pairs&&story.pairs.length){sentences=story.pairs.map(p=>p[lang]||"").filter(Boolean)}
   if(!sentences.length){const txt=(story&&story["sum_"+lang])||(story&&story.lang===lang?story.summary:"")||"";sentences=splitSentences(txt)}
   // The resolved Telugu path must not cross an await: activation belongs to this tap.
-  const ready=lang==="te"&&teluguManifestResult;
-  let mod=voiceModule,result=ready;
+  const ready=lang==="te"&&teluguManifestResult&&typeof voiceModule?.VoicePlayer==="function";
+  let mod=voiceModule,result=teluguManifestResult;
   if(!ready){
    pendingBtn=btn;btn.classList.add("on");btn.querySelector("span").textContent="⏹ Stop";
    [mod,result]=await Promise.all([getVoiceModule(),getManifest(lang)]);
@@ -145,7 +145,7 @@
     const ok=super._makeQueue();
     if(ok&&sentences.length){for(const it of this.queue){if(!it.intro){
      it.chunks=[];it.chunkSentenceIndexes=[];
-     sentences.forEach((sentence,index)=>{for(const chunk of mod.chunkText(sentence)){
+     sentences.forEach((sentence,index)=>{for(const chunk of (typeof mod.chunkText==="function"?mod.chunkText(sentence):[sentence])){
       it.chunks.push(chunk);it.chunkSentenceIndexes.push(index);
      }});
     }}}
