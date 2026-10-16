@@ -1,10 +1,10 @@
 # HANDOFF — good-news
 
 ## Updated
-2026-10-15 16:09 PDT | agy/gemini-3.8-flash-high | branch `job/GN-1` | last commit 80dbc26
+2026-10-15 19:26 PDT | agy/gemini-3.8-flash-high | branch `job/GN-4` | last commit 9ac42e1
 
 ## Current task / claim
-**GN-1** Import laptop branch codex/goodnews-20261014 (83c9ad5: paired EN/TE summaries, `pairs` field) onto the box — needs the laptop or a push from it; Anil/Chief of Staff only. — status **in-review** by agy/gemini-3.8-flash-high on `job/GN-1` (since 2026-10-15 15:30 PDT). Last note: agy/gemini-3.8-flash-high build + Codex review passed done-check Next: Chief of Staff review/merge of job/GN-1
+**GN-4** Summaries fallback: v6 falls back to the live extract-and-translate method when no LLM hook is configured (no excerpt-only regression) — status **claimed** by agy/gemini-3.8-flash-high on `job/GN-4` (since 2026-10-15 19:26 PDT). Last note: 2026-10-15 19:26 PDT claimed by agy/gemini-3.8-flash-high
 
 ## Done this session
 - Evicted invalidated summary cache entries in `scripts/summarize.py` (`cache.pop(item["id"], None)`) when source or description changes, ensuring corrected facts cannot silently revert to outdated summaries during subsequent rebuilds.
