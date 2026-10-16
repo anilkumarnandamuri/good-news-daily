@@ -83,3 +83,4 @@ Resolved in `styles.css` and `reader.js`. The `.r-listen.on` pulse animation use
 - 2026-10-15 17:37 PDT run-job resumed
 - 2026-10-15 17:37 PDT Codex review: 1 must-fix item(s); running one fix pass
 - 2026-10-15 17:45 PDT [P2] decimal and abbreviation splitting resolved; 14 node tests + 6 browser tests passing; screenshots updated
+- 2026-10-15 17:48 PDT Codex review: 2 must-fix item(s) open
