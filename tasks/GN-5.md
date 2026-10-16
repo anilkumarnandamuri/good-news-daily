@@ -1,5 +1,9 @@
 # GN-5 — Mobile text-size + landing regressions from the 2026-10-15 merge
 
+Status: in-review
+
+Test command: python3 -m unittest discover -s tests -p 'test_*.py' && node --test tests/*.test.js && node --test voice/tests/*.test.js && python3 -m pytest tests/ -q
+
 Reported by Anil on the live site (Samsung Galaxy S24, Android Chrome, ~384 CSS px):
 1. Font is too big overall.
 2. A− / A+ appear to change nothing.
@@ -35,3 +39,10 @@ Phone screenshot: big "Large text" pill in the header next to the streak + theme
 - Phone reader image height is now `min(30vh,240px)` below 760px.
 - Browser coverage presets 160% scale before load for All, Science and Health, checks card/body/heading containment, and checks the first reader summary starts above 832px at default phone scale before scrolling.
 - Requested unittest (43 tests), frontend Node and voice Node commands passed. Browser run: five setup errors from sandbox AF_INET socket denial; screenshots and layout acceptance pending. No commit or push; protected paths untouched.
+
+## Checkpoint
+- 2026-10-15 21:40 PDT build pass (codex gpt-6.1-sol medium, workspace-write); committed 85e43ff
+- 2026-10-15 21:47 PDT Codex review: 1 must-fix item ([P2] hero clipping at 160%); running one fix pass
+- 2026-10-15 21:52 PDT fix pass complete (cards grow, hero h2 clamp, phone reader image min(30vh,240px))
+- 2026-10-15 21:55 PDT Codex review: 0 must-fix item(s) open (artifacts/GN-5/review.md; first review kept as review-1.md)
+- 2026-10-15 21:56 PDT verified on box: unittest 43 OK, node frontend 14/14, node voice 5/5, pytest tests/ 53 passed (incl. Playwright text-size + legacy browser), voice unittest 3 OK, voice browser_smoke PASS

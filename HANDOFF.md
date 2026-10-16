@@ -1,10 +1,10 @@
 # HANDOFF — good-news
 
 ## Updated
-2026-10-15 21:36 PDT | Codex | branch `job/GN-5` | one fix pass, intentionally uncommitted
+2026-10-15 21:38 PDT | codex/gpt-6.1-sol | branch `job/GN-5` | last commit ba412a0
 
 ## Current task / claim
-**GN-5** — addressed the P2 review finding and mobile reader image height. Existing claim retained; no board checkpoint or commit under the user's explicit no-commit instruction and workspace limits.
+**GN-5** Fix mobile text-size regressions from 2026-10-15 merge: default normal ~16px body (was forced 125% root + Large text on by default), one unified working text-size control (A-/A+ with bounds+persistence; Large-text pill removed from the header), compact Today's 5 / hero cards on the first screen at 384px; Playwright assertions. — status **in-review** by codex/gpt-6.1-sol on `job/GN-5` (since 2026-10-15 21:28 PDT). Last note: text size + landing fixes built by codex gpt-6.1-sol; codex review 0 must-fix; all tests pass; NOT pushed Next: Anil approves; merge job/GN-5 into main and push (avoid ~6:30 AM PT routine window)
 
 ## Done this session
 - Made hero and Today's 5 cards grow with normal-flow text over the existing absolute photo/gradient layers. Minimum heights retain 360px mobile heroes, 300px mobile Today's 5 cards, and 400px wider cards.
