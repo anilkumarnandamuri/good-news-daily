@@ -1,10 +1,10 @@
 # HANDOFF — good-news
 
 ## Updated
-2026-10-15 22:58 PDT | codex | branch `job/GN-6` | last commit d65154f
+2026-10-16 13:58 PDT | codex | branch `job/GN-6` | last commit 2d94ab9
 
 ## Current task / claim
-**GN-6** Telugu audio via local Piper TTS (pre-generated MP3, hosted outside main history) — status **in-review** by codex on `job/GN-6` (since 2026-10-15 22:10 PDT). Last note: merged GV-2 969c977; Codex fix pass 3 (d65154f) cleared module-load retry P2; Codex review clean; done-check PASS. Audio off by default; routine unchanged. Next: Anil: approve good-news-audio repo + routine wiring; merge GV-2 then GN-6
+**GN-6** Telugu audio via local Piper TTS (pre-generated MP3, hosted outside main history) — status **done** by codex on `job/GN-6` (since 2026-10-15 22:10 PDT). Last note: merged+pushed good-news-daily main 2d94ab9; Telugu audio live via good-news-audio (Pages), verified on live site
 
 ## Done this session
 - Fixed post-GV-2 chunkText compatibility: whole-sentence fallback when absent; Telugu test helper injects the real chunker.
