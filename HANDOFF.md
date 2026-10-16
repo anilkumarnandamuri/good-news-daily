@@ -1,10 +1,10 @@
 # HANDOFF — good-news
 
 ## Updated
-2026-10-15 20:06 PDT | agy/gemini-3.8-flash-high | branch `job/GN-4` | last commit a88c609
+2026-10-15 20:08 PDT | agy/gemini-3.8-flash-high | branch `job/GN-4` | last commit ab32f51
 
 ## Current task / claim
-**GN-4** Summaries fallback: v6 falls back to the live extract-and-translate method when no LLM hook is configured (no excerpt-only regression) — status **in-review** by agy/gemini-3.8-flash-high on `job/GN-4` (since 2026-10-15 19:56 PDT). Last note: support 1-3 pairs in fallback as summary status with offline tests Next: Codex review
+**GN-4** Summaries fallback: v6 falls back to the live extract-and-translate method when no LLM hook is configured (no excerpt-only regression) — status **in-review** by agy/gemini-3.8-flash-high on `job/GN-4` (since 2026-10-15 19:56 PDT). Last note: agy/gemini-3.8-flash-high build + Codex review passed done-check Next: Chief of Staff review/merge of job/GN-4
 
 ## Done this session
 - Fixed Codex review [P1] finding (Routine regression gate: short new items regress to excerpt-only):
