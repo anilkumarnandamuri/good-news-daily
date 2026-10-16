@@ -51,6 +51,11 @@ class ArtifactContracts(unittest.TestCase):
                     pairs = summarize.legacy_pairs(item["sum_en"], item["sum_te"])
                     self.assertEqual(pairs, cache[item["id"]]["pairs"])
                     complete += 1
+                elif item["summary_status"] == "summary":
+                    has_en = isinstance(item.get("sum_en"), str) and bool(item.get("sum_en"))
+                    has_te = isinstance(item.get("sum_te"), str) and bool(item.get("sum_te"))
+                    self.assertTrue(has_en and has_te)
+                    complete += 1
                 else:
                     self.assertEqual(item["summary_status"], "excerpt")
                     self.assertEqual((item["sum_en"], item["sum_te"]), ("", ""))

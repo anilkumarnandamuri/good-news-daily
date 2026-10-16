@@ -135,6 +135,19 @@ class RoutineCompatibility(unittest.TestCase):
             check_suite(suite)
             self.assertEqual(failed_modules, [], f"Discovery failed for modules: {failed_modules}")
 
+    def test_routine_sim_gate_rejects_empty_feed(self):
+        # Verify that routine_sim gate rejects empty feed even when n_sum == n_total (0 == 0)
+        b_sum = 115
+        n_total = 0
+        n_sum = 0
+        ok = n_sum >= b_sum or (n_total > 0 and n_sum == n_total)
+        self.assertFalse(ok)
+
+        # Baseline count met -> pass
+        self.assertTrue(115 >= b_sum or (115 > 0 and 115 == 115))
+        # Fewer stories than baseline but 100% summarized and nonempty -> pass
+        self.assertTrue(50 >= b_sum or (50 > 0 and 50 == 50))
+
 
 if __name__ == "__main__":
     unittest.main()

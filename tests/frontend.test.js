@@ -215,3 +215,17 @@ test('reader with ?voice=1 preserves $16.8 billion without splitting into separa
 });
 
 
+test('reader renders summary status like paired with both summaries and listen controls',async()=>{
+ const summaryItem={...stories[0],id:'summary-status-item',summary_status:'summary',sum_en:'A complete English summary.',sum_te:'పూర్తి తెలుగు సారాంశం.'};
+ const e=environment({news:[summaryItem]});
+ e.run('sticky.js');e.run('app.js');e.run('reader.js');await flush();
+ e.ctx.location.hash='#/s/summary-status-item';e.dispatch('hashchange');
+ assert.equal(e.nodes.get('reader').hidden,false);
+ assert.ok(!e.nodes.get('rBody').innerHTML.includes('Publisher excerpt'));
+ assert.ok(e.nodes.get('rBody').innerHTML.includes('A complete English summary.'));
+ assert.ok(e.nodes.get('rBody').innerHTML.includes('పూర్తి తెలుగు సారాంశం.'));
+ assert.match(e.nodes.get('rBody').innerHTML,/In short/);
+ assert.match(e.nodes.get('rBody').innerHTML,/తెలుగులో సారాంశం/);
+ assert.match(e.nodes.get('rBody').innerHTML,/r-listen/);
+});
+

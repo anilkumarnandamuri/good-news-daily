@@ -1,0 +1,103 @@
+# GN-4: GN-4 (see PLAN.md GN-4; Anil chose this 2026-10-15 19:23 PT). Problem: scripts/s
+
+Status: built
+Branch: job/GN-4 (base: merge/gn-main-20261015)
+Model: agy/gemini-3.8-flash-high | Playbook: Bug fix | Cost: cheap
+Created: 2026-10-15 19:26 PDT
+Test command: python3 -m unittest discover -s tests -p 'test_*.py' && node --test tests/*.test.js && node --test voice/tests/*.test.js && python3 -m pytest tests/test_legacy_feed_browser.py -q
+
+## Task
+GN-4 (see PLAN.md GN-4; Anil chose this 2026-10-15 19:23 PT). Problem: scripts/summarize.py v6 (from the laptop branch) only produces EN/TE summaries through the opt-in LLM hook (GOOD_NEWS_LLM=1 + GOOD_NEWS_LLM_COMMAND). Without it, the twice-daily routine (`python scripts/build.py`, which calls summarize.run) marks ~107/115 stories 'excerpt' (verified by tools/routine_sim.py: 8/115 on this branch vs 115/115 with origin/main's v5 code). The old v5 summarizer (`git show origin/main:scripts/summarize.py`) does extract-and-translate with no config: one canonical source-language summary (<=6 sentences/~120 words) extracted from the feed description + article og/meta descriptions (never the article body), then sentence-by-sentence machine translation (free Google translate web endpoint, MyMemory fallback), strictly 1:1, cached in data/summaries.json; network calls with short timeouts, retried next run.
+
+Implement (smallest correct change):
+1. In scripts/summarize.py v6, when the LLM hook is NOT enabled (or it fails), fall back to the v5 extract-and-translate method, ported from origin/main's summarize.py (reuse its functions: meta(), translate(), the extract/clean logic; keep the BUDGET_S time budget and per-call timeouts). Because v5 translates sentence by sentence, build `pairs` directly from the aligned per-sentence lists (do NOT re-split joined strings), validate with validate_pairs, store a v6 cache entry, set summary_status='paired'.
+2. Existing v5 cache entries (the routine's local data/summaries.json has ~200 v5 entries {en, te, ...}) whose joined strings cannot be re-paired by legacy_pairs (sentence-count mismatch) must NOT be dropped to excerpt: keep their en/te as the item's sum_en/sum_te with a new summary_status 'summary' (both summaries present, no sentence pairs), OR re-pair them via the v5 sentence splitter if that is exact. Prefer no network for already-cached stories. Update reader.js/app.js so status 'summary' renders like paired (shows both summaries + Listen; voice falls back to splitting text), and tests/test_artifacts.py to accept 'summary' items (both strings non-empty). Saved legacy items without any status keep the existing excerpt fallback (tests/frontend.test.js).
+3. LLM hook behavior unchanged when configured (hook first; on hook failure use the fallback).
+4. Do NOT change data/news.json or data/summaries.json in git (they must stay byte-identical to origin/main: the routine runs `git pull --ff-only` with an uncommitted local cache). Do not re-add scripts/__pycache__ to git. scripts/build.py stays byte-identical (hash-pinned).
+5. Unit tests (tests/test_summaries.py) with NO network: monkeypatch summarize.meta / summarize.translate (or the HTTP helper) to cover: no-LLM fallback produces paired pairs aligned 1:1; translation failure -> excerpt and retried next run; v5 cache entry kept as 'summary' without network; hook configured -> hook used; hook failure -> fallback. Node test for reader rendering 'summary' status.
+6. You have no network: do not run tools/routine_sim.py (the operator runs it after you; it must report >= origin/main's summary count). Update README (summaries section: fallback + hook) and DECISIONS.md, HANDOFF.md.
+Test command for the task file: python3 -m unittest discover -s tests -p 'test_*.py' && node --test tests/*.test.js && node --test voice/tests/*.test.js && python3 -m pytest tests/test_legacy_feed_browser.py -q
+
+## Acceptance (definition of done, see .cursor/rules/done.mdc)
+- [x] Checkpoint below filled and Status updated
+- [x] Playwright browser test passes via the Test command
+- [x] New screenshot in artifacts/GN-4/
+- [ ] Codex review (artifacts/GN-4/review.md) has no [P0]-[P2] items
+
+## Checkpoint
+- **What changed**:
+  1. Ported v5 extract-and-translate method into `scripts/summarize.py` (`_get`, `meta`, `translate`, `extract_and_translate`), which runs when `GOOD_NEWS_LLM` is not enabled or when the LLM hook fails. Builds 1:1 aligned sentence pairs directly from translation lists without re-splitting, validates with `validate_pairs`, stores v6 cache entries, and marks items `summary_status='paired'` (for 4–6 pairs) or `summary_status='summary'` (for 1–3 pairs).
+  2. Preserved legacy v5 cache entries whose sentence counts cannot be re-paired by `legacy_pairs` as `summary_status='summary'` with both `sum_en` and `sum_te` preserved and zero network requests.
+  3. Stored 1–3 aligned pairs from the no-LLM fallback as `summary_status='summary'` in `data/summaries.json`, reused on subsequent runs without re-translation.
+  4. Updated `validate_pairs` to accept `min_sentences` parameter defaulting to 4 (`MIN_SENTENCES`), ensuring `llm_pairs` strictly enforces 4–6 sentence pairs.
+  5. Updated `_tok` in `scripts/summarize.py` to `re.findall(r"[\w\u0C00-\u0C7F]{3,}", text.casefold())` so Telugu words with Unicode vowel signs are recognized as tokens in `canonical()`.
+  6. Updated `reader.js` and `app.js` to render `summary_status='summary'` with full bilingual summaries and Listen buttons like `paired`.
+  7. Updated `tests/test_artifacts.py` to accept `summary_status='summary'` items (asserting both summary strings non-empty).
+  8. Enforced remaining time budget in `scripts/summarize.py`: propagated remaining deadline (`deadline - time.monotonic()`) down through metadata retrieval (`meta(url, timeout)`) and sentence translation (`translate(text, sl, tl, timeout, deadline)`), checking deadlines between requests and between translation endpoints so slow endpoints cannot overrun the routine budget.
+  9. Updated `tools/routine_sim.py` routine regression gate to require `n_total > 0` before accepting the all-stories-summarized alternative (`n_sum == n_total`), rejecting empty simulated feeds.
+  10. Added comprehensive unit tests in `tests/test_summaries.py` (43 tests total, including 1-sentence EN fallback -> summary, 2-sentence TE fallback -> summary, 5-sentence fallback -> paired, empty translation -> excerpt, cached summary reuse without translate, and LLM hook 4–6 pair strictness) and `tests/test_compatibility.py` (empty feed regression rejection).
+  11. Added Node test in `tests/frontend.test.js` verifying reader renders `summary` status stories like `paired`.
+  12. Added Playwright browser tests in `tests/test_legacy_feed_browser.py` asserting reader display of `summary_status='summary'` items and generated screenshots at mobile (390px) and desktop (1280px) in `artifacts/GN-4/`.
+  13. Updated `README.md` and appended decisions D006, D007, and D008 in `DECISIONS.md`.
+- **Files modified**:
+  - `scripts/summarize.py`
+  - `tools/routine_sim.py`
+  - `reader.js`
+  - `app.js`
+  - `tests/test_artifacts.py`
+  - `tests/test_summaries.py`
+  - `tests/test_compatibility.py`
+  - `tests/frontend.test.js`
+  - `tests/test_legacy_feed_browser.py`
+  - `README.md`
+  - `DECISIONS.md`
+  - `tasks/GN-4.md`
+- **Verification evidence**:
+  - `python3 -m unittest discover -s tests -p 'test_*.py'` (43 tests passed)
+  - `node --test tests/*.test.js` (13 tests passed)
+  - `node --test voice/tests/*.test.js` (5 tests passed)
+  - `python3 -m pytest tests/test_legacy_feed_browser.py -q` (5 passed)
+  - Full test command passed in 4.79s.
+  - Screenshots re-generated: `artifacts/GN-4/gn4-summary-390.png` and `artifacts/GN-4/gn4-summary-1280.png`.
+  - Byte-identical contract verified: `data/news.json`, `data/summaries.json`, `scripts/build.py`, `scripts/send_push.py`, `scripts/digest.py`, `push.js`, `OneSignalSDKWorker.js` completely unmodified.
+- **Open items**:
+  - Codex review (`artifacts/GN-4/review.md`).
+
+## Review response
+### Response to Codex review 1 (artifacts/GN-4/review-1.md)
+1. **[P2] Enforce the fallback's remaining time budget — scripts/summarize.py:196-199**
+   - **Root cause**: `extract_and_translate` accepted a `timeout` parameter from `run`, but did not use it to bound its network calls. `meta` used a fixed 8-second timeout, and `translate` queried two endpoints (Google Translate and MyMemory) with up to 10 seconds each across 6 sentences. If a fallback started near the 240-second routine deadline, slow endpoints could take an additional ~128 seconds.
+   - **Fix**: Propagated remaining deadline through `extract_and_translate`:
+     - Computed item deadline `time.monotonic() + timeout`.
+     - `meta(url, timeout=8)` accepts bounded timeout and checks remaining time.
+     - `translate(text, sl, tl, timeout=10, deadline=None)` checks deadline before each endpoint query, breaks early without querying subsequent endpoints if deadline has expired, and caps request timeouts to remaining budget.
+     - `extract_and_translate` checks deadline between sentence translations, raising `TimeoutError` immediately if time is exhausted.
+     - Updated `run` to ensure `timeout = min(20, max(0.1, deadline - time.monotonic()))` does not exceed the routine deadline.
+     - Added unit tests in `tests/test_summaries.py` verifying deadline enforcement before metadata, between sentences, and between translation endpoints.
+
+2. **[P2] Reject empty feeds in the routine regression gate — tools/routine_sim.py:50-50**
+   - **Root cause**: Line 50 of `tools/routine_sim.py` checked `ok = n_sum >= b_sum or n_sum == n_total`. When RSS fetching failed for all feeds, `build.py` wrote an empty feed (`n_total = 0`, `n_sum = 0`), which caused `n_sum == n_total` to evaluate to `0 == 0` (True), improperly reporting PASS despite complete story and summary loss.
+   - **Fix**: Updated line 50 of `tools/routine_sim.py` to `ok = n_sum >= b_sum or (n_total > 0 and n_sum == n_total)`, explicitly requiring a non-empty simulated feed before accepting the all-stories-summarized condition. Added unit test `test_routine_sim_gate_rejects_empty_feed` in `tests/test_compatibility.py`.
+
+3. **[P1] Short new items regress to excerpt-only — scripts/summarize.py extract_and_translate()/validate_pairs**
+   - **Root cause**: Articles with only 1–3 extractable sentences (such as 127de8ce29, 8cf35dd46f, 99119d954d, 07a49d9c1e, 5e548f0fa3) were successfully extracted and translated by `extract_and_translate()`, but `validate_pairs()` raised `ValueError("A summary needs 4–6 sentence pairs")`, causing `run()` to fall back to `summary_status = 'excerpt'` and dropping the routine simulation from 116/116 to 111/116. Furthermore, `_tok` used `\w{3,}`, which did not include Telugu Unicode combining vowel signs (`\u0C00-\u0C7F`), fragmenting Telugu words and skipping sentences lacking ASCII digits.
+   - **Fix**:
+     - Updated `validate_pairs(pairs, min_sentences=MIN_SENTENCES, max_sentences=MAX_SENTENCES)` to accept an optional `min_sentences` parameter while defaulting to 4 (`MIN_SENTENCES`), preserving the strict 4–6 sentence requirement for `llm_pairs()` and `legacy_pairs()`.
+     - In `extract_and_translate()`, when 1–3 sentences are extracted and translated, validated the pairs with `validate_pairs(pairs, min_sentences=1)` and marked the item `summary_status = 'summary'`, while 4–6 sentences are marked `summary_status = 'paired'`.
+     - In `run()`, when `status == 'summary'`, populated `sum_en`, `sum_te`, and cached the 1–3 aligned pairs with `summary_status = 'summary'`, which subsequent runs reuse without network calls or re-translation.
+     - Updated `_tok` to `re.findall(r"[\w\u0C00-\u0C7F]{3,}", text.casefold())` matching the v5 tokenization logic so Telugu sentences are properly tokenized and extracted.
+     - Added comprehensive offline unit tests in `tests/test_summaries.py` verifying:
+       - 1-sentence EN fallback produces `summary_status = 'summary'` with 1 pair cached and saved.
+       - 2-sentence TE fallback produces `summary_status = 'summary'` with 2 pairs cached and saved.
+       - 5-sentence fallback produces `summary_status = 'paired'` with 5 pairs cached and saved.
+       - Empty translation results in `summary_status = 'excerpt'`.
+       - Cached `summary_status = 'summary'` entry is reused without calling `meta` or `translate`.
+       - `llm_pairs` strictly rejects hook output with fewer than 4 pairs and `validate_pairs` rejects lengths < 4 by default.
+
+- 2026-10-15 19:51 PDT Codex review: 0 must-fix item(s) open
+- 2026-10-15 19:56 PDT run-job resumed
+- 2026-10-15 19:56 PDT Codex review: 0 must-fix item(s) open
+- 2026-10-15 19:56 PDT run-job resumed
+- 2026-10-15 19:56 PDT Codex review: 1 must-fix item(s); running one fix pass
+- 2026-10-15 20:05 PDT fix pass complete: 1-3 pairs fallback supported as summary_status 'summary', offline tests added, all checks pass
+- 2026-10-15 20:08 PDT Codex review: 0 must-fix item(s) open

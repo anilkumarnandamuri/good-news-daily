@@ -192,6 +192,238 @@ class SummaryContract(unittest.TestCase):
         self.assertNotIn("old_departed", saved_cache)
         self.assertNotIn("no_timestamp_departed", saved_cache)
 
+    def test_no_llm_fallback_produces_paired_pairs_aligned_one_to_one(self):
+        translation_map = {p["en"]: p["te"] for p in PAIRS}
+        with patch.dict("os.environ", {}, clear=True), \
+             patch.object(summarize, "meta", return_value=("", "https://example.invalid/fallback.jpg")), \
+             patch.object(summarize, "translate", side_effect=lambda text, sl, tl: translation_map.get(text, "")):
+            result = self.run_items([item()])[0]
+            self.assertEqual(result["summary_status"], "paired")
+            self.assertEqual(result["sum_en"], " ".join(p["en"] for p in PAIRS))
+            self.assertEqual(result["sum_te"], " ".join(p["te"] for p in PAIRS))
+            self.assertEqual(result["image"], "https://example.invalid/fallback.jpg")
+            cached = json.loads(self.cache.read_text())["library"]
+            self.assertEqual(cached["pairs"], PAIRS)
+            self.assertEqual(cached["summary_status"], "paired")
+            self.assertEqual(cached["method"], "fallback")
+
+    def test_translation_failure_results_in_excerpt_and_retried_next_run(self):
+        with patch.dict("os.environ", {}, clear=True), \
+             patch.object(summarize, "meta", return_value=("", None)), \
+             patch.object(summarize, "translate", return_value=""):
+            result = self.run_items([item()])[0]
+            self.assertEqual(result["summary_status"], "excerpt")
+            self.assertEqual((result["sum_en"], result["sum_te"]), ("", ""))
+            self.assertNotIn("library", json.loads(self.cache.read_text()))
+
+            translation_map = {p["en"]: p["te"] for p in PAIRS}
+            with patch.object(summarize, "translate", side_effect=lambda text, sl, tl: translation_map.get(text, "")):
+                retry_item = item()
+                retry_result = self.run_items([retry_item])[0]
+                self.assertEqual(retry_result["summary_status"], "paired")
+                self.assertIn("library", json.loads(self.cache.read_text()))
+
+    def test_v5_cache_entry_kept_as_summary_without_network(self):
+        v5_en = "Volunteers opened a library in the village. They donated 500 books for local children."
+        v5_te = "వాలంటీర్లు గ్రామంలో ఒక గ్రంథాలయాన్ని ప్రారంభించారు. వారు స్థానిక పిల్లల కోసం 500 పుస్తకాలను ఇచ్చారు."
+        self.cache.write_text(json.dumps({"library": dict(v=5, en=v5_en, te=v5_te, n=2, t=int(time.time()))}))
+
+        with patch.object(summarize, "meta", side_effect=AssertionError("Network forbidden")), \
+             patch.object(summarize, "translate", side_effect=AssertionError("Network forbidden")):
+            result = self.run_items([item()])[0]
+            self.assertEqual(result["summary_status"], "summary")
+            self.assertEqual(result["sum_en"], v5_en)
+            self.assertEqual(result["sum_te"], v5_te)
+            saved = json.loads(self.cache.read_text())["library"]
+            self.assertEqual(saved["summary_status"], "summary")
+            self.assertEqual(saved["en"], v5_en)
+            self.assertEqual(saved["te"], v5_te)
+
+    def test_hook_configured_uses_hook_without_calling_fallback(self):
+        with patch.dict("os.environ", {"GOOD_NEWS_LLM": "1"}), \
+             patch.object(summarize, "llm_pairs", return_value=PAIRS[:4]) as mock_hook, \
+             patch.object(summarize, "meta", side_effect=AssertionError("Fallback must not be called when hook succeeds")), \
+             patch.object(summarize, "translate", side_effect=AssertionError("Fallback must not be called when hook succeeds")):
+            result = self.run_items([item()])[0]
+            self.assertEqual(result["summary_status"], "paired")
+            self.assertEqual(result["sum_en"], " ".join(p["en"] for p in PAIRS[:4]))
+            self.assertEqual(result["sum_te"], " ".join(p["te"] for p in PAIRS[:4]))
+            mock_hook.assert_called_once()
+            cached = json.loads(self.cache.read_text())["library"]
+            self.assertEqual(cached["method"], "llm")
+
+    def test_hook_failure_falls_back_to_extract_and_translate(self):
+        translation_map = {p["en"]: p["te"] for p in PAIRS}
+        with patch.dict("os.environ", {"GOOD_NEWS_LLM": "1"}), \
+             patch.object(summarize, "llm_pairs", side_effect=subprocess.CalledProcessError(1, "hook")), \
+             patch.object(summarize, "meta", return_value=("", "https://example.invalid/fallback.jpg")), \
+             patch.object(summarize, "translate", side_effect=lambda text, sl, tl: translation_map.get(text, "")):
+            result = self.run_items([item()])[0]
+            self.assertEqual(result["summary_status"], "paired")
+            self.assertEqual(result["sum_en"], " ".join(p["en"] for p in PAIRS))
+            self.assertEqual(result["sum_te"], " ".join(p["te"] for p in PAIRS))
+            cached = json.loads(self.cache.read_text())["library"]
+            self.assertEqual(cached["method"], "fallback")
+            self.assertEqual(cached["pairs"], PAIRS)
+
+    def test_extract_and_translate_enforces_remaining_time_budget(self):
+        it = item()
+        # 1. Zero timeout raises TimeoutError before network calls
+        with patch.object(summarize, "meta", side_effect=AssertionError("Must not call meta")), \
+             patch.object(summarize, "translate", side_effect=AssertionError("Must not call translate")):
+            with self.assertRaises(TimeoutError):
+                summarize.extract_and_translate(it, timeout=0)
+
+        # 2. Timeout is propagated to meta and translate
+        meta_timeouts = []
+        trans_timeouts = []
+        def fake_meta(url, timeout=8):
+            meta_timeouts.append(timeout)
+            return ("", None)
+        translation_map = {p["en"]: p["te"] for p in PAIRS}
+        def fake_translate(text, sl, tl, timeout=10, deadline=None):
+            trans_timeouts.append(timeout)
+            return translation_map.get(text, "")
+
+        with patch.object(summarize, "meta", side_effect=fake_meta), \
+             patch.object(summarize, "translate", side_effect=fake_translate):
+            res = summarize.extract_and_translate(it, timeout=5.0)
+            self.assertEqual(len(res["pairs"]), 6)
+            self.assertTrue(all(t <= 5.0 for t in meta_timeouts))
+            self.assertTrue(all(t <= 5.0 for t in trans_timeouts))
+
+        # 3. Deadline exceeded mid-translation stops without continuing
+        calls = []
+        def slow_translate(text, sl, tl, timeout=10, deadline=None):
+            calls.append(text)
+            if len(calls) == 2:
+                time.sleep(0.05)
+            return translation_map.get(text, "")
+
+        with patch.object(summarize, "meta", return_value=("", None)), \
+             patch.object(summarize, "translate", side_effect=slow_translate):
+            with self.assertRaises(TimeoutError):
+                summarize.extract_and_translate(it, timeout=0.03)
+            self.assertLess(len(calls), len(PAIRS))
+
+    def test_translate_checks_deadline_between_endpoints(self):
+        calls = []
+        def fake_get(url, timeout=10):
+            calls.append(url)
+            raise OSError("First endpoint timed out")
+
+        with patch.object(summarize, "_get", side_effect=fake_get):
+            out = summarize.translate("Hello world", "en", "te", deadline=time.monotonic() - 1)
+            self.assertEqual(out, "")
+            self.assertEqual(len(calls), 0)
+
+    def test_fallback_one_sentence_en_produces_summary_status(self):
+        en_sent = "Volunteers opened a library in the village."
+        te_sent = "వాలంటీర్లు గ్రామంలో ఒక గ్రంథాలయాన్ని ప్రారంభించారు."
+        it = dict(id="single-en", title="Volunteers open library", lang="en",
+                  summary="One sentence summary.", desc=en_sent,
+                  link="https://example.invalid/single-en")
+        with patch.dict("os.environ", {}, clear=True), \
+             patch.object(summarize, "meta", return_value=("", "https://example.invalid/one.jpg")), \
+             patch.object(summarize, "translate", side_effect=lambda text, sl, tl, timeout=10, deadline=None: te_sent if text == en_sent else ""):
+            result = self.run_items([it])[0]
+            self.assertEqual(result["summary_status"], "summary")
+            self.assertEqual(result["sum_en"], en_sent)
+            self.assertEqual(result["sum_te"], te_sent)
+            self.assertEqual(result["image"], "https://example.invalid/one.jpg")
+            cached = json.loads(self.cache.read_text())["single-en"]
+            self.assertEqual(cached["summary_status"], "summary")
+            self.assertEqual(cached["pairs"], [{"en": en_sent, "te": te_sent}])
+            self.assertEqual(cached["en"], en_sent)
+            self.assertEqual(cached["te"], te_sent)
+
+    def test_fallback_two_sentence_te_produces_summary_status(self):
+        te_sents = [PAIRS[0]["te"], PAIRS[1]["te"]]
+        en_sents = [PAIRS[0]["en"], PAIRS[1]["en"]]
+        te_desc = " ".join(te_sents)
+        it = dict(id="two-te", title="గ్రామంలో గ్రంథాలయం", lang="te",
+                  summary="తెలుగు సారాంశం.", desc=te_desc,
+                  link="https://example.invalid/two-te")
+        trans_map = dict(zip(te_sents, en_sents))
+        with patch.dict("os.environ", {}, clear=True), \
+             patch.object(summarize, "meta", return_value=("", None)), \
+             patch.object(summarize, "translate", side_effect=lambda text, sl, tl, timeout=10, deadline=None: trans_map.get(text, "")):
+            result = self.run_items([it])[0]
+            self.assertEqual(result["summary_status"], "summary")
+            self.assertEqual(result["sum_te"], " ".join(te_sents))
+            self.assertEqual(result["sum_en"], " ".join(en_sents))
+            cached = json.loads(self.cache.read_text())["two-te"]
+            self.assertEqual(cached["summary_status"], "summary")
+            self.assertEqual(len(cached["pairs"]), 2)
+            self.assertEqual(cached["pairs"], PAIRS[:2])
+
+    def test_fallback_five_sentence_produces_paired_status(self):
+        five_pairs = PAIRS[:5]
+        en_desc = " ".join(p["en"] for p in five_pairs)
+        it = dict(id="five-en", title="Volunteers open library", lang="en",
+                  summary="Five sentences summary.", desc=en_desc,
+                  link="https://example.invalid/five-en")
+        trans_map = {p["en"]: p["te"] for p in five_pairs}
+        with patch.dict("os.environ", {}, clear=True), \
+             patch.object(summarize, "meta", return_value=("", None)), \
+             patch.object(summarize, "translate", side_effect=lambda text, sl, tl, timeout=10, deadline=None: trans_map.get(text, "")):
+            result = self.run_items([it])[0]
+            self.assertEqual(result["summary_status"], "paired")
+            self.assertEqual(result["sum_en"], " ".join(p["en"] for p in five_pairs))
+            self.assertEqual(result["sum_te"], " ".join(p["te"] for p in five_pairs))
+            cached = json.loads(self.cache.read_text())["five-en"]
+            self.assertEqual(cached["summary_status"], "paired")
+            self.assertEqual(len(cached["pairs"]), 5)
+            self.assertEqual(cached["pairs"], five_pairs)
+
+    def test_fallback_empty_translate_results_in_excerpt(self):
+        it = dict(id="empty-trans", title="Volunteers open library", lang="en",
+                  summary="Summary text.", desc=PAIRS[0]["en"],
+                  link="https://example.invalid/empty-trans")
+        with patch.dict("os.environ", {}, clear=True), \
+             patch.object(summarize, "meta", return_value=("", None)), \
+             patch.object(summarize, "translate", return_value=""):
+            result = self.run_items([it])[0]
+            self.assertEqual(result["summary_status"], "excerpt")
+            self.assertEqual(result["sum_en"], "")
+            self.assertEqual(result["sum_te"], "")
+            self.assertNotIn("empty-trans", json.loads(self.cache.read_text()))
+
+    def test_cached_summary_status_reused_without_translate(self):
+        en_sent = "Volunteers opened a library in the village."
+        te_sent = "వాలంటీర్లు గ్రామంలో ఒక గ్రంథాలయాన్ని ప్రారంభించారు."
+        it = dict(id="cached-summary-item", title="Volunteers open library", lang="en",
+                  summary="One sentence summary.", desc=en_sent,
+                  link="https://example.invalid/cached-summary")
+        self.cache.write_text(json.dumps({
+            "cached-summary-item": dict(
+                v=6, en=en_sent, te=te_sent, n=1,
+                pairs=[{"en": en_sent, "te": te_sent}],
+                summary_status="summary",
+                fingerprint=summarize.fingerprint(it),
+                description_fingerprint=summarize.description_fingerprint(it),
+                t=int(time.time()),
+            )
+        }))
+        with patch.object(summarize, "meta", side_effect=AssertionError("meta must not be called")), \
+             patch.object(summarize, "translate", side_effect=AssertionError("translate must not be called")):
+            result = self.run_items([it])[0]
+            self.assertEqual(result["summary_status"], "summary")
+            self.assertEqual(result["sum_en"], en_sent)
+            self.assertEqual(result["sum_te"], te_sent)
+            cached = json.loads(self.cache.read_text())["cached-summary-item"]
+            self.assertEqual(cached["summary_status"], "summary")
+            self.assertEqual(cached["pairs"], [{"en": en_sent, "te": te_sent}])
+
+    def test_llm_hook_does_not_relax_validate_pairs(self):
+        hook = Path(self.tmp.name) / "short_hook.py"
+        hook.write_text("import json,sys\nprint(" + repr(json.dumps({"pairs": PAIRS[:2]})) + ")\n")
+        with patch.dict("os.environ", {"GOOD_NEWS_LLM": "1", "GOOD_NEWS_LLM_COMMAND": json.dumps([sys.executable, str(hook)])}):
+            with self.assertRaises(ValueError):
+                summarize.llm_pairs(item())
+        with self.assertRaises(ValueError):
+            summarize.validate_pairs(PAIRS[:3])
+
 
 if __name__ == "__main__":
     unittest.main()

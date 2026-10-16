@@ -82,7 +82,7 @@
  function renderBody(it){
   const c=CAT[it.category]||CAT.community,col=COL[it.category]||"#f26b3a";
   const first=it.lang==="te"?[["te",it.sum_te],["en",it.sum_en]]:[["en",it.sum_en],["te",it.sum_te]];
-  const excerpt=it.summary_status!=="paired"||!it.sum_en||!it.sum_te;
+  const excerpt=(it.summary_status!=="paired"&&it.summary_status!=="summary")||!it.sum_en||!it.sum_te;
   const fallback=excerpt?`<section class="r-sum ${it.lang==="te"?"te":""}" lang="${it.lang==="te"?"te":"en"}"><h2 lang="en">Publisher excerpt</h2><p>${esc(it.summary)}</p><p class="r-note" lang="en">A complete bilingual summary is not available yet.</p></section>`:"";
   B.innerHTML=`${thumb(it,"r-img",true)}
   <div class="r-card"><div class="r-meta"><span class="pill" style="--c:${col}">${c[1]} ${c[0]}</span><span>${esc(it.source)}</span><span class="dot">•</span><time>${ago(it.published)}</time></div>
