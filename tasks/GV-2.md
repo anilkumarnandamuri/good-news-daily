@@ -16,6 +16,12 @@ GV-2 (see PLAN.md and HANDOFF.md): Integrate the voice player (imported under vo
 - [ ] Codex review (artifacts/GV-2/review.md) has no [P0]-[P2] items
 
 ## Review response
+### [P2] Stop fallback speech before replacing the reader body — reader.js:135
+Resolved by calling the full `stop()` teardown at the start of `renderBody()`. Every reader body replacement now cancels native speech synthesis, clears `speaking`, resets the old control, invalidates pending playback, and destroys any active voice player. The summary callback no longer uses the partial `stopVoice()` teardown. The new frontend regression starts native fallback after a module import failure, resolves delayed summaries, verifies cancellation before the Stop control disappears, and verifies the replacement Listen/Stop control works.
+
+### [P2] Validate cached pairs before overwriting story content — reader.js:133
+Resolved by preserving existing valid bilingual pairs and attaching cached pairs only when both joined language texts match the story's current summaries after whitespace normalization. Invalid or mismatching cache entries leave the story unchanged, including `summary_status: 'summary'` stories without pairs. Existing summary text remains authoritative. Frontend regressions cover English and Telugu mismatches, malformed pairs, normalized matches, existing-pair preservation, and cache resolution both before and after opening the reader.
+
 ### [P2] Handle an unavailable voice module before extending its class — reader.js:62-65
 Resolved in `reader.js`. In `getVoiceModule()`, dynamic module import is safely guarded. If the module fails to load or import (network error, 404, or missing `VoicePlayer` class), `voicePromise` and `voiceModule` are reset to `null` and a retry query parameter (`voiceLoadAttempt`) is incremented, ensuring failed promises are never permanently cached. In `playVoice()`, `VoicePlayer` is checked for validity (`typeof VoicePlayer !== 'function'`) before extending; if unavailable, Listen falls back to the native `speechSynthesis` playback path (`speak(btn, fallbackText, lang)`). When the user clicks Listen on a subsequent attempt, `getVoiceModule()` re-attempts the import with cache busting, recovering full voice player functionality without requiring a page reload. Added Playwright test `test_voice_reader_module_failure_fallback_and_recovery` in `tests/test_voice_reader.py` demonstrating that when the voice module route is aborted, Listen falls back to `speechSynthesis`, and when the route is subsequently restored, a later click cleanly instantiates `ReaderVoicePlayer` and activates sentence highlighting without reloading.
 
@@ -47,27 +53,11 @@ Resolved in `reader.js`. Added a unified protected sentence splitter `splitSente
 Resolved in `styles.css` and `reader.js`. The `.r-listen.on` pulse animation used `@keyframes pulse { 50% { transform: scale(1.03); } }` which infinitely mutated the button's layout bounding box across animation frames, failing Playwright's stability checks during active MP3 playback. Replaced with `@keyframes pulse-listen { 50% { opacity: 0.85; } }` which preserves visual pulsing without geometry thrashing. In addition, `highlightSentence(idx)` now tracks `currentHighlightIdx` and deduplicates calls, avoiding continuous scroll calls on every `timeupdate` tick.
 
 ## Checkpoint
-- **What changed**:
-  - `reader.js`: Safely handled unavailable voice module by verifying `VoicePlayer` before class extension; added fallback to native `speechSynthesis` (`speak()`); prevented caching of rejected load promises by resetting `voicePromise = null` with cache-busting `voiceLoadAttempt` counter to allow retry and recovery without reload; added toggle/stop guard for speech synthesis fallback.
-  - `tests/fixtures/`: Created standalone `tests/fixtures/news.json` and `tests/fixtures/summaries.json` with controlled fixtures for paired stories (`be4d5ceb60`), MP3 playback stories (`beb21be0b4`), legacy decimal stories (`378259bf26`), and summary status stories (`summary-story-no-pairs`).
-  - `tests/test_voice_reader.py`: Routed `data/news.json` and `data/summaries.json` across all browser tests to fixed fixtures, eliminating reliance on mutable routine feed data and fixing the `test_voice_reader_mp3_playback` timeout; added `test_voice_reader_module_failure_fallback_and_recovery` testing speech fallback under module failure and recovery without reload; added `test_voice_reader_summary_status_no_pairs_reads_via_speech` testing speech playback on stories with `summary_status = 'summary'` (no pairs).
-  - `tests/test_legacy_feed_browser.py`: Configured Chromium launch with system Google Chrome binary when available.
-  - `DECISIONS.md`: Appended decision D009.
-  - `tasks/GV-2.md` & `HANDOFF.md`: Updated review responses, checkpoints, test commands, and handoff documentation.
-- **Files modified**:
-  - `reader.js`
-  - `tests/fixtures/news.json` (new)
-  - `tests/fixtures/summaries.json` (new)
-  - `tests/test_voice_reader.py`
-  - `tests/test_legacy_feed_browser.py`
-  - `DECISIONS.md`
-  - `tasks/GV-2.md`
-  - `HANDOFF.md`
-- **Verification evidence**:
-  - Full test command passed: `python3 -m unittest discover -s tests -p 'test_*.py' && node --test tests/*.test.js && node --test voice/tests/*.test.js && python3 -m pytest tests/test_legacy_feed_browser.py tests/test_voice_reader.py -q` (43 unittests passed, 15 node frontend tests passed, 5 node voice tests passed, 13 playwright browser tests passed).
-  - All 5 screenshots in `artifacts/GV-2/` re-generated and verified (`mobile-390-en-active.png`, `mobile-390-te-active.png`, `desktop-1280-en-active.png`, `desktop-1280-te-active.png`, `desktop-mp3-active.png`).
-  - `data/news.json` and `data/summaries.json` confirmed unmodified.
-- **Open items**: None. All must-fix findings resolved and verified.
+- **What changed**: Fixed the two latest P2 findings in `reader.js`; added two regression tests and minimal Listen/summary support in the existing fake frontend environment.
+- **Files modified this pass**: `reader.js`, `tests/frontend.test.js`, `tasks/GV-2.md`, `HANDOFF.md`, `DECISIONS.md`.
+- **Verification evidence**: `python3 -m unittest discover -s tests -p 'test_*.py' && node --test tests/*.test.js && node --test voice/tests/*.test.js` passed (43 Python tests, 18 frontend tests, 5 voice tests). `git diff --check` passed.
+- **Protected files**: GN-5 text scale (`sticky.js`, `styles.css`) and `data/news.json` / `data/summaries.json` untouched.
+- **Open items**: Operator browser verification and review of this uncommitted fix pass; no new browser run or screenshots in this pass. Existing browser evidence above predates these fixes. No network, branch changes, commits, or board mutations performed, per the task-specific workflow.
 
 ## Log
 - 2026-10-15 13:58 PDT run-job started

@@ -117,3 +117,8 @@
   - Showing an unrecoverable error banner on import failure: Degrades user experience when native speech synthesis is readily available on the device.
   - Relying on `voice/sample/news.json` fallback: Sample fallback lacks `summary_status` and cannot test routine feed adapter behaviors.
 
+
+## D011 — Reader rerender teardown and cache text consistency (2026-10-15, Codex)
+- Decision: Put full `stop()` teardown in `renderBody()`; retain existing valid pairs and require both cached joined texts to match current summaries after whitespace normalization before attachment.
+- Why: Native speech and the voice player must stop before controls are replaced, and rendering, speech, sharing, and MP3 freshness must use consistent summary content.
+- Alternatives rejected: Partial voice-only teardown; unconditional cache pair replacement; replacing current story summaries with cache text.

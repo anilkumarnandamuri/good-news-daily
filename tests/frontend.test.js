@@ -17,6 +17,12 @@ function environment({news=[],search='',storageBlocked=false}={}){
     for(const attr of match[2].matchAll(/([\w-]+)="([^"]*)"/g)){
      el.setAttribute(attr[1],attr[2]);if(attr[1]==='id'){el.id=attr[2];nodes.set(el.id,el)}
     }
+    if(el.attributes.class==='r-listen'){
+     el.label=new Element();el.label.textContent='🔊 Listen';
+     const section=value.slice(value.lastIndexOf('<section',match.index));
+     const paragraph=new Element();paragraph.textContent=(section.match(/<p[^>]*>([\s\S]*?)<\/p>/)?.[1]||'').replace(/<[^>]*>/g,'');
+     el.summary={querySelector:selector=>selector==='p'?paragraph:null,querySelectorAll:()=>[]};
+    }
     el.parent=this;this.children.push(el);
    }
   }
@@ -24,8 +30,8 @@ function environment({news=[],search='',storageBlocked=false}={}){
   setAttribute(k,v){this.attributes[k]=String(v);if(k.startsWith('data-'))this.dataset[k.slice(5)]=v}
   getAttribute(k){return this.attributes[k]??null}
   querySelector(selector){return ['span','.lbl'].includes(selector)?this.label: this.querySelectorAll(selector)[0]||null}
-  querySelectorAll(selector){if(selector==='.r-listen')return [];return this.children.filter(el=>selector==='button'?el.tagName==='button':selector==='button:not(:disabled),a[href]'?['button','a'].includes(el.tagName):selector==='a[href]'?el.tagName==='a':false)}
-  closest(selector){return selector==='a'&&this.tagName==='a'?this:selector==='.tab'&&this.dataset.k?this:null}
+  querySelectorAll(selector){if(selector==='.r-listen')return this.children.filter(el=>el.attributes.class==='r-listen');return this.children.filter(el=>selector==='button'?el.tagName==='button':selector==='button:not(:disabled),a[href]'?['button','a'].includes(el.tagName):selector==='a[href]'?el.tagName==='a':false)}
+  closest(selector){return selector==='.r-sum'?this.summary:selector==='a'&&this.tagName==='a'?this:selector==='.tab'&&this.dataset.k?this:null}
   focus(){document.activeElement=this}
   click(){this.onclick?.({target:this})}
   addEventListener(k,fn){this['on'+k]=fn}
@@ -247,3 +253,62 @@ test('reader renders summary status like paired with both summaries and listen c
  assert.match(e.nodes.get('rBody').innerHTML,/r-listen/);
 });
 
+function voiceReader(story){
+ const e=environment({search:'?voice=1'});
+ let resolveSummaries;
+ const summaries=new Promise(resolve=>{resolveSummaries=resolve});
+ e.ctx.fetch=async url=>({ok:true,json:async()=>url==='data/summaries.json'?summaries:url.includes('sample/news')?{items:[]}: {}});
+ e.ctx.thumb=()=>'';
+ e.run('sticky.js');e.run('reader.js');
+ e.ctx.location.hash='#/s/'+story.id;e.ctx.onData([story]);
+ return {...e,resolveSummaries};
+}
+
+const pairedSummaryStory=()=>({...stories[0],id:'cache-test',lang:'en',summary_status:'summary',sum_en:'First sentence. Second sentence.',sum_te:'మొదటి వాక్యం. రెండవ వాక్యం.',pairs:undefined});
+const matchingPairs=()=>[{en:'First sentence.',te:'మొదటి వాక్యం.'},{en:'Second sentence.',te:'రెండవ వాక్యం.'}];
+
+test('summary rerender cancels native fallback speech and resets the replacement control',async()=>{
+ const story=pairedSummaryStory(),e=voiceReader(story);
+ let cancels=0,utterance=null;
+ e.ctx.speechSynthesis={getVoices:()=>[],cancel(){cancels++;utterance=null},speak(u){utterance=u}};
+ e.ctx.SpeechSynthesisUtterance=function(text){this.text=text};
+ const body=e.nodes.get('rBody'),button=body.querySelectorAll('.r-listen')[0];
+ // vm has no dynamic import loader: Listen exercises the real module-failure fallback.
+ button.onclick();await flush();
+ assert.equal(utterance.text,story.sum_en);
+ assert.equal(button.label.textContent,'⏹ Stop');
+ const before=cancels,writes=body.writes;
+ e.resolveSummaries({[story.id]:{pairs:matchingPairs()}});await flush();
+ assert.equal(body.writes,writes+1);assert.equal(button.isConnected,false);
+ assert.ok(cancels>before);assert.equal(utterance,null);
+ const replacement=body.querySelectorAll('.r-listen')[0];
+ assert.equal(replacement.label.textContent,'🔊 Listen');
+ assert.equal(button.label.textContent,'🔊 Listen');
+ replacement.onclick();await flush();assert.ok(utterance);assert.equal(replacement.label.textContent,'⏹ Stop');
+ replacement.onclick();await flush();assert.equal(utterance,null);assert.equal(replacement.label.textContent,'🔊 Listen');
+});
+
+test('cached pairs attach only when both joined summaries match, preserving valid story pairs',async()=>{
+ for(const cachedFirst of [false,true])for(const variant of ['matching','different-en','different-te','existing','invalid']){
+  const story=pairedSummaryStory(),pairs=matchingPairs();
+  if(variant==='matching'){pairs[0].en='  First   sentence.\n';pairs[1].te='\n రెండవ వాక్యం.  '}
+  if(variant==='different-en')pairs[0].en='A stale English sentence.';
+  if(variant==='different-te')pairs[0].te='పాత వాక్యం.';
+  if(variant==='invalid')pairs[0]=null;
+  const existing=[{en:story.sum_en,te:story.sum_te}];
+  if(variant==='existing')story.pairs=existing;
+  const e=voiceReader(story);
+  if(cachedFirst){e.ctx.location.hash='';e.dispatch('hashchange')}
+  e.resolveSummaries({[story.id]:{en:'Stale cache metadata.',te:'పాత సారాంశం.',pairs}});await flush();
+  if(cachedFirst){e.ctx.location.hash='#/s/'+story.id;e.dispatch('hashchange')}
+  if(variant==='matching')assert.equal(story.pairs,pairs);
+  else if(variant==='existing')assert.equal(story.pairs,existing);
+  else{
+   assert.equal(story.pairs,undefined);assert.equal(story.summary_status,'summary');
+   assert.ok(!e.nodes.get('rBody').innerHTML.includes('A stale English sentence.'));
+   assert.ok(!e.nodes.get('rBody').innerHTML.includes('పాత వాక్యం.'));
+  }
+  assert.equal(story.sum_en,'First sentence. Second sentence.');
+  assert.equal(story.sum_te,'మొదటి వాక్యం. రెండవ వాక్యం.');
+ }
+});

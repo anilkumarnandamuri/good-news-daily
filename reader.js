@@ -102,6 +102,7 @@
   <button class="r-listen" data-lang="${lang}"><span>🔊 Listen</span></button></div>${contentHtml}</section>`}
 
  function renderBody(it){
+  stop();
   const c=CAT[it.category]||CAT.community,col=COL[it.category]||"#f26b3a";
   const first=it.lang==="te"?[["te",it.sum_te],["en",it.sum_en]]:[["en",it.sum_en],["te",it.sum_te]];
   const excerpt=(it.summary_status!=="paired"&&it.summary_status!=="summary")||!it.sum_en||!it.sum_te;
@@ -132,9 +133,15 @@
   if(!it&&isVoiceEnabled()){getSampleNews().then(items=>{const found=items.find(x=>x.id===id);const m=location.hash.match(/^#\/s\/([\w-]+)/);if(found&&m&&m[1]===id&&(!cur||cur.id!==id))open(id,found)});return}
   if(!it)return;
   if(isVoiceEnabled()){
-   const attach=s=>{if(s&&s[it.id]?.pairs){it.pairs=s[it.id].pairs;it.sum_en=it.sum_en||s[it.id].en;it.sum_te=it.sum_te||s[it.id].te;it.summary_status="paired"}};
+   const normalize=text=>String(text||"").replace(/\s+/gu," ").trim();
+   const matches=(pairs,en,te)=>Array.isArray(pairs)&&pairs.length>0&&pairs.every(p=>p&&typeof p.en==="string"&&normalize(p.en)&&typeof p.te==="string"&&normalize(p.te))&&[ ["en",en],["te",te] ].every(([lang,text])=>normalize(pairs.map(p=>p[lang]).join(" "))===normalize(text));
+   const attach=s=>{
+    if(matches(it.pairs,it.sum_en,it.sum_te))return;
+    const cached=s&&s[it.id];
+    if(matches(cached?.pairs,it.sum_en,it.sum_te)){it.pairs=cached.pairs;it.summary_status="paired"}
+   };
    if(summariesData)attach(summariesData);
-   else getSummaries().then(s=>{attach(s);if(cur&&cur.id===it.id&&it.pairs){stopVoice();renderBody(it)}});
+   else getSummaries().then(s=>{attach(s);if(cur&&cur.id===it.id&&it.pairs)renderBody(it)});
   }
   if(R.hidden){returnFocus=document.activeElement;returnHref=returnFocus?.closest("a")?.getAttribute("href");
    [...document.body.children].filter(node=>node!==R).forEach(node=>{background.set(node,node.inert);node.inert=true})}
