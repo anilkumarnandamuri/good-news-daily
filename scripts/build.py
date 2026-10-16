@@ -121,6 +121,8 @@ def main():
     except Exception as ex:
         print("summaries skipped:",ex)
         for i in out: i.pop("desc",None)
+    import tts_audio
+    tts_audio.run(out)
     p=pathlib.Path(__file__).resolve().parent.parent/"data"; p.mkdir(exist_ok=True)
     (p/"news.json").write_text(json.dumps(dict(generated=now.isoformat(),count=len(out),feeds=report,items=out),ensure_ascii=False,indent=1))
     for r in report: print(r)

@@ -1,6 +1,6 @@
 # GN-6: Telugu audio via local Piper TTS (pre-generated MP3, hosted outside the site's history)
 
-Status: claimed
+Status: built
 Branch: job/GN-6 (base: job/GV-2 4493f51 — needs the reader's voice-module MP3 mode)
 Model: codex/gpt-6.1-sol (medium) | Playbook: Feature | Cost: cheap
 Created: 2026-10-15 22:12 PDT
@@ -27,10 +27,15 @@ Family feedback: on iPhone and an old Samsung, Telugu Listen says the voice isn'
 - Voice te_IN maya medium: trained on IIT Madras IndicTTS; the IITM EULA grants a perpetual, worldwide, royalty-free licence and allows free distribution of derivative works (copy at /workspace/tts-eval/indictts-license.pdf).
 
 ## Acceptance
-- [ ] Unit tests for key/caching (second run generates nothing), changed text => new file, rolling deletion, budget/missing-binary skip, manifest format — with a fake piper/ffmpeg (no network, fast).
-- [ ] Node tests: Telugu Listen uses MP3 when present; falls back to device speech when no MP3; friendly message when neither; English unchanged.
+- [x] Unit tests for key/caching (second run generates nothing), changed text => new file, rolling deletion, budget/missing-binary skip, manifest format — with a fake piper/ffmpeg (no network, fast).
+- [x] Node tests: Telugu Listen uses MP3 when present; falls back to device speech when no MP3; friendly message when neither; English unchanged.
 - [ ] Playwright test tests/test_te_audio_browser.py with fixed fixtures (fixture news.json + a small real Piper MP3 under tests/fixtures/audio/), screenshots in artifacts/GN-6/ at 390 and 1280: Telugu MP3 playing; friendly message state.
-- [ ] Data files data/news.json and data/summaries.json unchanged.
+- [x] Data files data/news.json and data/summaries.json unchanged.
 
 ## Checkpoint
-(fill in)
+- Changed: implemented opt-in local Piper/ffmpeg generation after summarization; normalized text/voice/rate hashing, cached reuse, atomic output, current-story manifest, seven-day unreferenced cleanup, shared deadline and isolated failures. Audio output is rejected inside this repo. Added separate-checkout publish helper (not executed).
+- Reader: default Telugu uses the real voice module and external manifest/MP3; absent/stale/broken/offline audio falls back to Telugu device speech. Missing both produces a persistent inline bilingual status. Default English and the GV-2 preview stay intact; no GN-5 typography changes.
+- Files: `scripts/tts_audio.py`, `scripts/build.py`, `scripts/publish_audio.sh`, `reader.js`, `tests/test_tts_audio.py`, `tests/frontend.test.js`, `tests/test_artifacts.py`, `tests/test_te_audio_browser.py`, `tests/fixtures/te-audio-news.json`, `tests/fixtures/audio/{te-maya.mp3,README.md}`, README/HANDOFF/DECISIONS, and `artifacts/GN-6/verification.txt`.
+- Evidence: exact requested unittest + frontend Node + voice Node command passed (51 Python tests, 24 frontend Node cases, 5 voice Node cases). `git diff --check` and `bash -n scripts/publish_audio.sh` passed. Real fixture probed: 2.324898 s, 9526 bytes, mono 22050 Hz / 32000 bps. Both routine-owned data files are byte-identical to HEAD.
+- Browser test is written with a free-port local server, fixed routed feed/manifest/real Piper MP3, and no external network. Four screenshot cases target `artifacts/GN-6/te-{mp3-playing,audio-unavailable}-{390,1280}.png` on the default site without a Telugu device voice.
+- Open items: browser run failed in server setup with `PermissionError: [Errno 1] Operation not permitted` creating AF_INET sockets; screenshots and real-browser assertions remain pending operator execution. Thus the browser acceptance checkbox remains open. Operator should run the full task Test command and inspect screenshots, then review/commit. No audio repo was created, no publication helper run, no routine enabled, no network used, no branch changed and no commits made. Existing GN-6 claim retained; no board mutation outside the authorized writable repo.

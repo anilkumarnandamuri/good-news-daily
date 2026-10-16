@@ -21,7 +21,10 @@ function environment({news=[],search='',storageBlocked=false}={}){
      el.label=new Element();el.label.textContent='🔊 Listen';
      const section=value.slice(value.lastIndexOf('<section',match.index));
      const paragraph=new Element();paragraph.textContent=(section.match(/<p[^>]*>([\s\S]*?)<\/p>/)?.[1]||'').replace(/<[^>]*>/g,'');
-     el.summary={querySelector:selector=>selector==='p'?paragraph:null,querySelectorAll:()=>[]};
+     const sectionNode=new Element();
+     sectionNode.querySelector=selector=>selector==='p'?paragraph:sectionNode.children.find(n=>n.className==='r-note r-audio-status')||null;
+     sectionNode.querySelectorAll=()=>[];
+     el.summary=sectionNode;
     }
     el.parent=this;this.children.push(el);
    }
@@ -253,7 +256,7 @@ test('reader renders summary status like paired with both summaries and listen c
  assert.match(e.nodes.get('rBody').innerHTML,/r-listen/);
 });
 
-function voiceReader(story,{VoicePlayer,search='?voice=1'}={}){
+function voiceReader(story,{setup,VoicePlayer,search='?voice=1'}={}){
  const e=environment({search});
  let resolveSummaries;
  const summaries=new Promise(resolve=>{resolveSummaries=resolve});
@@ -262,6 +265,7 @@ function voiceReader(story,{VoicePlayer,search='?voice=1'}={}){
  e.run('sticky.js');
  // Inject only the module boundary; exercise the reader's real player lifecycle.
  e.ctx.__voiceModule={VoicePlayer};
+ if(setup){setup(e);VoicePlayer=e.ctx.__voiceModule?.VoicePlayer}
  e.run('reader.js',code=>VoicePlayer?code.replace('import(u)','Promise.resolve(__voiceModule)'):code);
  e.ctx.location.hash='#/s/'+story.id;e.ctx.onData([story]);
  return {...e,resolveSummaries};
@@ -364,4 +368,64 @@ test('cached pairs attach only when both joined summaries match, preserving vali
   assert.equal(story.sum_en,'First sentence. Second sentence.');
   assert.equal(story.sum_te,'మొదటి వాక్యం. రెండవ వాక్యం.');
  }
+});
+
+// Exercise the real reader and real VoicePlayer together; only browser APIs are faked.
+function teluguReader({entry=true,voice=false,broken=false,moduleMissing=false,manifestOffline=false}={}){
+ const story=pairedSummaryStory();
+ const spoken=[],requests=[];
+ const e=voiceReader(story,{search:'',setup(e){
+  e.ctx.EventTarget=EventTarget;e.ctx.CustomEvent=CustomEvent;
+  e.ctx.Audio=class {
+   constructor(){this.duration=10;this.currentTime=0;this.src=''}
+   setAttribute(){} addEventListener(){} removeAttribute(){this.src=''} load(){} pause(){}
+   play(){if(broken){this.onerror?.();return Promise.resolve()}this.onplaying?.();return Promise.resolve()}
+  };
+  e.ctx.speechSynthesis={getVoices:()=>voice?[{lang:'te-IN',voiceURI:'te'}]:[],
+   addEventListener(){},removeEventListener(){},resume(){},cancel(){},speak(u){spoken.push(u)}};
+  e.ctx.SpeechSynthesisUtterance=function(text){this.text=text};
+  e.ctx.fetch=async url=>{
+   requests.push(url);
+   if(manifestOffline&&url.includes('manifest.json'))throw Error('offline');
+   return{ok:true,json:async()=>url==='data/audio-config.json'?{base_url:'https://audio.example/'}:
+    {stories:{[story.id]:entry?{te:{file:'te/key.mp3',text:entry==='stale'?'పాత వార్త.':story.sum_te}}:{}}}};
+  };
+  if(moduleMissing)e.ctx.__voiceModule={VoicePlayer:null};
+  else e.run('voice/src/gn-voice.js',code=>code.replace(/export /g,'')+';window.__voiceModule={VoicePlayer};');
+ }});
+ return{...e,spoken,requests,button:e.nodes.get('rBody').querySelectorAll('.r-listen')[1]};
+}
+
+test('default Telugu Listen plays manifest MP3 without a device voice and Stop tears down',async()=>{
+ const e=teluguReader();e.button.onclick();await flush();
+ assert.equal(e.ctx.__readerPlayer.mode,'audio');
+ assert.equal(e.ctx.__readerPlayer.audio.src,'https://audio.example/te/key.mp3');
+ assert.equal(e.button.label.textContent,'⏹ Stop');assert.equal(e.spoken.length,0);
+ assert.ok(e.requests.includes('https://audio.example/manifest.json'));
+ e.button.onclick();assert.equal(e.ctx.__readerPlayer,null);assert.equal(e.button.label.textContent,'🔊 Listen');
+});
+
+test('default Telugu falls back to device speech for absent, stale, failed, or offline audio',async()=>{
+ for(const options of [{entry:false},{entry:'stale'},{broken:true},{manifestOffline:true},{moduleMissing:true}]){
+  const e=teluguReader({...options,voice:true});e.button.onclick();await flush();
+  assert.ok(e.spoken.length>0,JSON.stringify(options));
+  assert.equal(e.spoken[0].lang,'te-IN');assert.equal(e.button.label.textContent,'⏹ Stop');
+  e.button.onclick();assert.equal(e.button.label.textContent,'🔊 Listen');
+ }
+});
+
+test('default Telugu unavailable message is inline and bilingual across audio failures',async()=>{
+ for(const options of [{entry:false},{entry:'stale'},{broken:true},{manifestOffline:true},{moduleMissing:true}]){
+  const e=teluguReader(options);e.button.onclick();await flush();
+  const note=e.button.summary.children[0];assert.equal(note.getAttribute('role'),'status');
+  assert.match(note.textContent,/ఈ వార్తకు ఆడియో/);assert.match(note.textContent,/Audio isn't available for this story yet/);
+  assert.equal(e.button.label.textContent,'🔊 Listen');assert.equal(e.spoken.length,0);
+ }
+});
+
+test('default English remains on native speech even when Telugu MP3 is present',async()=>{
+ const e=teluguReader();const button=e.nodes.get('rBody').querySelectorAll('.r-listen')[0];
+ button.onclick();await flush();assert.equal(e.spoken[0].text,pairedSummaryStory().sum_en);
+ assert.equal(e.spoken[0].lang,'en-IN');assert.equal(e.ctx.__readerPlayer,null);
+ assert.equal(e.requests.length,0);
 });
