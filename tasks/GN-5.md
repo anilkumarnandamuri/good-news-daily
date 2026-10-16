@@ -41,8 +41,8 @@ Phone screenshot: big "Large text" pill in the header next to the streak + theme
 - Requested unittest (43 tests), frontend Node and voice Node commands passed. Browser run: five setup errors from sandbox AF_INET socket denial; screenshots and layout acceptance pending. No commit or push; protected paths untouched.
 
 ## Checkpoint
-- 2026-10-15 21:40 PDT build pass (codex gpt-6.1-sol medium, workspace-write); committed 85e43ff
-- 2026-10-15 21:47 PDT Codex review: 1 must-fix item ([P2] hero clipping at 160%); running one fix pass
-- 2026-10-15 21:52 PDT fix pass complete (cards grow, hero h2 clamp, phone reader image min(30vh,240px))
-- 2026-10-15 21:55 PDT Codex review: 0 must-fix item(s) open (artifacts/GN-5/review.md; first review kept as review-1.md)
-- 2026-10-15 21:56 PDT verified on box: unittest 43 OK, node frontend 14/14, node voice 5/5, pytest tests/ 53 passed (incl. Playwright text-size + legacy browser), voice unittest 3 OK, voice browser_smoke PASS
+- 2026-10-15 21:34 PDT build pass (codex gpt-6.1-sol medium, workspace-write); committed 85e43ff
+- 2026-10-15 21:35 PDT Codex review: 1 must-fix item ([P2] hero clipping at 160%); running one fix pass
+- 2026-10-15 21:37 PDT fix pass complete (cards grow, hero h2 clamp, phone reader image min(30vh,240px))
+- 2026-10-15 21:37 PDT Codex review: 0 must-fix item(s) open (artifacts/GN-5/review.md; first review kept as review-1.md)
+- 2026-10-15 21:38 PDT verified on box: unittest 43 OK, node frontend 14/14, node voice 5/5, pytest tests/ 53 passed (incl. Playwright text-size + legacy browser), voice unittest 3 OK, voice browser_smoke PASS
