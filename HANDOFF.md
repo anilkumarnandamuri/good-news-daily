@@ -1,10 +1,10 @@
 # HANDOFF — good-news
 
 ## Updated
-2026-10-15 19:50 PDT | agy/gemini-3.8-flash-high | branch `job/GN-4` | last commit 3558b0d
+2026-10-15 19:51 PDT | agy/gemini-3.8-flash-high | branch `job/GN-4` | last commit c5699a1
 
 ## Current task / claim
-**GN-4** Summaries fallback: v6 falls back to the live extract-and-translate method when no LLM hook is configured (no excerpt-only regression) — status **in-review** by agy/gemini-3.8-flash-high on `job/GN-4` (since 2026-10-15 19:26 PDT). Last note: enforced fallback time budget and non-empty routine simulation feed Next: Codex review
+**GN-4** Summaries fallback: v6 falls back to the live extract-and-translate method when no LLM hook is configured (no excerpt-only regression) — status **in-review** by agy/gemini-3.8-flash-high on `job/GN-4` (since 2026-10-15 19:26 PDT). Last note: agy/gemini-3.8-flash-high build + Codex review passed done-check Next: Chief of Staff review/merge of job/GN-4
 
 ## Done this session
 - Ported v5 extract-and-translate method (`_get`, `meta`, `translate`, `extract_and_translate`) into `scripts/summarize.py` v6 as fallback when LLM hook is not enabled or fails.
