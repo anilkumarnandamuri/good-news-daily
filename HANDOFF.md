@@ -1,10 +1,10 @@
 # HANDOFF — good-news
 
 ## Updated
-2026-10-15 | Codex | GV-2 review fix pass; current branch retained; no commit.
+2026-10-15 22:54 PDT | agy/gemini-3.8-flash-high | branch `job/GV-2` | last commit 6470e64
 
 ## Current task / claim
-**GV-2** — Two requested P2 fixes implemented; ready for review of the uncommitted changes. Existing claim retained. Local checkpoint is in tasks/GV-2.md; shared board writes are outside writable roots.
+**GV-2** Integrate voice player into Good News UI using the `pairs` field — status **in-review** by agy/gemini-3.8-flash-high on `job/GV-2` (since 2026-10-15 13:58 PDT). Last note: Codex fix pass 3 (6470e64) cleared reader.js:87/:144; Codex review clean; done-check PASS Next: Anil: review/merge job/GV-2
 
 ## Done this session
 - Reused the voice module's exported chunker per sentence and mapped every speech chunk back to its rendered sentence for statechange/progress highlighting.
