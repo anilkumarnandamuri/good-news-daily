@@ -265,3 +265,38 @@ else:
         assert reader_hidden is True
         assert page.evaluate("location.hash") == ""
         context.close()
+
+    def test_voice_reader_legacy_decimals_preserved(server, browser_instance):
+        """Verify legacy stories without pairs preserve decimals in display and speech."""
+        context = browser_instance.new_context(viewport={"width": 1280, "height": 800})
+        context.add_init_script(MOCK_SPEECH_SCRIPT)
+        page = context.new_page()
+
+        # Open legacy story with decimal '$16.8 billion' (378259bf26)
+        url = f"{server}/?voice=1#/s/378259bf26"
+        page.goto(url)
+        page.wait_for_selector("#reader:not([hidden])")
+        page.wait_for_selector(".r-sum[lang='en'] .r-sentence")
+
+        en_sentences = page.locator(".r-sum[lang='en'] .r-sentence")
+        assert en_sentences.count() == 2, f"Expected 2 sentences, got {en_sentences.count()}"
+        en_texts = [en_sentences.nth(i).inner_text() for i in range(en_sentences.count())]
+        assert any("$16.8 billion" in t for t in en_texts), f"$16.8 billion not found in {en_texts}"
+        assert not any("$16. 8 billion" in t for t in en_texts), f"Corrupted decimal found in {en_texts}"
+
+        te_sentences = page.locator(".r-sum[lang='te'] .r-sentence")
+        assert te_sentences.count() == 2, f"Expected 2 Telugu sentences, got {te_sentences.count()}"
+        te_texts = [te_sentences.nth(i).inner_text() for i in range(te_sentences.count())]
+        assert any("$16.8" in t for t in te_texts), f"$16.8 not found in Telugu sentences {te_texts}"
+        assert not any("$16. 8" in t for t in te_texts), f"Corrupted Telugu decimal found in {te_texts}"
+
+        # Test playback highlights sentence 0 then sentence 1
+        en_listen = page.locator(".r-sum[lang='en'] .r-listen")
+        en_listen.click()
+        page.wait_for_selector(".r-sum[lang='en'] .r-sentence[data-idx='0'].is-active")
+        page.wait_for_selector(".r-sum[lang='en'] .r-sentence[data-idx='1'].is-active", timeout=5000)
+
+        en_listen.click()
+        page.wait_for_function("!document.querySelector('.r-sum[lang=\"en\"] .r-sentence.is-active')")
+        context.close()
+

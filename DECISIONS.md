@@ -61,3 +61,10 @@
   - Skipping the summary rerender while playing: Leaves outdated excerpt text and missing sentence spans permanently displayed for the session.
   - Relying on `cur` ID comparison without checking `location.hash`: Fails when the user closes the reader (`cur = null`), incorrectly reopening the story on hash `""`.
 
+## D008 — Protected sentence splitter for legacy summary rendering and playback (2026-10-15, agy/gemini-3.8-flash-high)
+- Decision: Introduce a unified `splitSentences(text)` function in `reader.js` (and expose it on `window.splitSentences`) that protects decimal points between digits (`/(?<=\d)\.(?=\d)/gu`) and common abbreviations/initialisms (`/\b(?:Mr|Mrs|Ms|Dr|Prof|Sr|Jr|St|vs|etc)\./giu` and `/\b(?:[A-Za-z]\.){2,}|\b[A-Z]\.(?=\s+[A-Z][a-z])/gu`) before splitting against sentence terminators `[^.!?।॥…]+[.!?।॥…]*|[.!?।॥…]+`, and use it consistently in both `block()` DOM rendering and `playVoice()` queue creation. Wrap dynamic import in `getVoiceModule()` in `try...catch`.
+- Why: Previously, legacy stories without precomputed pairs in `data/summaries.json` were split naively on all punctuation characters including periods, corrupting decimal numbers such as `$16.8 billion` into `$16. 8 billion` in DOM text and generating separate broken speech chunks. Sharing a single protected splitter ensures rendered sentence spans and spoken queue chunks stay aligned without corrupting numerical or abbreviation data.
+- Alternatives rejected:
+  - Importing `chunkText` asynchronously from `voice/src/gn-voice.js`: Rejected because `block()` renders story cards and summary sections synchronously during initial page layout and route changes before dynamic ES modules can be imported.
+  - Relying on CSS or string replacement post-split: Fragile and fails to preserve audio player chunk boundaries during speech playback.
+

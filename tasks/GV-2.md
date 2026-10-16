@@ -34,29 +34,32 @@ Resolved in `reader.js`. In the `getSampleNews().then()` callback, the current r
 ### [P2] Keep browser dependencies optional during unittest discovery — tests/test_voice_reader.py:5-6
 Resolved in `tests/test_voice_reader.py`. Replaced unconditional top-level imports of `pytest` and `playwright.sync_api` with `try...except ImportError` guards and `pytestmark = pytest.mark.skip(reason="playwright is not installed")`, mirroring `tests/test_legacy_feed_browser.py`. Updated `tests/test_compatibility.py` to pop `test_voice_reader` during playwright-absent discovery checks. Running `python3 -m unittest discover -s tests -v` now runs cleanly with zero `_FailedTest` errors even when optional browser dependencies are absent.
 
+### [P2] Preserve decimals and abbreviations in fallback sentence splitting — reader.js:65-65
+Resolved in `reader.js`. Added a unified protected sentence splitter `splitSentences(text)` that replaces decimal points between digits (`/(?<=\d)\.(?=\d)/gu`) and common abbreviations like Dr., Mr., Mrs., Ms., St., U.S., e.g., i.e., vs. (`/\b(?:Mr|Mrs|Ms|Dr|Prof|Sr|Jr|St|vs|etc)\./giu` and `/\b(?:[A-Za-z]\.){2,}|\b[A-Z]\.(?=\s+[A-Z][a-z])/gu`) with private placeholders (`\ue000`) before splitting against `[^.!?।॥…]+[.!?।॥…]*|[.!?।॥…]+` and restores them after. Used `splitSentences` in both `block()` DOM rendering and `playVoice()` queue creation so that rendered spans and spoken utterances stay perfectly aligned and decimal numbers (such as `$16.8 billion` in checked-in story `378259bf26`) are never split into `$16. 8 billion`. Added comprehensive unit tests in `tests/frontend.test.js` verifying `$16.8 billion`, `Dr. Rao met U.S. officials.`, Telugu sentences with `।`, and reader DOM rendering. Also added Playwright test `test_voice_reader_legacy_decimals_preserved` in `tests/test_voice_reader.py`.
+
 ### Locator.click timeout in test_voice_reader.py::test_voice_reader_mp3_playback
 Resolved in `styles.css` and `reader.js`. The `.r-listen.on` pulse animation used `@keyframes pulse { 50% { transform: scale(1.03); } }` which infinitely mutated the button's layout bounding box across animation frames, failing Playwright's stability checks during active MP3 playback. Replaced with `@keyframes pulse-listen { 50% { opacity: 0.85; } }` which preserves visual pulsing without geometry thrashing. In addition, `highlightSentence(idx)` now tracks `currentHighlightIdx` and deduplicates calls, avoiding continuous scroll calls on every `timeupdate` tick.
 
 ## Checkpoint
 - **What changed**:
-  - `reader.js`: Invoked `stopVoice()` before `renderBody(it)` upon summary fetch resolution; verified `location.hash` still routes to target story id before opening sample stories.
-  - `tests/test_voice_reader.py`: Wrapped `pytest` and `playwright` imports in optional `try...except ImportError` blocks with `pytestmark` skip markers for non-browser discovery; added browser assertions for summary-load playback teardown (`test_voice_reader_stops_playback_on_summary_load`) and route verification abort on sample lookup (`test_voice_reader_sample_lookup_aborts_if_route_changes`).
-  - `tests/test_compatibility.py`: Added `test_voice_reader` module eviction to `test_unittest_discovery_succeeds_when_playwright_is_absent` to verify clean discovery without playwright.
-  - `DECISIONS.md`: Recorded decision D007.
-  - `tasks/GV-2.md` & `HANDOFF.md`: Updated review responses, checkpoints, and handoff state.
+  - `reader.js`: Implemented protected `splitSentences(text)` preserving decimal points between digits and common abbreviations/initialisms; used `splitSentences` in `block()` and `playVoice()`; safely wrapped dynamic voice module import in `try...catch`.
+  - `tests/frontend.test.js`: Added tests for `splitSentences` asserting preservation of `$16.8 billion`, `Dr. Rao met U.S. officials.`, Telugu sentences with `।`, and reader rendering with `?voice=1` for story `378259bf26`.
+  - `tests/test_voice_reader.py`: Added browser assertion `test_voice_reader_legacy_decimals_preserved` verifying legacy story `378259bf26` renders `$16.8 billion` intact and speech highlighting advances across the full sentences.
+  - `DECISIONS.md`: Recorded decision D008.
+  - `HANDOFF.md` & `tasks/GV-2.md`: Updated review responses, checkpoints, and handoff state.
 - **Files modified**:
   - `reader.js`
+  - `tests/frontend.test.js`
   - `tests/test_voice_reader.py`
-  - `tests/test_compatibility.py`
   - `DECISIONS.md`
   - `tasks/GV-2.md`
   - `HANDOFF.md`
 - **Verification evidence**:
-  - `python3 -m pytest tests/test_voice_reader.py` (5 passed in 9.29s)
-  - `node --test tests/*.test.js` (12 passed in 292ms)
-  - `python3 -m unittest discover -s tests -v` (29 passed in 0.11s)
-  - `python3 -m pytest tests/test_legacy_feed_browser.py` (3 passed in 3.03s)
-  - `node --test voice/tests/*.test.js` (5 passed in 173ms)
+  - `python3 -m pytest tests/test_voice_reader.py` (6 passed in 11.16s)
+  - `node --test tests/*.test.js` (14 passed in 230ms)
+  - `python3 -m unittest discover -s tests -p 'test_*.py'` (29 passed in 0.10s)
+  - `python3 -m pytest tests/test_legacy_feed_browser.py` (3 passed in 2.83s)
+  - `node --test voice/tests/*.test.js` (5 passed in 180ms)
   - Fresh screenshots verified in `artifacts/GV-2/`: `desktop-1280-en-active.png`, `desktop-1280-te-active.png`, `desktop-mp3-active.png`, `mobile-390-en-active.png`, `mobile-390-te-active.png`
 - **Open items**: None. All must-fix findings resolved and verified.
 
@@ -78,3 +81,5 @@ Resolved in `styles.css` and `reader.js`. The `.r-listen.on` pulse animation use
 - 2026-10-15 17:30 PDT Codex review: 3 must-fix item(s); running one fix pass
 - 2026-10-15 17:35 PDT Codex review: 1 must-fix item(s) open
 - 2026-10-15 17:37 PDT run-job resumed
+- 2026-10-15 17:37 PDT Codex review: 1 must-fix item(s); running one fix pass
+- 2026-10-15 17:45 PDT [P2] decimal and abbreviation splitting resolved; 14 node tests + 6 browser tests passing; screenshots updated

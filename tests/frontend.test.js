@@ -36,11 +36,11 @@ function environment({news=[],search='',storageBlocked=false}={}){
  }
  for(const id of ['hero','feed','tabs','theme','textSize','date','streak','gen','reader','rBody','rBack','rSave','rSm','rLg','rShare','main','push','pushBtn','pushHint'])nodes.set(id,new Element(id,['theme','textSize','rBack','rSave','rSm','rLg','rShare','pushBtn'].includes(id)?'button':'div'));
  nodes.get('reader').hidden=true;nodes.get('pushBtn').label=new Element();
- document={activeElement:new Element(),documentElement:new Element(),body:new Element(),title:'',getElementById:id=>nodes.get(id),
+ document={activeElement:new Element(),documentElement:new Element(),body:new Element(),title:'',baseURI:'http://local/',getElementById:id=>nodes.get(id),
   querySelector(selector){if(selector==='#tabs button')return nodes.get('tabs').children[0];if(selector.startsWith('#'))return nodes.get(selector.slice(1));const m=selector.match(/data-k="([^"]+)"/);return m?nodes.get('tabs').children.find(b=>b.dataset.k===m[1]):null},
   querySelectorAll:selector=>selector==='a[href]'?nodes.get('feed').querySelectorAll(selector):[],createElement:()=>new Element()};
  document.body.children=[nodes.get('main'),nodes.get('tabs'),nodes.get('reader')];
- const ctx={document,console,URLSearchParams,Date,Map,Set,Number,Math,Promise,encodeURIComponent,
+ const ctx={document,console,URL,URLSearchParams,Date,Map,Set,Number,Math,Promise,encodeURIComponent,
   navigator:{userAgent:'Test desktop',platform:'Linux',maxTouchPoints:0},location:{search,hash:'',href:'http://local/',origin:'http://local',pathname:'/'},history:{back(){ctx.location.hash='';listeners.get('hashchange')?.forEach(f=>f())}},
   matchMedia(q){if(!media.has(q))media.set(q,{matches:false,addEventListener(_,fn){this.change=fn}});return media.get(q)},
   addEventListener(k,fn){if(!listeners.has(k))listeners.set(k,[]);listeners.get(k).push(fn)},
@@ -169,4 +169,49 @@ test('feed item without summary_status but with both summaries renders the summa
  assert.ok(e.nodes.get('rBody').innerHTML.includes('పూర్తి తెలుగు సారాంశం.'));
  assert.match(e.nodes.get('rBody').innerHTML,/In short/);
 });
+
+test('splitSentences preserves $16.8 billion, Dr. Rao met U.S. officials., and Telugu sentences with ।',async()=>{
+ const e=environment();
+ e.run('sticky.js');e.run('app.js');e.run('reader.js');await flush();
+ const split=e.ctx.window.splitSentences;
+ assert.equal(typeof split,'function');
+ const s=txt=>[...split(txt)];
+
+ // Decimal preservation: '$16.8 billion'
+ const dec=s('Anthropic told investors that revenue jumped to $16.8 billion in the September quarter.');
+ assert.deepEqual(dec,['Anthropic told investors that revenue jumped to $16.8 billion in the September quarter.']);
+ assert.deepEqual(s('$16.8 billion'),['$16.8 billion']);
+
+ // Abbreviations: 'Dr. Rao met U.S. officials.'
+ const abbr=s('Dr. Rao met U.S. officials. They discussed bilateral trade.');
+ assert.deepEqual(abbr,['Dr. Rao met U.S. officials.','They discussed bilateral trade.']);
+ assert.deepEqual(s('Dr. Rao met U.S. officials.'),['Dr. Rao met U.S. officials.']);
+
+ // Telugu sentence with '।'
+ const te=s('రైతులకు ప్రభుత్వం శుభవార్త చెప్పింది। సాగునీటి ప్రాజెక్టును ప్రారంభించింది.');
+ assert.deepEqual(te,['రైతులకు ప్రభుత్వం శుభవార్త చెప్పింది।','సాగునీటి ప్రాజెక్టును ప్రారంభించింది.']);
+ assert.deepEqual(s('ఇది మొదటి వాక్యం। ఇది రెండవ వాక్యం.'),['ఇది మొదటి వాక్యం।','ఇది రెండవ వాక్యం.']);
+});
+
+test('reader with ?voice=1 preserves $16.8 billion without splitting into separate spans',async()=>{
+ const story3782={
+  id:'378259bf26',
+  title:'Anthropic revenue test',
+  summary:'Anthropic summary',
+  sum_en:'Anthropic told investors it was free cash flow positive and had an 11 percent operating margin, both adjusted, in the third quarter. Anthropic told investors on Wednesday that its revenue jumped around 50 percent to $16.8 billion in the September quarter.',
+  sum_te:'ఆంత్రోపిక్ పెట్టుబడిదారులకు ఇది ఉచిత నగదు ప్రవాహం సానుకూలంగా ఉందని మరియు మూడవ త్రైమాసికంలో సర్దుబాటు చేయబడిన 11 శాతం ఆపరేటింగ్ మార్జిన్‌ను కలిగి ఉందని తెలిపింది. సెప్టెంబర్ త్రైమాసికంలో తమ ఆదాయం దాదాపు 50 శాతం పెరిగి $16.8 బిలియన్లకు చేరుకుందని ఆంత్రోపిక్ బుధవారం పెట్టుబడిదారులకు తెలిపింది.',
+  summary_status:'paired',
+  published:'2026-10-15T04:11:12+00:00',
+  category:'tech',
+  lang:'en'
+ };
+ const e=environment({news:[story3782],search:'?voice=1'});
+ e.run('sticky.js');e.run('app.js');e.run('reader.js');await flush();
+ e.ctx.location.hash='#/s/378259bf26';e.dispatch('hashchange');
+ assert.equal(e.nodes.get('reader').hidden,false);
+ const html=e.nodes.get('rBody').innerHTML;
+ assert.ok(html.includes('$16.8 billion'),'HTML must preserve $16.8 billion in sentence span');
+ assert.ok(!html.includes('$16. 8 billion'),'HTML must not split $16.8 billion into $16. 8 billion');
+});
+
 
