@@ -28,3 +28,10 @@ Phone screenshot: big "Large text" pill in the header next to the streak + theme
 - ONE text-size control: A−/A+ (reader bar), persisted in localStorage (`gn_textScale`), bounds 0.85–1.6, step 0.15, default 1; it scales the whole site (root font-size) so it also affects list text. Buttons disabled at bounds; brief toast/status shows the size %. Header "Large text" pill removed. Migration: ignore/delete `gn_largeText` (it was a default, not a choice); old `gn_rfs`/`rfs` 1.15 (merge default) → 1, other values clamped to bounds.
 - Landing page clean at 384px: header one row (~≤90px), Today's 5 card #1 compact (≤ 320px tall at 384 width, fully visible in the first 832px screen), photo visible with a gradient (not an opaque box) while keeping white text contrast; headline line-clamped (3 lines). Desktop 1280 not worse than pre-merge (t5 card ≤ 420px).
 - Tests: Playwright assertions (384 and 1280): computed font-size of `.r-sum p` increases after A+, decreases after A−, persists after reload, clamps at bounds; html/body font-size 16px by default; header has no #textSize; first Today's 5 card height ≤ 320px at 384 and its bottom within the viewport. Screenshots in artifacts/GN-5/. Existing unittest, node (tests + voice), voice and browser tests pass (update tests that referenced #textSize/largeText).
+
+
+## One fix pass — 2026-10-15, Codex
+- Addressed review P2: hero/Today's 5 bodies now flow inside growing cards with the existing default minimum heights; hero headlines clamp to three lines and excerpts remain at two.
+- Phone reader image height is now `min(30vh,240px)` below 760px.
+- Browser coverage presets 160% scale before load for All, Science and Health, checks card/body/heading containment, and checks the first reader summary starts above 832px at default phone scale before scrolling.
+- Requested unittest (43 tests), frontend Node and voice Node commands passed. Browser run: five setup errors from sandbox AF_INET socket denial; screenshots and layout acceptance pending. No commit or push; protected paths untouched.

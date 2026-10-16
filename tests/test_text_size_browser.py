@@ -67,6 +67,7 @@ if pytest is not None:
             font_size = lambda: paragraph.evaluate("e => parseFloat(getComputedStyle(e).fontSize)")
             original = font_size()
             if mobile:
+                assert paragraph.bounding_box()["y"] < 832
                 paragraph.scroll_into_view_if_needed()
                 page.screenshot(path=str(ARTIFACTS / "gn5-reader-384.png"))
             press("#rLg")
@@ -97,4 +98,40 @@ if pytest is not None:
             assert page.locator("#rSm").get_attribute("aria-disabled") == "true"
             assert page.evaluate("GN.textScale.get()") == .85
             assert abs(font_size() - original * .85) < .02
+            browser.close()
+
+
+    @pytest.mark.parametrize("category", ["all", "science", "health"])
+    def test_max_text_scale_card_containment(server, category):
+        ARTIFACTS.mkdir(parents=True, exist_ok=True)
+        with sync_playwright() as p:
+            browser = p.chromium.launch()
+            context = browser.new_context(
+                viewport={"width": 384, "height": 832},
+                device_scale_factor=3, is_mobile=True, has_touch=True,
+                reduced_motion="reduce",
+            )
+            context.route("**/*", lambda route: route.continue_()
+                          if route.request.url.startswith(server + "/") else route.abort())
+            context.add_init_script("localStorage.setItem('gn_textScale', '1.6')")
+            page = context.new_page()
+            page.goto(f"{server}/?cat={category}")
+            # All renders Today's 5; category views render a lead hero.
+            card = page.locator(".t5-c" if category == "all" else ".hero").first
+            card.wait_for()
+            page.evaluate("document.fonts.ready")
+            assert page.evaluate("GN.textScale.get()") == 1.6
+            card_box = card.bounding_box()
+            body_box = card.locator(".body").bounding_box()
+            heading = card.locator("h2, h3")
+            heading_box = heading.bounding_box()
+            for box in (body_box, heading_box):
+                assert box["y"] >= card_box["y"] - 1
+                assert box["y"] + box["height"] <= card_box["y"] + card_box["height"] + 1
+                assert box["x"] >= card_box["x"] - 1
+                assert box["x"] + box["width"] <= card_box["x"] + card_box["width"] + 1
+            assert heading.evaluate("e => getComputedStyle(e).webkitLineClamp") == "3"
+            if category != "all":
+                assert card.locator("p").evaluate("e => getComputedStyle(e).webkitLineClamp") == "2"
+            page.screenshot(path=str(ARTIFACTS / f"gn5-max-scale-{category}-384.png"), full_page=True)
             browser.close()
