@@ -35,9 +35,6 @@ function tabs(){const focused=document.activeElement?.dataset.k;const c={all:DAT
 $("#tabs").onclick=e=>{const b=e.target.closest(".tab");if(!b)return;cur=b.dataset.k;$("#tabs").querySelectorAll("button").forEach(tab=>tab.setAttribute("aria-pressed",tab===b));render();scrollTo({top:0,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"instant":"smooth"})};
 const th=GN.LS.get("theme",null)||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.dataset.theme=th;
 $("#theme").onclick=()=>{const t=document.documentElement.dataset.theme==="dark"?"light":"dark";document.documentElement.dataset.theme=t;GN.LS.set("theme",t)};
-const textSize=$("#textSize");
-function setTextSize(large){document.documentElement.dataset.text=large?"large":"standard";textSize.setAttribute("aria-pressed",large);GN.LS.set("largeText",large)}
-setTextSize(GN.LS.get("largeText",true));textSize.onclick=()=>setTextSize(textSize.getAttribute("aria-pressed")!=="true");
 $("#date").textContent=new Date().toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"});
 const p=new URLSearchParams(location.search);if(["dark","light"].includes(p.get("theme")))document.documentElement.dataset.theme=p.get("theme");if(Object.hasOwn(CATS,p.get("cat")))cur=p.get("cat");
 fetch("data/thoughts.json").then(r=>r.json()).then(t=>{window.THOUGHTS=t;if(DATA.length&&cur==="all")$("#hero").insertAdjacentHTML("beforeend",thoughtCard())}).catch(()=>{});

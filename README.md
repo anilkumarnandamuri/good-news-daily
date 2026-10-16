@@ -61,7 +61,7 @@ The example shows one pair to explain the shape. A publishable response needs 4�
 
 ## Reading and static performance
 
-Large text is on by default. The header button selects standard text, and the reader has separate A− and A+ controls. Preferences and saved stories stay on the device. Telugu uses a bundled font with `font-display: swap`. Text uses relative sizes, controls have at least 44-pixel targets, keyboard focus is visible, and the reader contains focus until it closes. Automated palette checks require at least 4.5:1 contrast for the tested text colors in both themes.
+Text starts at the normal browser size. The reader’s A− and A+ controls resize text across the whole site from 85% to 160%, with the chosen size saved on this device. Preferences and saved stories stay on the device. Telugu uses a bundled font with `font-display: swap`. Text uses relative sizes, controls have at least 44-pixel targets, keyboard focus is visible, and the reader contains focus until it closes. Automated palette checks require at least 4.5:1 contrast for the tested text colors in both themes.
 
 Images have reserved dimensions, async decoding, and native lazy loading. The lead image loads eagerly. Local scripts defer in dependency order, with the OneSignal SDK after the local scripts so a slow SDK download does not hold up the feed. Only crossing the desktop layout breakpoint causes a resize rerender. News requests use normal browser HTTP caching, including the host's cache headers and conditional requests. There is no extra service worker competing with OneSignal. The standalone summary command compacts `data/news.json`; the scheduled build retains its original output format.
 

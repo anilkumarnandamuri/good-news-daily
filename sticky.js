@@ -1,7 +1,7 @@
 /* Good News Daily — local-only habits: read marks, streak, saved stories, Today's 5, banners. No accounts. */
 (function(){
  const LS={get(k,d){try{return JSON.parse(localStorage.getItem("gn_"+k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem("gn_"+k,JSON.stringify(v))}catch(e){}}};
- for(const key of ["theme","rfs"]){try{const old=localStorage.getItem(key);if(old!==null&&localStorage.getItem("gn_"+key)===null)LS.set(key,key==="rfs"?Number(old):old)}catch(e){}}
+ for(const key of ["theme"]){try{const old=localStorage.getItem(key);if(old!==null&&localStorage.getItem("gn_"+key)===null)LS.set(key,old)}catch(e){}}
  const day=(d=new Date())=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
  const GN=window.GN={
   isRead:id=>!!LS.get("read",{})[id],
@@ -18,6 +18,18 @@
   thought(list){const d=new Date(),n=Math.floor((d-new Date(d.getFullYear(),0,0))/864e5);return list[n%list.length]},
   LS,day
  };
+ // One root scale for the list and reader; migrate before app/reader render.
+ const normalize=v=>{const n=Number(v);return Math.round(Math.min(1.6,Math.max(.85,Number.isFinite(n)?n:1))*100)/100};
+ let scale=LS.get("textScale",null);
+ if(scale===null){
+  const old=LS.get("rfs",null);let legacy=old;
+  if(legacy===null){try{legacy=localStorage.getItem("rfs")}catch(e){}}
+  scale=legacy===null||Number(legacy)===1.15?1:normalize(legacy);
+ }
+ scale=normalize(scale);
+ try{for(const key of ["gn_largeText","gn_rfs","rfs"])localStorage.removeItem(key)}catch(e){}
+ GN.textScale={min:.85,max:1.6,step:.15,get:()=>scale,set(v){scale=normalize(v);LS.set("textScale",scale);document.documentElement.style.fontSize=Math.round(scale*100)+"%";return scale}};
+ GN.textScale.set(scale);
  // ---- banners: install (Android/Chrome) + gentle notification reminder ----
  let deferred=null;
  function banner(id,html,onYes){if(document.getElementById(id))return;const b=document.createElement("div");b.className="gn-banner";b.id=id;b.innerHTML=html+'<button class="gb-x" aria-label="Dismiss">✕</button>';
