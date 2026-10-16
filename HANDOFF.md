@@ -1,10 +1,10 @@
 # HANDOFF — good-news
 
 ## Updated
-2026-10-15 20:15 PDT | agy/gemini-3.8-flash-high | branch `job/GN-4` | last commit 81f37fd
+2026-10-15 21:28 PDT | codex/gpt-6.1-sol | branch `job/GN-5` | last commit 5bdf08c
 
 ## Current task / claim
-**GN-4** Summaries fallback: v6 falls back to the live extract-and-translate method when no LLM hook is configured (no excerpt-only regression) — status **done** by agy/gemini-3.8-flash-high on `job/GN-4` (since 2026-10-15 19:56 PDT). Last note: merged+pushed good-news main 81f37fd (v5 fallback in v6; routine sim 116/116)
+**GN-5** Fix mobile text-size regressions from 2026-10-15 merge: default normal ~16px body (was forced 125% root + Large text on by default), one unified working text-size control (A-/A+ with bounds+persistence; Large-text pill removed from the header), compact Today's 5 / hero cards on the first screen at 384px; Playwright assertions. — status **claimed** by codex/gpt-6.1-sol on `job/GN-5` (since 2026-10-15 21:28 PDT). Last note: 2026-10-15 21:28 PDT claimed by codex/gpt-6.1-sol
 
 ## Done this session
 - Fixed Codex review [P1] finding (Routine regression gate: short new items regress to excerpt-only):
