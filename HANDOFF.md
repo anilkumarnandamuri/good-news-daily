@@ -1,10 +1,10 @@
 # HANDOFF — good-news
 
 ## Updated
-2026-10-15 | Codex | branch `job/GN-6` | uncommitted review fixes (operator commits)
+2026-10-15 22:50 PDT | codex | branch `job/GN-6` | last commit 18cae0a
 
 ## Current task / claim
-**GN-6** Telugu audio via local Piper — built, with P1/P2 review fixes and legacy generation compatibility implemented. Existing claim retained. Browser verification remains pending. User explicitly prohibited network, commits, pushes and branch switches; no board writes performed.
+**GN-6** Telugu audio via local Piper TTS (pre-generated MP3, hosted outside main history) — status **claimed** by codex on `job/GN-6` (since 2026-10-15 22:10 PDT). Last note: Codex build c81827d + 2 fix passes (2b6cfce, 18cae0a); 2 P1 + 1 P2 fixed; final review 1 P2 (reader.js:120 module-load retry). Not wired into routine (GOOD_NEWS_AUDIO off). Next: Anil: approve hosting (good-news-audio repo) + routine wiring; optional fix pass for last P2
 
 ## Done this session
 - Addressed the latest GN-6 P1: prefetch Telugu config/manifest and voice module when opening a story; resolved taps use cached results without awaiting before speech or MP3 play.
