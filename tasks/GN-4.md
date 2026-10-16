@@ -30,28 +30,49 @@ Test command for the task file: python3 -m unittest discover -s tests -p 'test_*
   2. Preserved legacy v5 cache entries whose sentence counts cannot be re-paired by `legacy_pairs` as `summary_status='summary'` with both `sum_en` and `sum_te` preserved and zero network requests.
   3. Updated `reader.js` and `app.js` to render `summary_status='summary'` with full bilingual summaries and Listen buttons like `paired`.
   4. Updated `tests/test_artifacts.py` to accept `summary_status='summary'` items (asserting both summary strings non-empty).
-  5. Added unit tests in `tests/test_summaries.py` covering: no-LLM fallback producing 1:1 aligned pairs, translation failure falling back to excerpt and retrying on next run, v5 cache entries kept as `summary` without network, hook configured taking precedence without calling fallback, and hook failure falling back to extract-and-translate.
-  6. Added Node test in `tests/frontend.test.js` verifying reader renders `summary` status stories like `paired`.
-  7. Added Playwright browser tests in `tests/test_legacy_feed_browser.py` asserting reader display of `summary_status='summary'` items and generated screenshots at mobile (390px) and desktop (1280px) in `artifacts/GN-4/`.
-  8. Updated `README.md` and appended decision D006 in `DECISIONS.md`.
+  5. Enforced remaining time budget in `scripts/summarize.py`: propagated remaining deadline (`deadline - time.monotonic()`) down through metadata retrieval (`meta(url, timeout)`) and sentence translation (`translate(text, sl, tl, timeout, deadline)`), checking deadlines between requests and between translation endpoints so slow endpoints cannot overrun the routine budget.
+  6. Updated `tools/routine_sim.py` routine regression gate to require `n_total > 0` before accepting the all-stories-summarized alternative (`n_sum == n_total`), rejecting empty simulated feeds.
+  7. Added comprehensive unit tests in `tests/test_summaries.py` (covering fallback pairs alignment, translation failure retry, v5 cache preservation as summary, hook precedence, hook failure fallback, time budget enforcement, and translation endpoint deadline skipping) and `tests/test_compatibility.py` (empty feed regression rejection).
+  8. Added Node test in `tests/frontend.test.js` verifying reader renders `summary` status stories like `paired`.
+  9. Added Playwright browser tests in `tests/test_legacy_feed_browser.py` asserting reader display of `summary_status='summary'` items and generated screenshots at mobile (390px) and desktop (1280px) in `artifacts/GN-4/`.
+  10. Updated `README.md` and appended decisions D006 and D007 in `DECISIONS.md`.
 - **Files modified**:
   - `scripts/summarize.py`
+  - `tools/routine_sim.py`
   - `reader.js`
   - `app.js`
   - `tests/test_artifacts.py`
   - `tests/test_summaries.py`
+  - `tests/test_compatibility.py`
   - `tests/frontend.test.js`
   - `tests/test_legacy_feed_browser.py`
   - `README.md`
   - `DECISIONS.md`
   - `tasks/GN-4.md`
 - **Verification evidence**:
-  - `python3 -m unittest discover -s tests -p 'test_*.py'` (34 tests passed)
+  - `python3 -m unittest discover -s tests -p 'test_*.py'` (37 tests passed)
   - `node --test tests/*.test.js` (13 tests passed)
   - `node --test voice/tests/*.test.js` (5 tests passed)
   - `python3 -m pytest tests/test_legacy_feed_browser.py -q` (5 passed)
-  - Full test command passed in 4.40s.
-  - Screenshots generated: `artifacts/GN-4/gn4-summary-390.png` and `artifacts/GN-4/gn4-summary-1280.png`.
+  - Full test command passed in 4.41s.
+  - Screenshots re-generated: `artifacts/GN-4/gn4-summary-390.png` and `artifacts/GN-4/gn4-summary-1280.png`.
   - Byte-identical contract verified: `data/news.json`, `data/summaries.json`, `scripts/build.py`, `scripts/send_push.py`, `scripts/digest.py`, `push.js`, `OneSignalSDKWorker.js` completely unmodified.
 - **Open items**:
   - Codex review (`artifacts/GN-4/review.md`).
+
+## Review response
+### Response to Codex review 1 (artifacts/GN-4/review-1.md)
+1. **[P2] Enforce the fallback's remaining time budget — scripts/summarize.py:196-199**
+   - **Root cause**: `extract_and_translate` accepted a `timeout` parameter from `run`, but did not use it to bound its network calls. `meta` used a fixed 8-second timeout, and `translate` queried two endpoints (Google Translate and MyMemory) with up to 10 seconds each across 6 sentences. If a fallback started near the 240-second routine deadline, slow endpoints could take an additional ~128 seconds.
+   - **Fix**: Propagated remaining deadline through `extract_and_translate`:
+     - Computed item deadline `time.monotonic() + timeout`.
+     - `meta(url, timeout=8)` accepts bounded timeout and checks remaining time.
+     - `translate(text, sl, tl, timeout=10, deadline=None)` checks deadline before each endpoint query, breaks early without querying subsequent endpoints if deadline has expired, and caps request timeouts to remaining budget.
+     - `extract_and_translate` checks deadline between sentence translations, raising `TimeoutError` immediately if time is exhausted.
+     - Updated `run` to ensure `timeout = min(20, max(0.1, deadline - time.monotonic()))` does not exceed the routine deadline.
+     - Added unit tests in `tests/test_summaries.py` verifying deadline enforcement before metadata, between sentences, and between translation endpoints.
+
+2. **[P2] Reject empty feeds in the routine regression gate — tools/routine_sim.py:50-50**
+   - **Root cause**: Line 50 of `tools/routine_sim.py` checked `ok = n_sum >= b_sum or n_sum == n_total`. When RSS fetching failed for all feeds, `build.py` wrote an empty feed (`n_total = 0`, `n_sum = 0`), which caused `n_sum == n_total` to evaluate to `0 == 0` (True), improperly reporting PASS despite complete story and summary loss.
+   - **Fix**: Updated line 50 of `tools/routine_sim.py` to `ok = n_sum >= b_sum or (n_total > 0 and n_sum == n_total)`, explicitly requiring a non-empty simulated feed before accepting the all-stories-summarized condition. Added unit test `test_routine_sim_gate_rejects_empty_feed` in `tests/test_compatibility.py`.
+

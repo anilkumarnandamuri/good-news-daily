@@ -45,3 +45,12 @@
   - Dropping all non-re-pairable v5 cache entries to excerpts: Rejects over 90% of existing stories and violates the routine's zero-regression requirement.
   - Re-splitting joined strings with punctuation regexes: Introduces mismatch between English and Telugu sentence boundaries and breaks number alignment.
   - Making live network calls to re-summarize already cached stories: Wastes network bandwidth, slows down the routine, and risks API rate limits.
+
+## D007 — Fallback time budget enforcement and routine simulation non-empty feed requirement (2026-10-15, agy/gemini-3.8-flash-high)
+- Decision: Propagate the remaining time budget (`deadline - time.monotonic()`) down through metadata retrieval (`meta(url, timeout)`) and translation (`translate(text, sl, tl, timeout, deadline)`), checking the deadline between requests and between endpoints. In `tools/routine_sim.py`, require a non-empty simulated feed (`n_total > 0`) before accepting the all-stories-summarized alternative (`n_sum == n_total`).
+- Why:
+  - Without remaining deadline propagation, when translation endpoints or network requests are slow or timing out, a fallback triggered close to the 240-second routine deadline could continue for up to 128 additional seconds (fetching metadata plus six sentences across two translation endpoints), overrunning the routine time budget.
+  - In `tools/routine_sim.py`, if RSS fetching completely failed for all feeds, `build.py` wrote an empty feed where `n_sum == n_total` evaluated to `0 == 0`, erroneously reporting PASS despite total loss of stories. Requiring `n_total > 0` ensures complete feed failures are caught and reported as failures.
+- Alternatives rejected:
+  - Allowing `extract_and_translate` to consume its own unconstrained timeout on each sentence: Overruns the routine budget when multiple stories or sentences experience slow network or endpoint outages.
+  - Relying solely on `n_sum >= b_sum` in routine simulation: Rejects valid routine builds when the total number of stories naturally fluctuates downwards while all present stories are successfully summarized.

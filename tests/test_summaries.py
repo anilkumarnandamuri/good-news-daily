@@ -266,6 +266,57 @@ class SummaryContract(unittest.TestCase):
             self.assertEqual(cached["method"], "fallback")
             self.assertEqual(cached["pairs"], PAIRS)
 
+    def test_extract_and_translate_enforces_remaining_time_budget(self):
+        it = item()
+        # 1. Zero timeout raises TimeoutError before network calls
+        with patch.object(summarize, "meta", side_effect=AssertionError("Must not call meta")), \
+             patch.object(summarize, "translate", side_effect=AssertionError("Must not call translate")):
+            with self.assertRaises(TimeoutError):
+                summarize.extract_and_translate(it, timeout=0)
+
+        # 2. Timeout is propagated to meta and translate
+        meta_timeouts = []
+        trans_timeouts = []
+        def fake_meta(url, timeout=8):
+            meta_timeouts.append(timeout)
+            return ("", None)
+        translation_map = {p["en"]: p["te"] for p in PAIRS}
+        def fake_translate(text, sl, tl, timeout=10, deadline=None):
+            trans_timeouts.append(timeout)
+            return translation_map.get(text, "")
+
+        with patch.object(summarize, "meta", side_effect=fake_meta), \
+             patch.object(summarize, "translate", side_effect=fake_translate):
+            res = summarize.extract_and_translate(it, timeout=5.0)
+            self.assertEqual(len(res["pairs"]), 6)
+            self.assertTrue(all(t <= 5.0 for t in meta_timeouts))
+            self.assertTrue(all(t <= 5.0 for t in trans_timeouts))
+
+        # 3. Deadline exceeded mid-translation stops without continuing
+        calls = []
+        def slow_translate(text, sl, tl, timeout=10, deadline=None):
+            calls.append(text)
+            if len(calls) == 2:
+                time.sleep(0.05)
+            return translation_map.get(text, "")
+
+        with patch.object(summarize, "meta", return_value=("", None)), \
+             patch.object(summarize, "translate", side_effect=slow_translate):
+            with self.assertRaises(TimeoutError):
+                summarize.extract_and_translate(it, timeout=0.03)
+            self.assertLess(len(calls), len(PAIRS))
+
+    def test_translate_checks_deadline_between_endpoints(self):
+        calls = []
+        def fake_get(url, timeout=10):
+            calls.append(url)
+            raise OSError("First endpoint timed out")
+
+        with patch.object(summarize, "_get", side_effect=fake_get):
+            out = summarize.translate("Hello world", "en", "te", deadline=time.monotonic() - 1)
+            self.assertEqual(out, "")
+            self.assertEqual(len(calls), 0)
+
 
 if __name__ == "__main__":
     unittest.main()

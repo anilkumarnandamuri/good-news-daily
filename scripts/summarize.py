@@ -152,10 +152,10 @@ def _get(url, timeout=8, limit=400_000):
         return r.read(limit).decode("utf-8", "ignore")
 
 
-def meta(url):
+def meta(url, timeout=8):
     """og:description/meta description and og:image only — no article body."""
     try:
-        h = _get(url)
+        h = _get(url, timeout=max(0.1, timeout) if timeout is not None else 8)
     except Exception:
         return "", None
     def m(*names):
@@ -174,7 +174,7 @@ def meta(url):
     return " ".join(ds), m("og:image", "twitter:image")
 
 
-def translate(text, sl, tl):
+def translate(text, sl, tl, timeout=10, deadline=None):
     if not text:
         return ""
     q = urllib.parse.quote(text[:1500])
@@ -184,8 +184,16 @@ def translate(text, sl, tl):
         (f"https://api.mymemory.translated.net/get?langpair={sl}|{tl}&q={q}",
          lambda d: d["responseData"]["translatedText"]),
     ):
+        if deadline is not None and time.monotonic() >= deadline:
+            break
+        req_timeout = timeout
+        if deadline is not None:
+            rem = deadline - time.monotonic()
+            if rem <= 0:
+                break
+            req_timeout = min(req_timeout, rem)
         try:
-            out = pick(json.loads(_get(url, timeout=10)))
+            out = pick(json.loads(_get(url, timeout=max(0.1, req_timeout))))
             if out and "MYMEMORY WARNING" not in out and out.strip() != text.strip():
                 return html.unescape(out).strip()
         except Exception:
@@ -194,15 +202,44 @@ def translate(text, sl, tl):
 
 
 def extract_and_translate(item, timeout=None):
+    deadline = (time.monotonic() + timeout) if timeout is not None else None
     desc = item.get("desc") or item.get("summary") or ""
     link = item.get("link", "")
-    md, img = meta(link) if link else ("", None)
+    if deadline is not None and time.monotonic() >= deadline:
+        raise TimeoutError("Deadline exceeded before metadata retrieval")
+
+    if link:
+        meta_timeout = 8
+        if deadline is not None:
+            rem = deadline - time.monotonic()
+            if rem <= 0:
+                raise TimeoutError("Deadline exceeded before metadata retrieval")
+            meta_timeout = min(meta_timeout, rem)
+        try:
+            md, img = meta(link, timeout=meta_timeout)
+        except TypeError:
+            md, img = meta(link)
+    else:
+        md, img = "", None
+
     src_lang = "te" if item.get("lang") == "te" else "en"
     other = "en" if src_lang == "te" else "te"
     sents = canonical(item.get("title", ""), desc, md, lang=src_lang)
     pairs = []
     for s in sents:
-        t = translate(s, src_lang, other)
+        if deadline is not None and time.monotonic() >= deadline:
+            raise TimeoutError("Deadline exceeded during translation")
+        rem = (deadline - time.monotonic()) if deadline is not None else None
+        if rem is not None and rem <= 0:
+            raise TimeoutError("Deadline exceeded during translation")
+        trans_timeout = min(10, rem) if rem is not None else 10
+        try:
+            t = translate(s, src_lang, other, timeout=trans_timeout, deadline=deadline)
+        except TypeError:
+            try:
+                t = translate(s, src_lang, other, timeout=trans_timeout)
+            except TypeError:
+                t = translate(s, src_lang, other)
         if not t:
             raise ValueError("Translation failed for sentence")
         t = t.strip()
@@ -305,7 +342,7 @@ def run(items):
                     failed += 1
             if status is None and time.monotonic() < deadline:
                 try:
-                    generated = extract_and_translate(item, timeout=min(20, max(1, deadline - time.monotonic())))
+                    generated = extract_and_translate(item, timeout=min(20, max(0.1, deadline - time.monotonic())))
                     pairs = generated["pairs"]
                     method = "fallback"
                     status = "paired"

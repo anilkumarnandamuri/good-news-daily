@@ -47,7 +47,7 @@ def main():
     print(f"simulated routine (no LLM env, {secs}s): {n_sum}/{n_total} stories with EN+TE summaries; summary_status={st}")
     for line in (r.stdout + r.stderr).splitlines():
         if line.startswith("summaries:"): print(line)
-    ok = n_sum >= b_sum or n_sum == n_total
+    ok = n_sum >= b_sum or (n_total > 0 and n_sum == n_total)
     print("ROUTINE-SIM:", "PASS" if ok else "FAIL (regression to excerpt-only)", f"(temp copy: {tmp})" if a.keep else "")
     if not a.keep: subprocess.run(["rm", "-rf", tmp])
     return 0 if ok else 1
