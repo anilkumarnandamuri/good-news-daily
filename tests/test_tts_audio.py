@@ -113,6 +113,18 @@ class AudioTests(unittest.TestCase):
                        dict(id='blank', summary_status='summary', sum_te='   ')]
         self.assertEqual(list(self.build()['stories']), ['one'])
 
+    def test_legacy_bilingual_summaries_are_eligible_except_excerpts(self):
+        self.items = [dict(id='legacy', sum_en='Good news.', sum_te='మంచి వార్తలు.'),
+                      dict(id='excerpt', summary_status='excerpt', sum_en='Good news.', sum_te='వార్త.'),
+                      dict(id='no-en', sum_te='వార్త.'),
+                      dict(id='blank-en', sum_en='  ', sum_te='వార్త.'),
+                      dict(id='blank-te', sum_en='Good news.', sum_te='  ')]
+        original = copy.deepcopy(self.items)
+        manifest = self.build()
+        self.assertEqual(list(manifest['stories']), ['legacy'])
+        self.assertEqual(len(self.calls), 2)
+        self.assertEqual(self.items, original)
+
     def test_enabled_hook_writes_only_host_config_and_passes_settings(self):
         root = self.out / 'site'
         (root / 'data').mkdir(parents=True)

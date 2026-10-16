@@ -36,8 +36,11 @@
    if(!teluguManifestPromise)teluguManifestPromise=(async()=>{
     const config=await audioJSON("data/audio-config.json");
     const u=new URL("manifest.json",config.base_url||AUDIO_BASE).href;
-    return{manifest:await audioJSON(u),manifestURL:u};
-   })().catch(()=>({manifest:{},manifestURL:AUDIO_BASE}));
+    const manifest=await audioJSON(u);
+    // Empty/failed/timeout results must be retried on a later Listen tap.
+    if(!manifest||!Object.keys(manifest.stories||{}).length)teluguManifestPromise=null;
+    return{manifest:manifest||{},manifestURL:u};
+   })().catch(()=>{teluguManifestPromise=null;return{manifest:{},manifestURL:AUDIO_BASE}});
    return teluguManifestPromise;
   }
   if(!manifestPromise){const u=new URL("voice/demo/audio/manifest.json",document.baseURI).href;manifestPromise=fetch(u).then(r=>r.ok?r.json():{}).then(m=>{manifestData=m;manifestURL=u;return{manifest:m,manifestURL:u}}).catch(()=>({manifest:{},manifestURL:document.baseURI}))}return manifestPromise
@@ -95,7 +98,12 @@
  if("speechSynthesis" in window)speechSynthesis.onvoiceschanged=()=>{};
 
  async function playVoice(btn,lang,story){
-  if((activeBtn===btn&&activePlayer)||speaking===btn){stop();return}stop();clearAudioMessage(btn);
+  if(activeBtn===btn&&activePlayer){
+   // Stay before all awaits: this tap must reach the same audio element's play().
+   if(activePlayer.state==="paused"){activePlayer.play();return}
+   stop();return;
+  }
+  if(speaking===btn){stop();return}stop();clearAudioMessage(btn);
   const reqId=++playRequestId;
   const container=btn.closest(".r-sum");const targetSentenceEls=container?[...container.querySelectorAll(".r-sentence")]:[];
   let sentences=[];
@@ -116,7 +124,7 @@
   const player=new ReaderVoicePlayer({language:lang,preferAudio:true,radio:false});
   player.setStories([story],{manifest,manifestURL,limit:1});
   player.audio.addEventListener("timeupdate",()=>{if(player===activePlayer&&!player.destroyed&&player.mode==="audio"&&player.audio.duration>0&&sentences.length){const curT=player.audio.currentTime,dur=player.audio.duration;const totalChars=sentences.reduce((acc,s)=>acc+s.length,0)||1;let accum=0,activeIdx=0;for(let i=0;i<sentences.length;i++){accum+=sentences[i].length;if(curT<=(accum/totalChars)*dur||i===sentences.length-1){activeIdx=i;break}}highlightSentence(activeIdx)}});
-  player.addEventListener("statechange",()=>{if(player.destroyed||player!==activePlayer)return;if(player.state==="playing"){btn.classList.add("on");const sp=btn.querySelector("span");if(sp)sp.textContent="⏹ Stop";if(player.mode==="speech"){highlightSentence(player.chunkIndex)}else if(player.mode==="audio"){highlightSentence(0)}}else if(player.state==="ended"||player.state==="idle"){stopVoice()}else if(player.state==="error"){if(lang==="te")audioUnavailable(btn);else toast(player.message||"Speech unavailable");stopVoice()}});
+  player.addEventListener("statechange",()=>{if(player.destroyed||player!==activePlayer)return;if(player.state==="playing"||player.state==="loading"){btn.classList.add("on");const sp=btn.querySelector("span");if(sp)sp.textContent="⏹ Stop";if(player.mode==="speech"){highlightSentence(player.chunkIndex)}else if(player.mode==="audio"){highlightSentence(0)}}else if(player.state==="paused"){btn.classList.remove("on");const sp=btn.querySelector("span");if(sp)sp.textContent=lang==="te"?"▶ వినడానికి నొక్కండి · Tap to play":"▶ Tap to play"}else if(player.state==="ended"||player.state==="idle"){stopVoice()}else if(player.state==="error"){if(lang==="te")audioUnavailable(btn);else toast(player.message||"Speech unavailable");stopVoice()}});
   player.addEventListener("progress",()=>{if(player===activePlayer&&!player.destroyed&&player.mode==="speech"){highlightSentence(player.chunkIndex)}});
   player.addEventListener("ended",()=>{if(player===activePlayer)stopVoice()});
   activePlayer=player;activeBtn=btn;window.__readerPlayer=player;btn.classList.add("on");const sp=btn.querySelector("span");if(sp)sp.textContent="⏹ Stop";

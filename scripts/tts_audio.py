@@ -48,7 +48,9 @@ def generate(items, out, piper, model, ffmpeg, budget=300):
     referenced = set()
     for story in items:
         text = story.get('sum_te')
-        if story.get('summary_status') not in ('paired', 'summary') or not isinstance(text, str) or not normalize(text):
+        status = story.get('summary_status')
+        legacy = status is None and isinstance(story.get('sum_en'), str) and normalize(story['sum_en'])
+        if (status not in ('paired', 'summary') and not legacy) or not isinstance(text, str) or not normalize(text):
             continue
         text = normalize(text)
         sid = str(story['id'])

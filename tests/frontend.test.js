@@ -274,7 +274,7 @@ function voiceReader(story,{setup,VoicePlayer,search='?voice=1'}={}){
 const pairedSummaryStory=()=>({...stories[0],id:'cache-test',lang:'en',summary_status:'summary',sum_en:'First sentence. Second sentence.',sum_te:'మొదటి వాక్యం. రెండవ వాక్యం.',pairs:undefined});
 const matchingPairs=()=>[{en:'First sentence.',te:'మొదటి వాక్యం.'},{en:'Second sentence.',te:'రెండవ వాక్యం.'}];
 
-test('Stop destroys an externally paused active voice player without starting playback again',async()=>{
+test('paused voice player exposes resume, then Stop destroys the resumed player',async()=>{
  let created=0,plays=0,destroys=0;
  class FakeVoicePlayer{
   constructor(){created++;this.audio={addEventListener(){}};this.listeners=new Map();this.state='idle';this.destroyed=false}
@@ -291,10 +291,12 @@ test('Stop destroys an externally paused active voice player without starting pl
  assert.ok(player);assert.equal(plays,1);assert.equal(button.label.textContent,'⏹ Stop');
  player.state='paused';player.listeners.get('statechange')();
  assert.equal(player.isPlaying,false);assert.equal(e.ctx.__readerPlayer,player);
+ assert.match(button.label.textContent,/Tap to play/);
+ button.onclick();assert.equal(plays,2);assert.equal(e.ctx.__readerPlayer,player);
  assert.equal(button.label.textContent,'⏹ Stop');
  button.onclick();await flush();
  assert.equal(destroys,1);assert.equal(player.destroyed,true);assert.equal(player.state,'idle');
- assert.equal(e.ctx.__readerPlayer,null);assert.equal(created,1);assert.equal(plays,1);
+ assert.equal(e.ctx.__readerPlayer,null);assert.equal(created,1);assert.equal(plays,2);
  assert.equal(button.classList.contains('on'),false);assert.equal(button.label.textContent,'🔊 Listen');
 });
 
@@ -428,4 +430,58 @@ test('default English remains on native speech even when Telugu MP3 is present',
  button.onclick();await flush();assert.equal(e.spoken[0].text,pairedSummaryStory().sum_en);
  assert.equal(e.spoken[0].lang,'en-IN');assert.equal(e.ctx.__readerPlayer,null);
  assert.equal(e.requests.length,0);
+});
+
+test('autoplay rejection offers synchronous resume on the same Telugu audio element',async()=>{
+ for(const synchronous of [false,true]){
+  const e=teluguReader();let calls=0,firstAudio;
+  e.ctx.Audio.prototype.play=function(){
+   calls++;
+   if(calls===1){
+    firstAudio=this;
+    const error=Object.assign(new Error('Tap required'),{name:'NotAllowedError'});
+    if(synchronous)throw error;
+    return Promise.reject(error);
+   }
+   assert.equal(this,firstAudio);this.onplaying?.();return Promise.resolve();
+  };
+  e.button.onclick();await flush();
+  const player=e.ctx.__readerPlayer;
+  assert.equal(player.state,'paused');assert.match(e.button.label.textContent,/Tap to play/);
+  assert.equal(e.button.classList.contains('on'),false);
+  e.button.onclick();
+  // Assert before flushing promises: play must run inside the second tap.
+  assert.equal(calls,2);assert.equal(e.ctx.__readerPlayer,player);
+  assert.equal(player.audio,firstAudio);assert.equal(player.state,'playing');
+  assert.equal(e.button.label.textContent,'⏹ Stop');assert.equal(e.spoken.length,0);
+  e.button.onclick();assert.equal(e.ctx.__readerPlayer,null);
+  assert.equal(e.button.label.textContent,'🔊 Listen');
+ }
+});
+
+test('Telugu manifest retries after failed, empty, invalid, and timed-out loads',async()=>{
+ for(const failure of ['offline','http','empty','invalid','timeout']){
+  const e=teluguReader(),fetch=e.ctx.fetch;let attempts=0,timeout;
+  e.ctx.setTimeout=fn=>{timeout=fn;return 1};e.ctx.clearTimeout=()=>{};
+  e.ctx.fetch=async url=>{
+   if(url.includes('manifest.json')&&++attempts===1){
+    if(failure==='offline')throw Error('offline');
+    if(failure==='http')return{ok:false};
+    if(failure==='timeout')return new Promise(()=>{});
+    return{ok:true,json:async()=>failure==='invalid'?null:{stories:{}}};
+   }
+   return fetch(url);
+  };
+  e.button.onclick();await flush();
+  if(failure==='timeout'){timeout();await flush()}
+  assert.equal(attempts,1);assert.equal(e.button.label.textContent,'🔊 Listen');
+  assert.match(e.button.summary.children[0].textContent,/Audio isn't available/);
+  e.button.onclick();await flush();
+  assert.equal(attempts,2);assert.equal(e.ctx.__readerPlayer.mode,'audio');
+  assert.equal(e.button.label.textContent,'⏹ Stop');
+  assert.equal(e.button.summary.children[0].hidden,true);
+  e.button.onclick();e.button.onclick();await flush();
+  assert.equal(attempts,2,'successful manifest is cached');
+  e.button.onclick();
+ }
 });
