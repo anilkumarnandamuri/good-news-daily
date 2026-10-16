@@ -16,6 +16,12 @@ GV-2 (see PLAN.md and HANDOFF.md): Integrate the voice player (imported under vo
 - [ ] Codex review (artifacts/GV-2/review.md) has no [P0]-[P2] items
 
 ## Review response
+### [P2] Preserve bounded speech chunks within each sentence — reader.js:87
+Resolved by calling the voice module's exported `chunkText()` for each rendered sentence when building the speech queue. Each queue item keeps `chunkSentenceIndexes`; speech statechange and progress highlighting use that mapping. MP3 highlighting remains sentence based. Node regressions use the real chunker for paired and legacy summaries: a sentence longer than 160 units becomes multiple bounded chunks, and every chunk highlights the same sentence before advancing to the next.
+
+### [P2] Rerender only when cached pairs actually change the story — reader.js:144
+Resolved by returning a boolean from `attach()` and rerendering only after newly attaching matching pairs. Existing valid pairs and rejected stale/invalid cache responses leave playback, focus, controls, and body writes unchanged. Node regressions verify those cases during active playback and verify that newly attached pairs still rerender and fully stop playback. Prior full teardown, external-pause Stop, matching-cache validation, module-load fallback, and GN-5 text scale behavior are retained.
+
 ### [P2] Stop the active player even when playback is paused — reader.js:70
 Resolved by treating a click on the active player's button as Stop regardless of `isPlaying`. External pauses retain the Stop label; clicking destroys the active player and resets Listen without creating a replacement or calling play again. Added a frontend regression that starts a voice player, emits an external paused state, and verifies teardown and unchanged creation/play counts. Checked the native speech fallback: it already tracks the owning button independently of speech state. Added coverage with and without `?voice=1` for external pauses, end/error callbacks, and an external end without a callback; any remaining Stop control cancels and resets without restarting.
 
@@ -56,11 +62,11 @@ Resolved in `reader.js`. Added a unified protected sentence splitter `splitSente
 Resolved in `styles.css` and `reader.js`. The `.r-listen.on` pulse animation used `@keyframes pulse { 50% { transform: scale(1.03); } }` which infinitely mutated the button's layout bounding box across animation frames, failing Playwright's stability checks during active MP3 playback. Replaced with `@keyframes pulse-listen { 50% { opacity: 0.85; } }` which preserves visual pulsing without geometry thrashing. In addition, `highlightSentence(idx)` now tracks `currentHighlightIdx` and deduplicates calls, avoiding continuous scroll calls on every `timeupdate` tick.
 
 ## Checkpoint
-- **What changed**: Fixed the paused-player Stop toggle at its ownership check; added voice-player and native speech regressions. Previous full `renderBody()` teardown and matching-cache-pair fixes retained.
+- **What changed**: Reused exported speech chunking per sentence with chunk-to-sentence highlighting; skip delayed-summary rerenders when attachment changes nothing.
 - **Files modified this pass**: `reader.js`, `tests/frontend.test.js`, `tasks/GV-2.md`, `HANDOFF.md`.
-- **Verification evidence**: `python3 -m unittest discover -s tests -p 'test_*.py' && node --test tests/*.test.js && node --test voice/tests/*.test.js` passed (43 Python tests; frontend and voice Node suites green). `git diff --check` passed.
-- **Protected files**: GN-5 single A-/A+ text scale and 16px base, `data/news.json`, and `data/summaries.json` untouched.
-- **Open items**: Operator browser verification and review of this uncommitted fix pass; no new browser run or screenshots. Existing browser evidence above predates this fix. No network, branch changes, commits, or board mutations performed.
+- **Verification evidence**: Requested Python + frontend Node + voice Node command passed (43 Python tests, 22 frontend tests, voice suite green). `git diff --check` passed.
+- **Protected files**: GN-5 single A-/A+ and 16px base, `data/news.json`, and `data/summaries.json` untouched.
+- **Open items**: Browser verification/screenshots remain pending: all 8 voice Playwright cases fail in server setup because sandbox socket creation raises `PermissionError: [Errno 1] Operation not permitted`. No network, branch changes, commits, or board mutations performed. Local checkpoint recorded here; shared board writes are outside writable roots.
 
 ## Log
 - 2026-10-15 13:58 PDT run-job started

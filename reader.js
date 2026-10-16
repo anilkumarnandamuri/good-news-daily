@@ -140,15 +140,27 @@
    return;
   }
   activeSentenceEls=targetSentenceEls;
-  class ReaderVoicePlayer extends VoicePlayer{_makeQueue(){const ok=super._makeQueue();if(ok&&sentences.length){for(const it of this.queue){if(!it.intro){it.chunks=sentences.slice()}}}return ok}}
+  class ReaderVoicePlayer extends VoicePlayer{
+   _makeQueue(){
+    const ok=super._makeQueue();
+    if(ok&&sentences.length){for(const it of this.queue){if(!it.intro){
+     it.chunks=[];it.chunkSentenceIndexes=[];
+     sentences.forEach((sentence,index)=>{for(const chunk of mod.chunkText(sentence)){
+      it.chunks.push(chunk);it.chunkSentenceIndexes.push(index);
+     }});
+    }}}
+    return ok;
+   }
+  }
+  const speechSentenceIndex=player=>player.queue[player.queueIndex]?.chunkSentenceIndexes?.[player.chunkIndex]??-1;
   const player=new ReaderVoicePlayer({language:lang,preferAudio:true,radio:false});
   player.setStories([story],{manifest,manifestURL,limit:1});
   if(lang==="te"&&!ready&&!player.hasAudio(lang)){
    player.destroy();speechFallback();return;
   }
   player.audio.addEventListener("timeupdate",()=>{if(player===activePlayer&&!player.destroyed&&player.mode==="audio"&&player.audio.duration>0&&sentences.length){const curT=player.audio.currentTime,dur=player.audio.duration;const totalChars=sentences.reduce((acc,s)=>acc+s.length,0)||1;let accum=0,activeIdx=0;for(let i=0;i<sentences.length;i++){accum+=sentences[i].length;if(curT<=(accum/totalChars)*dur||i===sentences.length-1){activeIdx=i;break}}highlightSentence(activeIdx)}});
-  player.addEventListener("statechange",()=>{if(player.destroyed||player!==activePlayer)return;if(player.state==="playing"||player.state==="loading"){btn.classList.add("on");const sp=btn.querySelector("span");if(sp)sp.textContent="⏹ Stop";if(player.mode==="speech"){highlightSentence(player.chunkIndex)}else if(player.mode==="audio"){highlightSentence(0)}}else if(player.state==="paused"){btn.classList.remove("on");const sp=btn.querySelector("span");if(sp)sp.textContent=lang==="te"?"▶ వినడానికి నొక్కండి · Tap to play":"▶ Tap to play"}else if(player.state==="ended"||player.state==="idle"){stopVoice()}else if(player.state==="error"){if(lang==="te")audioUnavailable(btn);else toast(player.message||"Speech unavailable");stopVoice()}});
-  player.addEventListener("progress",()=>{if(player===activePlayer&&!player.destroyed&&player.mode==="speech"){highlightSentence(player.chunkIndex)}});
+  player.addEventListener("statechange",()=>{if(player.destroyed||player!==activePlayer)return;if(player.state==="playing"||player.state==="loading"){btn.classList.add("on");const sp=btn.querySelector("span");if(sp)sp.textContent="⏹ Stop";if(player.mode==="speech"){highlightSentence(speechSentenceIndex(player))}else if(player.mode==="audio"){highlightSentence(0)}}else if(player.state==="paused"){btn.classList.remove("on");const sp=btn.querySelector("span");if(sp)sp.textContent=lang==="te"?"▶ వినడానికి నొక్కండి · Tap to play":"▶ Tap to play"}else if(player.state==="ended"||player.state==="idle"){stopVoice()}else if(player.state==="error"){if(lang==="te")audioUnavailable(btn);else toast(player.message||"Speech unavailable");stopVoice()}});
+  player.addEventListener("progress",()=>{if(player===activePlayer&&!player.destroyed&&player.mode==="speech"){highlightSentence(speechSentenceIndex(player))}});
   player.addEventListener("ended",()=>{if(player===activePlayer)stopVoice()});
   activePlayer=player;activeBtn=btn;window.__readerPlayer=player;btn.classList.add("on");const sp=btn.querySelector("span");if(sp)sp.textContent="⏹ Stop";
   highlightSentence(0);player.play();
@@ -196,12 +208,13 @@
    const normalize=text=>String(text||"").replace(/\s+/gu," ").trim();
    const matches=(pairs,en,te)=>Array.isArray(pairs)&&pairs.length>0&&pairs.every(p=>p&&typeof p.en==="string"&&normalize(p.en)&&typeof p.te==="string"&&normalize(p.te))&&[ ["en",en],["te",te] ].every(([lang,text])=>normalize(pairs.map(p=>p[lang]).join(" "))===normalize(text));
    const attach=s=>{
-    if(matches(it.pairs,it.sum_en,it.sum_te))return;
+    if(matches(it.pairs,it.sum_en,it.sum_te))return false;
     const cached=s&&s[it.id];
-    if(matches(cached?.pairs,it.sum_en,it.sum_te)){it.pairs=cached.pairs;it.summary_status="paired"}
+    if(matches(cached?.pairs,it.sum_en,it.sum_te)){it.pairs=cached.pairs;it.summary_status="paired";return true}
+    return false;
    };
    if(summariesData)attach(summariesData);
-   else getSummaries().then(s=>{attach(s);if(cur&&cur.id===it.id&&it.pairs)renderBody(it)});
+   else getSummaries().then(s=>{const changed=attach(s);if(changed&&cur&&cur.id===it.id)renderBody(it)});
   }
   if(R.hidden){returnFocus=document.activeElement;returnHref=returnFocus?.closest("a")?.getAttribute("href");
    [...document.body.children].filter(node=>node!==R).forEach(node=>{background.set(node,node.inert);node.inert=true})}
