@@ -16,6 +16,9 @@ GV-2 (see PLAN.md and HANDOFF.md): Integrate the voice player (imported under vo
 - [ ] Codex review (artifacts/GV-2/review.md) has no [P0]-[P2] items
 
 ## Review response
+### [P2] Stop the active player even when playback is paused — reader.js:70
+Resolved by treating a click on the active player's button as Stop regardless of `isPlaying`. External pauses retain the Stop label; clicking destroys the active player and resets Listen without creating a replacement or calling play again. Added a frontend regression that starts a voice player, emits an external paused state, and verifies teardown and unchanged creation/play counts. Checked the native speech fallback: it already tracks the owning button independently of speech state. Added coverage with and without `?voice=1` for external pauses, end/error callbacks, and an external end without a callback; any remaining Stop control cancels and resets without restarting.
+
 ### [P2] Stop fallback speech before replacing the reader body — reader.js:135
 Resolved by calling the full `stop()` teardown at the start of `renderBody()`. Every reader body replacement now cancels native speech synthesis, clears `speaking`, resets the old control, invalidates pending playback, and destroys any active voice player. The summary callback no longer uses the partial `stopVoice()` teardown. The new frontend regression starts native fallback after a module import failure, resolves delayed summaries, verifies cancellation before the Stop control disappears, and verifies the replacement Listen/Stop control works.
 
@@ -53,11 +56,11 @@ Resolved in `reader.js`. Added a unified protected sentence splitter `splitSente
 Resolved in `styles.css` and `reader.js`. The `.r-listen.on` pulse animation used `@keyframes pulse { 50% { transform: scale(1.03); } }` which infinitely mutated the button's layout bounding box across animation frames, failing Playwright's stability checks during active MP3 playback. Replaced with `@keyframes pulse-listen { 50% { opacity: 0.85; } }` which preserves visual pulsing without geometry thrashing. In addition, `highlightSentence(idx)` now tracks `currentHighlightIdx` and deduplicates calls, avoiding continuous scroll calls on every `timeupdate` tick.
 
 ## Checkpoint
-- **What changed**: Fixed the two latest P2 findings in `reader.js`; added two regression tests and minimal Listen/summary support in the existing fake frontend environment.
-- **Files modified this pass**: `reader.js`, `tests/frontend.test.js`, `tasks/GV-2.md`, `HANDOFF.md`, `DECISIONS.md`.
-- **Verification evidence**: `python3 -m unittest discover -s tests -p 'test_*.py' && node --test tests/*.test.js && node --test voice/tests/*.test.js` passed (43 Python tests, 18 frontend tests, 5 voice tests). `git diff --check` passed.
-- **Protected files**: GN-5 text scale (`sticky.js`, `styles.css`) and `data/news.json` / `data/summaries.json` untouched.
-- **Open items**: Operator browser verification and review of this uncommitted fix pass; no new browser run or screenshots in this pass. Existing browser evidence above predates these fixes. No network, branch changes, commits, or board mutations performed, per the task-specific workflow.
+- **What changed**: Fixed the paused-player Stop toggle at its ownership check; added voice-player and native speech regressions. Previous full `renderBody()` teardown and matching-cache-pair fixes retained.
+- **Files modified this pass**: `reader.js`, `tests/frontend.test.js`, `tasks/GV-2.md`, `HANDOFF.md`.
+- **Verification evidence**: `python3 -m unittest discover -s tests -p 'test_*.py' && node --test tests/*.test.js && node --test voice/tests/*.test.js` passed (43 Python tests; frontend and voice Node suites green). `git diff --check` passed.
+- **Protected files**: GN-5 single A-/A+ text scale and 16px base, `data/news.json`, and `data/summaries.json` untouched.
+- **Open items**: Operator browser verification and review of this uncommitted fix pass; no new browser run or screenshots. Existing browser evidence above predates this fix. No network, branch changes, commits, or board mutations performed.
 
 ## Log
 - 2026-10-15 13:58 PDT run-job started

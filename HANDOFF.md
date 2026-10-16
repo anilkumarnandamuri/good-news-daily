@@ -4,20 +4,21 @@
 2026-10-15 21:59 PDT | codex/gpt-6.1-sol | branch `job/GV-2` | uncommitted fix pass
 
 ## Current task / claim
-**GV-2** — both latest P2 findings fixed; ready for operator review. Existing claim retained; no board mutation, commit, or branch change per explicit user instructions.
+**GV-2** — paused-player Stop P2 fixed; in-review, pending operator browser verification. Existing claim retained; no board mutation, commit, or branch change per explicit user instructions.
 
 ## Done this session
-- Centralized full playback teardown in `renderBody()` so native speech cannot outlive its Stop control.
+- Fixed Stop to use active-player ownership regardless of playing/paused state. Added voice-player external-pause regression and native speech pause/end/error coverage.
+- Retained full playback teardown in `renderBody()` so native speech cannot outlive its Stop control.
 - Preserved valid story pairs; attach cached pairs only when both joined texts match current summaries after whitespace normalization.
-- Added two frontend regressions covering fallback speech during delayed summary loading and cache consistency; updated task review responses and checkpoint.
+- Retained delayed-summary teardown and cache-consistency regressions; updated task review response and checkpoint.
 - GN-5 text scale and routine-owned data files untouched.
 
 ## Verified (with evidence)
-- Requested Python + frontend Node + voice Node command passed: 43 Python, 18 frontend, 5 voice tests.
+- Requested Python + frontend Node + voice Node command passed: 43 Python tests; frontend and voice Node suites green (including two new frontend regressions).
 - `git diff --check` passed.
 
 ## Unverified
-- Browser tests and screenshots for this fix pass are left to the operator, as requested.
+- Browser tests and screenshots not rerun for this minimal offline fix pass; operator verification pending.
 
 ## Broken / half-done
 - No known implementation issues; browser verification and final review pending.

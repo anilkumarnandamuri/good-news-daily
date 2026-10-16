@@ -54,7 +54,7 @@ function environment({news=[],search='',storageBlocked=false}={}){
   fetch:async url=>({ok:true,json:async()=>url.includes('thoughts')?[]:{generated:'2026-10-14T00:00:00Z',items:news}}),
   scrollTo(){},setTimeout(){},requestAnimationFrame:f=>f()};
  ctx.window=ctx;vm.createContext(ctx);
- const run=name=>vm.runInContext(source(name),ctx,{filename:name});
+ const run=(name,transform=code=>code)=>vm.runInContext(transform(source(name)),ctx,{filename:name});
  const dispatch=(type,event)=>listeners.get(type)?.forEach(f=>f(event));
  return {ctx,nodes,media,stored,run,dispatch,Element};
 }
@@ -253,19 +253,72 @@ test('reader renders summary status like paired with both summaries and listen c
  assert.match(e.nodes.get('rBody').innerHTML,/r-listen/);
 });
 
-function voiceReader(story){
- const e=environment({search:'?voice=1'});
+function voiceReader(story,{VoicePlayer,search='?voice=1'}={}){
+ const e=environment({search});
  let resolveSummaries;
  const summaries=new Promise(resolve=>{resolveSummaries=resolve});
  e.ctx.fetch=async url=>({ok:true,json:async()=>url==='data/summaries.json'?summaries:url.includes('sample/news')?{items:[]}: {}});
  e.ctx.thumb=()=>'';
- e.run('sticky.js');e.run('reader.js');
+ e.run('sticky.js');
+ // Inject only the module boundary; exercise the reader's real player lifecycle.
+ e.ctx.__voiceModule={VoicePlayer};
+ e.run('reader.js',code=>VoicePlayer?code.replace('import(u)','Promise.resolve(__voiceModule)'):code);
  e.ctx.location.hash='#/s/'+story.id;e.ctx.onData([story]);
  return {...e,resolveSummaries};
 }
 
 const pairedSummaryStory=()=>({...stories[0],id:'cache-test',lang:'en',summary_status:'summary',sum_en:'First sentence. Second sentence.',sum_te:'మొదటి వాక్యం. రెండవ వాక్యం.',pairs:undefined});
 const matchingPairs=()=>[{en:'First sentence.',te:'మొదటి వాక్యం.'},{en:'Second sentence.',te:'రెండవ వాక్యం.'}];
+
+test('Stop destroys an externally paused active voice player without starting playback again',async()=>{
+ let created=0,plays=0,destroys=0;
+ class FakeVoicePlayer{
+  constructor(){created++;this.audio={addEventListener(){}};this.listeners=new Map();this.state='idle';this.destroyed=false}
+  get isPlaying(){return this.state==='playing'}
+  setStories(){}
+  addEventListener(type,fn){this.listeners.set(type,fn)}
+  play(){plays++;this.state='playing';this.listeners.get('statechange')?.()}
+  destroy(){destroys++;this.destroyed=true;this.state='idle';this.listeners.get('statechange')?.()}
+ }
+ const e=voiceReader(pairedSummaryStory(),{VoicePlayer:FakeVoicePlayer});
+ const button=e.nodes.get('rBody').querySelectorAll('.r-listen')[0];
+ button.onclick();await flush();
+ const player=e.ctx.__readerPlayer;
+ assert.ok(player);assert.equal(plays,1);assert.equal(button.label.textContent,'⏹ Stop');
+ player.state='paused';player.listeners.get('statechange')();
+ assert.equal(player.isPlaying,false);assert.equal(e.ctx.__readerPlayer,player);
+ assert.equal(button.label.textContent,'⏹ Stop');
+ button.onclick();await flush();
+ assert.equal(destroys,1);assert.equal(player.destroyed,true);assert.equal(player.state,'idle');
+ assert.equal(e.ctx.__readerPlayer,null);assert.equal(created,1);assert.equal(plays,1);
+ assert.equal(button.classList.contains('on'),false);assert.equal(button.label.textContent,'🔊 Listen');
+});
+
+test('native speech Stop cancels externally paused or ended speech without restarting',async()=>{
+ for(const search of ['', '?voice=1'])for(const externalState of ['paused','ended','error','ended-without-event']){
+  const e=voiceReader(pairedSummaryStory(),{search});
+  let plays=0,cancels=0,utterance;
+  const synth=e.ctx.speechSynthesis={speaking:false,paused:false,getVoices:()=>[],
+   cancel(){cancels++;this.speaking=false;this.paused=false},
+   speak(u){plays++;utterance=u;this.speaking=true}};
+  e.ctx.SpeechSynthesisUtterance=function(text){this.text=text};
+  const button=e.nodes.get('rBody').querySelectorAll('.r-listen')[0];
+  button.onclick();await flush();
+  assert.equal(plays,1);assert.equal(button.label.textContent,'⏹ Stop');
+  synth.speaking=false;synth.paused=externalState==='paused';
+  if(externalState==='ended'||externalState==='error'){
+   utterance[externalState==='ended'?'onend':'onerror']();
+   assert.equal(button.label.textContent,'🔊 Listen');assert.equal(button.classList.contains('on'),false);
+  }else{
+   const before=cancels;
+   assert.equal(button.label.textContent,'⏹ Stop');
+   button.onclick();await flush();
+   assert.ok(cancels>before);assert.equal(synth.paused,false);
+   assert.equal(button.label.textContent,'🔊 Listen');assert.equal(button.classList.contains('on'),false);
+  }
+  assert.equal(plays,1);
+ }
+});
 
 test('summary rerender cancels native fallback speech and resets the replacement control',async()=>{
  const story=pairedSummaryStory(),e=voiceReader(story);

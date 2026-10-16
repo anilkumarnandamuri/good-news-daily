@@ -67,7 +67,7 @@
  if("speechSynthesis" in window)speechSynthesis.onvoiceschanged=()=>{};
 
  async function playVoice(btn,lang,story){
-  if((activeBtn===btn&&activePlayer&&activePlayer.isPlaying)||speaking===btn){stop();return}stop();
+  if((activeBtn===btn&&activePlayer)||speaking===btn){stop();return}stop();
   const reqId=++playRequestId;
   const container=btn.closest(".r-sum");const targetSentenceEls=container?[...container.querySelectorAll(".r-sentence")]:[];
   let sentences=[];
