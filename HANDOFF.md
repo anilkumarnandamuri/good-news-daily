@@ -1,38 +1,39 @@
 # HANDOFF — good-news
 
 ## Updated
-2026-10-15 22:54 PDT | agy/gemini-3.8-flash-high | branch `job/GV-2` | last commit 6470e64
+2026-10-15 22:58 PDT | codex | branch `job/GN-6` | last commit d65154f
 
 ## Current task / claim
-**GV-2** Integrate voice player into Good News UI using the `pairs` field — status **in-review** by agy/gemini-3.8-flash-high on `job/GV-2` (since 2026-10-15 13:58 PDT). Last note: Codex fix pass 3 (6470e64) cleared reader.js:87/:144; Codex review clean; done-check PASS Next: Anil: review/merge job/GV-2
+**GN-6** Telugu audio via local Piper TTS (pre-generated MP3, hosted outside main history) — status **in-review** by codex on `job/GN-6` (since 2026-10-15 22:10 PDT). Last note: merged GV-2 969c977; Codex fix pass 3 (d65154f) cleared module-load retry P2; Codex review clean; done-check PASS. Audio off by default; routine unchanged. Next: Anil: approve good-news-audio repo + routine wiring; merge GV-2 then GN-6
 
 ## Done this session
-- Reused the voice module's exported chunker per sentence and mapped every speech chunk back to its rendered sentence for statechange/progress highlighting.
-- Made cache attachment report changes; unchanged, stale, or invalid cache responses preserve active playback and controls. Newly attached matching pairs still rerender with full stop.
-- Added Node regressions using the real chunker, paired/legacy summaries, focus/control preservation, and teardown on changed content.
-- Preserved previous Stop, full rerender teardown, cache matching, module failure fallback, and GN-5 fixes. Routine-owned data untouched.
-- Updated GV-2 Review response and Checkpoint. No network, commits, pushes, or branch changes.
+- Fixed post-GV-2 chunkText compatibility: whole-sentence fallback when absent; Telugu test helper injects the real chunker.
+- Cached Telugu manifests now retry failed module imports. Ready playback stays synchronous; asynchronous recovery preserves MP3 and device-speech resume gestures.
+- Added three regressions (35 frontend cases total). Updated task Review response and Checkpoint. GN-5 controls/styles and routine-owned data unchanged.
 
 ## Verified (with evidence)
-- Requested `python3 -m unittest discover -s tests -p 'test_*.py' && node --test tests/*.test.js && node --test voice/tests/*.test.js` passed: 43 Python tests, 22 frontend tests, voice suite green.
-- `git diff --check` passed.
+- Requested combined command passed: 52 Python tests, frontend Node suite and voice Node suite.
+- Direct `node tests/frontend.test.js`: all 35 cases pass, including GN-6, GV-2 and GN-5 regressions.
+- `git diff --check` passed; data/news.json and data/summaries.json match HEAD.
 
 ## Unverified
-- Voice Playwright suite attempted: all 8 cases blocked before browser launch by local HTTP server socket creation (`PermissionError: [Errno 1] Operation not permitted`). No new screenshots.
+- Playwright GN-6 retry: six setup errors from sandbox-denied AF_INET sockets before browser launch. No new screenshots.
+- Physical-device playback and external hosting still require operator verification.
 
 ## Broken / half-done
-- No known implementation issue. Browser acceptance and review remain pending.
+- Browser acceptance remains pending; no known implementation failures.
 
 ## Next 3 steps (smallest first)
-1. Review the uncommitted GV-2 fixes and regression tests.
-2. Run voice Playwright tests and inspect screenshots in a socket-enabled environment.
-3. Operator commits when satisfied; this pass explicitly prohibits commits.
+1. Review the uncommitted reader/test fixes.
+2. Run Playwright and inspect screenshots in a socket-enabled environment.
+3. Operator commits when satisfied and configures audio hosting before routine opt-in.
 
 ## Blockers / questions for Anil
-- Sandbox denies the local server socket needed for browser verification; no product clarification needed.
+- Local server sockets are denied by the sandbox; no product clarification needed.
+- No network, commits, pushes or branch switches. Shared board writes are outside permitted writable roots; checkpoint recorded in tasks/GN-6.md.
 
 ## How to resume
 ```sh
 python3 -m unittest discover -s tests -p 'test_*.py' && node --test tests/*.test.js && node --test voice/tests/*.test.js
-python3 -m pytest tests/test_voice_reader.py -q
+python3 -m pytest tests/test_te_audio_browser.py -q
 ```

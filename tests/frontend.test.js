@@ -22,7 +22,10 @@ function environment({news=[],search='',storageBlocked=false}={}){
      const section=value.slice(value.lastIndexOf('<section',match.index));
      const paragraph=new Element();paragraph.textContent=(section.match(/<p[^>]*>([\s\S]*?)<\/p>/)?.[1]||'').replace(/<[^>]*>/g,'');
      const sentences=[...section.slice(0,section.indexOf('</section>')).matchAll(/<span class="r-sentence" data-idx="(\d+)">/g)].map(match=>{const sentence=new Element();sentence.dataset.idx=match[1];return sentence});
-     el.summary={querySelector:selector=>selector==='p'?paragraph:null,querySelectorAll:selector=>selector==='.r-sentence'?sentences:[]};
+     const sectionNode=new Element();
+     sectionNode.querySelector=selector=>selector==='p'?paragraph:sectionNode.children.find(n=>n.className==='r-note r-audio-status')||null;
+     sectionNode.querySelectorAll=selector=>selector==='.r-sentence'?sentences:[];
+     el.summary=sectionNode;
     }
     el.parent=this;this.children.push(el);
    }
@@ -255,7 +258,7 @@ test('reader renders summary status like paired with both summaries and listen c
  assert.match(e.nodes.get('rBody').innerHTML,/r-listen/);
 });
 
-function voiceReader(story,{VoicePlayer,chunkText,search='?voice=1'}={}){
+function voiceReader(story,{setup,VoicePlayer,chunkText,search='?voice=1'}={}){
  const e=environment({search});
  let resolveSummaries;
  const summaries=new Promise(resolve=>{resolveSummaries=resolve});
@@ -264,7 +267,8 @@ function voiceReader(story,{VoicePlayer,chunkText,search='?voice=1'}={}){
  e.run('sticky.js');
  // Inject only the module boundary; exercise the reader's real player lifecycle.
  e.ctx.__voiceModule={VoicePlayer,chunkText};
- e.run('reader.js',code=>VoicePlayer?code.replace('import(u)','Promise.resolve(__voiceModule)'):code);
+ if(setup){setup(e);VoicePlayer=e.ctx.__voiceModule?.VoicePlayer}
+ e.run('reader.js',code=>e.ctx.__importVoiceModule?code.replace('import(u)','__importVoiceModule(u)'):VoicePlayer?code.replace('import(u)','Promise.resolve(__voiceModule)'):code);
  e.ctx.location.hash='#/s/'+story.id;e.ctx.onData([story]);
  return {...e,resolveSummaries};
 }
@@ -272,7 +276,7 @@ function voiceReader(story,{VoicePlayer,chunkText,search='?voice=1'}={}){
 const pairedSummaryStory=()=>({...stories[0],id:'cache-test',lang:'en',summary_status:'summary',sum_en:'First sentence. Second sentence.',sum_te:'మొదటి వాక్యం. రెండవ వాక్యం.',pairs:undefined});
 const matchingPairs=()=>[{en:'First sentence.',te:'మొదటి వాక్యం.'},{en:'Second sentence.',te:'రెండవ వాక్యం.'}];
 
-test('Stop destroys an externally paused active voice player without starting playback again',async()=>{
+test('paused voice player exposes resume, then Stop destroys the resumed player',async()=>{
  let created=0,plays=0,destroys=0;
  class FakeVoicePlayer{
   constructor(){created++;this.audio={addEventListener(){}};this.listeners=new Map();this.state='idle';this.destroyed=false}
@@ -289,10 +293,12 @@ test('Stop destroys an externally paused active voice player without starting pl
  assert.ok(player);assert.equal(plays,1);assert.equal(button.label.textContent,'⏹ Stop');
  player.state='paused';player.listeners.get('statechange')();
  assert.equal(player.isPlaying,false);assert.equal(e.ctx.__readerPlayer,player);
+ assert.match(button.label.textContent,/Tap to play/);
+ button.onclick();assert.equal(plays,2);assert.equal(e.ctx.__readerPlayer,player);
  assert.equal(button.label.textContent,'⏹ Stop');
  button.onclick();await flush();
  assert.equal(destroys,1);assert.equal(player.destroyed,true);assert.equal(player.state,'idle');
- assert.equal(e.ctx.__readerPlayer,null);assert.equal(created,1);assert.equal(plays,1);
+ assert.equal(e.ctx.__readerPlayer,null);assert.equal(created,1);assert.equal(plays,2);
  assert.equal(button.classList.contains('on'),false);assert.equal(button.label.textContent,'🔊 Listen');
 });
 
@@ -368,6 +374,204 @@ test('cached pairs attach only when both joined summaries match, preserving vali
  }
 });
 
+// Exercise the real reader and real VoicePlayer together; only browser APIs are faked.
+function teluguReader({entry=true,voice=false,broken=false,moduleMissing=false,moduleFailures=0,manifestOffline=false,manifestGate=null}={}){
+ const story=pairedSummaryStory();
+ const spoken=[],requests=[];
+ const e=voiceReader(story,{search:'',setup(e){
+  e.ctx.EventTarget=EventTarget;e.ctx.CustomEvent=CustomEvent;
+  e.ctx.Audio=class {
+   constructor(){this.duration=10;this.currentTime=0;this.src=''}
+   setAttribute(){} addEventListener(){} removeAttribute(){this.src=''} load(){} pause(){}
+   play(){if(broken){this.onerror?.();return Promise.resolve()}this.onplaying?.();return Promise.resolve()}
+  };
+  e.ctx.speechSynthesis={getVoices:()=>voice?[{lang:'te-IN',voiceURI:'te'}]:[],
+   addEventListener(){},removeEventListener(){},resume(){},cancel(){},speak(u){spoken.push(u)}};
+  e.ctx.SpeechSynthesisUtterance=function(text){this.text=text};
+  e.ctx.fetch=async url=>{
+   requests.push(url);
+   if(url.includes('manifest.json')){if(manifestGate)await manifestGate;if(manifestOffline)throw Error('offline')}
+   return{ok:true,json:async()=>url==='data/audio-config.json'?{base_url:'https://audio.example/'}:
+    {stories:{[story.id]:entry?{te:{file:'te/key.mp3',text:entry==='stale'?'పాత వార్త.':story.sum_te}}:{}}}};
+  };
+  if(moduleMissing)e.ctx.__voiceModule={VoicePlayer:null};
+  else e.run('voice/src/gn-voice.js',code=>code.replace(/export /g,'')+';window.__voiceModule={VoicePlayer,chunkText};');
+  if(moduleFailures){
+   e.ctx.moduleImports=[];
+   e.ctx.__importVoiceModule=url=>{
+    e.ctx.moduleImports.push(url);
+    return e.ctx.moduleImports.length<=moduleFailures?Promise.reject(Error('temporary import failure')):Promise.resolve(e.ctx.__voiceModule);
+   };
+  }
+ }});
+ return{...e,spoken,requests,button:e.nodes.get('rBody').querySelectorAll('.r-listen')[1]};
+}
+
+test('default Telugu Listen plays manifest MP3 without a device voice and Stop tears down',async()=>{
+ const e=teluguReader();e.button.onclick();await flush();
+ assert.equal(e.ctx.__readerPlayer.mode,'audio');
+ assert.equal(e.ctx.__readerPlayer.audio.src,'https://audio.example/te/key.mp3');
+ assert.equal(e.button.label.textContent,'⏹ Stop');assert.equal(e.spoken.length,0);
+ assert.ok(e.requests.includes('https://audio.example/manifest.json'));
+ e.button.onclick();assert.equal(e.ctx.__readerPlayer,null);assert.equal(e.button.label.textContent,'🔊 Listen');
+});
+
+test('default Telugu falls back to device speech for absent, stale, failed, or offline audio',async()=>{
+ for(const options of [{entry:false},{entry:'stale'},{broken:true},{manifestOffline:true},{moduleMissing:true}]){
+  const e=teluguReader({...options,voice:true});await flush();e.button.onclick();await flush();
+  if(/Tap to listen/.test(e.button.label.textContent))e.button.onclick();
+  assert.ok(e.spoken.length>0,JSON.stringify(options));
+  assert.equal(e.spoken[0].lang,'te-IN');assert.equal(e.button.label.textContent,'⏹ Stop');
+  e.button.onclick();assert.equal(e.button.label.textContent,'🔊 Listen');
+ }
+});
+
+test('default Telugu unavailable message is inline and bilingual across audio failures',async()=>{
+ for(const options of [{entry:false},{entry:'stale'},{broken:true},{manifestOffline:true},{moduleMissing:true}]){
+  const e=teluguReader(options);e.button.onclick();await flush();
+  const note=e.button.summary.children[0];assert.equal(note.getAttribute('role'),'status');
+  assert.match(note.textContent,/ఈ వార్తకు ఆడియో/);assert.match(note.textContent,/Audio isn't available for this story yet/);
+  assert.equal(e.button.label.textContent,'🔊 Listen');assert.equal(e.spoken.length,0);
+ }
+});
+
+test('default English remains on native speech even when Telugu MP3 is present',async()=>{
+ const e=teluguReader();const button=e.nodes.get('rBody').querySelectorAll('.r-listen')[0];
+ button.onclick();await flush();assert.equal(e.spoken[0].text,pairedSummaryStory().sum_en);
+ assert.equal(e.spoken[0].lang,'en-IN');assert.equal(e.ctx.__readerPlayer,null);
+ assert.ok(e.requests.includes('data/audio-config.json'),'story opening prefetches Telugu audio');
+});
+
+test('autoplay rejection offers synchronous resume on the same Telugu audio element',async()=>{
+ for(const synchronous of [false,true]){
+  const e=teluguReader();let calls=0,firstAudio;
+  e.ctx.Audio.prototype.play=function(){
+   calls++;
+   if(calls===1){
+    firstAudio=this;
+    const error=Object.assign(new Error('Tap required'),{name:'NotAllowedError'});
+    if(synchronous)throw error;
+    return Promise.reject(error);
+   }
+   assert.equal(this,firstAudio);this.onplaying?.();return Promise.resolve();
+  };
+  e.button.onclick();await flush();
+  const player=e.ctx.__readerPlayer;
+  assert.equal(player.state,'paused');assert.match(e.button.label.textContent,/Tap to play/);
+  assert.equal(e.button.classList.contains('on'),false);
+  e.button.onclick();
+  // Assert before flushing promises: play must run inside the second tap.
+  assert.equal(calls,2);assert.equal(e.ctx.__readerPlayer,player);
+  assert.equal(player.audio,firstAudio);assert.equal(player.state,'playing');
+  assert.equal(e.button.label.textContent,'⏹ Stop');assert.equal(e.spoken.length,0);
+  e.button.onclick();assert.equal(e.ctx.__readerPlayer,null);
+  assert.equal(e.button.label.textContent,'🔊 Listen');
+ }
+});
+
+test('Telugu manifest retries after failed, empty, invalid, and timed-out loads',async()=>{
+ for(const failure of ['offline','http','empty','invalid','timeout']){
+  const e=teluguReader(),fetch=e.ctx.fetch;let attempts=0,timeout;
+  e.ctx.setTimeout=fn=>{timeout=fn;return 1};e.ctx.clearTimeout=()=>{};
+  e.ctx.fetch=async url=>{
+   if(url.includes('manifest.json')&&++attempts===1){
+    if(failure==='offline')throw Error('offline');
+    if(failure==='http')return{ok:false};
+    if(failure==='timeout')return new Promise(()=>{});
+    return{ok:true,json:async()=>failure==='invalid'?null:{stories:{}}};
+   }
+   return fetch(url);
+  };
+  e.button.onclick();await flush();
+  if(failure==='timeout'){timeout();await flush()}
+  assert.equal(attempts,1);assert.equal(e.button.label.textContent,'🔊 Listen');
+  assert.match(e.button.summary.children[0].textContent,/Audio isn't available/);
+  e.button.onclick();await flush();
+  assert.equal(attempts,2);assert.equal(e.ctx.__readerPlayer.mode,'audio');
+  assert.equal(e.button.label.textContent,'⏹ Stop');
+  assert.equal(e.button.summary.children[0].hidden,true);
+  e.button.onclick();e.button.onclick();await flush();
+  assert.equal(attempts,2,'successful manifest is cached');
+  e.button.onclick();
+ }
+});
+
+
+test('prefetched Telugu without a clip speaks inside the first click, including offline hosts',async()=>{
+ for(const options of [{entry:false},{entry:'stale'},{manifestOffline:true}]){
+  const e=teluguReader({...options,voice:true});await flush();
+  let inClick=false,calls=0;
+  const speak=e.ctx.speechSynthesis.speak;
+  e.ctx.speechSynthesis.speak=u=>{assert.equal(inClick,true);calls++;speak(u)};
+  inClick=true;e.button.onclick();inClick=false;
+  assert.ok(calls>0);assert.equal(e.button.label.textContent,'⏹ Stop');
+  e.button.onclick();assert.equal(e.button.label.textContent,'🔊 Listen');
+ }
+});
+
+test('pending Telugu manifest offers a synchronous speech resume on the next tap',async()=>{
+ let resolve;const manifestGate=new Promise(r=>resolve=r);
+ const e=teluguReader({entry:false,voice:true,manifestGate});
+ e.ctx.navigator.userAgent='iPhone';
+ e.button.onclick();assert.equal(e.button.label.textContent,'⏹ Stop');
+ resolve();await flush();
+ assert.equal(e.spoken.length,0);assert.match(e.button.label.textContent,/Tap to listen/);
+ e.button.onclick();assert.equal(e.spoken.length,1);
+ assert.equal(e.button.label.textContent,'⏹ Stop');
+ e.button.onclick();assert.equal(e.spoken.length,1);assert.equal(e.button.label.textContent,'🔊 Listen');
+});
+
+test('prefetched Telugu clip plays synchronously in the click handler',async()=>{
+ const e=teluguReader();await flush();let calls=0;
+ e.ctx.Audio.prototype.play=function(){calls++;this.onplaying?.();return Promise.resolve()};
+ e.button.onclick();assert.equal(calls,1);assert.equal(e.ctx.__readerPlayer.mode,'audio');
+ e.button.onclick();
+});
+
+test('cached Telugu manifest retries a failed module import and preserves MP3 resume',async()=>{
+ for(const rejected of [false,true]){
+  const e=teluguReader({moduleFailures:1});await flush();
+  assert.equal(e.ctx.moduleImports.length,1,'story-open import failed');
+  assert.equal(e.requests.filter(url=>url.includes('manifest.json')).length,1);
+  let plays=0,firstAudio;
+  e.ctx.Audio.prototype.play=function(){
+   plays++;firstAudio??=this;assert.equal(this,firstAudio);
+   if(rejected&&plays===1)return Promise.reject(Object.assign(Error('Tap required'),{name:'NotAllowedError'}));
+   this.onplaying?.();return Promise.resolve();
+  };
+  e.button.onclick();await flush();
+  assert.equal(e.ctx.moduleImports.length,2,'Listen retries the module with the manifest already cached');
+  assert.match(e.ctx.moduleImports[1],/\?r=1$/);
+  assert.equal(e.requests.filter(url=>url.includes('manifest.json')).length,1,'successful manifest stays cached');
+  const player=e.ctx.__readerPlayer;
+  assert.equal(player.mode,'audio');assert.equal(player.audio.src,'https://audio.example/te/key.mp3');
+  assert.equal(e.spoken.length,0);
+  if(rejected){
+   assert.equal(player.state,'paused');assert.match(e.button.label.textContent,/Tap to play/);
+   e.button.onclick();assert.equal(plays,2,'resume plays synchronously');
+   assert.equal(e.ctx.__readerPlayer,player);assert.equal(player.audio,firstAudio);
+  }
+  assert.equal(player.state,'playing');assert.equal(e.button.label.textContent,'⏹ Stop');
+  e.button.onclick();assert.equal(e.ctx.__readerPlayer,null);
+ }
+});
+
+test('failed module retry offers synchronous Telugu device-speech resume',async()=>{
+ const e=teluguReader({moduleMissing:true,voice:true});await flush();
+ e.button.onclick();await flush();
+ assert.equal(e.spoken.length,0);assert.match(e.button.label.textContent,/Tap to listen/);
+ e.button.onclick();assert.equal(e.spoken.length,1);assert.equal(e.button.label.textContent,'⏹ Stop');
+ e.button.onclick();assert.equal(e.button.label.textContent,'🔊 Listen');
+});
+
+test('Stop during Telugu manifest loading cancels the pending fallback',async()=>{
+ let resolve;const manifestGate=new Promise(r=>resolve=r);
+ const e=teluguReader({entry:false,voice:true,manifestGate});
+ e.button.onclick();assert.equal(e.button.label.textContent,'⏹ Stop');
+ e.button.onclick();assert.equal(e.button.label.textContent,'🔊 Listen');
+ resolve();await flush();
+ assert.equal(e.spoken.length,0);assert.equal(e.button.label.textContent,'🔊 Listen');
+});
 // Keep speech synthesis outside the VM while exercising the reader's queue override
 // and event handlers with the module's real exported chunker.
 class QueueVoicePlayer{
@@ -378,6 +582,18 @@ class QueueVoicePlayer{
  play(){this._makeQueue();this.state='playing';this.listeners.get('statechange')?.()}
  destroy(){this.destroys++;this.destroyed=true;this.state='idle';this.listeners.get('statechange')?.()}
 }
+
+test('voice modules without chunkText keep whole sentences and sentence highlighting',async()=>{
+ const story=pairedSummaryStory(),e=voiceReader(story,{VoicePlayer:QueueVoicePlayer});
+ const button=e.nodes.get('rBody').querySelectorAll('.r-listen')[0];
+ button.onclick();await flush();
+ const player=e.ctx.__readerPlayer,item=player.queue[1];
+ assert.deepEqual([...item.chunks],['First sentence.','Second sentence.']);
+ assert.deepEqual([...item.chunkSentenceIndexes],[0,1]);
+ player.chunkIndex=1;player.listeners.get('progress')();
+ assert.deepEqual(button.summary.querySelectorAll('.r-sentence').map(span=>span.classList.contains('is-active')),[false,true]);
+ button.onclick();assert.equal(player.destroyed,true);
+});
 
 test('reader bounds every sentence with the exported chunker and highlights its sentence for every speech chunk',async()=>{
  const {chunkText}=await import('../voice/src/gn-voice.js');

@@ -86,3 +86,76 @@ steps: checkout → setup-python 3.12 → `pip install -r requirements.txt && py
 ## Design references
 Apple News (big image-led hero, serif headlines), Particle/Artifact (clean cards, pill category labels), Flipboard (image-first grid),
 Positive News / Good News Network (warm, optimistic palette). Placeholders use category gradients when a feed has no image.
+
+## Telugu audio (GN-6, opt-in generation)
+
+Telugu Listen on the default site prefers a matching MP3 through `voice/` and falls
+back to a Telugu device voice. If both are unavailable, an inline Telugu/English
+message explains that audio is not available yet. English continues to use device
+speech; the existing `?voice=1` voice-module preview remains available.
+
+Generation stays **off** until Anil approves changing the routine. After the audio
+checkout has been set up, the operator can run:
+
+```sh
+GOOD_NEWS_AUDIO=1 python3 scripts/build.py
+# Review output, then commit the separate audio checkout (no push):
+scripts/publish_audio.sh
+# Only the operator should explicitly request publication:
+# scripts/publish_audio.sh --push
+```
+
+The hook runs after summarization, using every nonempty `sum_te` with status
+`paired` or `summary`. It normalizes whitespace and names clips
+`te/<first-16-sha256(voice_id + "\n" + rate + "\n" + text)>.mp3`. Unchanged clips
+are reused; changed summaries, voice IDs, or synthesis rates get new filenames.
+Piper uses maya at normal length scale (`1.0`); ffmpeg creates mono, 22.05 kHz,
+32 kbps MP3s (about 240 KB/minute; 100 one-minute stories are about 24 MB).
+The version-1 `manifest.json` embeds current summary text so the player rejects
+stale recordings. No per-story news fields or audio bytes are needed in this repo.
+The small real MP3 under `tests/fixtures/audio/` is a test-only exception.
+
+| Variable | Default |
+| --- | --- |
+| `GOOD_NEWS_AUDIO` | disabled; only `1` enables generation |
+| `GOOD_NEWS_AUDIO_DIR` | `../good-news-audio` relative to the site repo |
+| `GOOD_NEWS_PIPER` | `/workspace/tools/piper/venv/bin/piper` |
+| `GOOD_NEWS_PIPER_MODEL` | `/workspace/tools/piper/models/te_IN-maya-medium.onnx` |
+| `GOOD_NEWS_FFMPEG` | `ffmpeg` on PATH |
+| `GOOD_NEWS_AUDIO_BUDGET_S` | `300` seconds shared across all synthesis/encoding calls |
+| `GOOD_NEWS_AUDIO_BASE_URL` | `https://anilkumarnandamuri.github.io/good-news-audio/` |
+
+The output directory must be outside the site repo. Temporary WAV/MP3 files are
+removed automatically; successful MP3s and the manifest are replaced atomically.
+Missing tools, exhausted budget, or a failed story never fail the news build.
+Existing cached clips remain usable even without the tools. Each build publishes
+only current successful entries in the manifest and removes unreferenced
+`te/*.mp3` files whose mtime is older than seven days. Current clips are retained
+regardless of age. This bounds the live checkout; git history still retains
+previous recordings, so the operator may periodically compact that separate repo.
+
+On an opted-in build, `data/audio-config.json` records the configured base URL.
+Publish that small file with the static site. If it is absent, the reader uses the
+default host. Config/manifest failures time out after four seconds each and device
+speech remains available. Relative clip paths resolve against the manifest URL.
+
+One-time setup (operator only; GN-6 does not create the repo): create the public
+`good-news-audio` GitHub repository, initialize a `main` branch, and clone it next
+to the site checkout. Generate audio, review it, and use `publish_audio.sh` to
+commit that checkout; use `--push` only when ready. Enable GitHub Pages from
+`main` at the repository root, including `manifest.json` and `te/`. Verify CORS
+access to the manifest from the site, MP3 MIME type/byte ranges, and the Pages URL.
+Serve the manifest with revalidation and content-hashed MP3s with long caching.
+No publication or routine changes have been performed by GN-6.
+
+Piper (`piper-tts` 1.8.0) is GPL-3.0, used only as an offline tool; generated audio
+is not covered by the GPL. The `te_IN-maya-medium` voice was trained on IIT Madras
+IndicTTS. Its IITM EULA grants a perpetual, worldwide, royalty-free licence and
+allows free distribution of derivative works. The operator's licence copy is
+`/workspace/tts-eval/indictts-license.pdf`. Keep the applicable licence notices with
+the audio checkout. Public narration uses only the existing public summaries.
+
+Run `python3 -m pytest tests/test_te_audio_browser.py -q` in a socket-enabled
+environment for real MP3 playback without a Telugu device voice and the inline
+unavailable state at 390/1280 pixels. Screenshots are saved under
+`artifacts/GN-6/te-{mp3-playing,audio-unavailable}-{390,1280}.png`.
