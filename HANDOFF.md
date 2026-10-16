@@ -1,7 +1,7 @@
 # HANDOFF — good-news
 
 ## Updated
-2026-10-15 19:49 PDT | agy/gemini-3.8-flash-high | branch `job/GN-4` | last commit 349b358
+2026-10-15 19:50 PDT | agy/gemini-3.8-flash-high | branch `job/GN-4` | last commit 3558b0d
 
 ## Current task / claim
 **GN-4** Summaries fallback: v6 falls back to the live extract-and-translate method when no LLM hook is configured (no excerpt-only regression) — status **in-review** by agy/gemini-3.8-flash-high on `job/GN-4` (since 2026-10-15 19:26 PDT). Last note: enforced fallback time budget and non-empty routine simulation feed Next: Codex review
