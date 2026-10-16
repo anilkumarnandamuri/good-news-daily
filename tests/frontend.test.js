@@ -21,7 +21,8 @@ function environment({news=[],search='',storageBlocked=false}={}){
      el.label=new Element();el.label.textContent='🔊 Listen';
      const section=value.slice(value.lastIndexOf('<section',match.index));
      const paragraph=new Element();paragraph.textContent=(section.match(/<p[^>]*>([\s\S]*?)<\/p>/)?.[1]||'').replace(/<[^>]*>/g,'');
-     el.summary={querySelector:selector=>selector==='p'?paragraph:null,querySelectorAll:()=>[]};
+     const sentences=[...section.slice(0,section.indexOf('</section>')).matchAll(/<span class="r-sentence" data-idx="(\d+)">/g)].map(match=>{const sentence=new Element();sentence.dataset.idx=match[1];return sentence});
+     el.summary={querySelector:selector=>selector==='p'?paragraph:null,querySelectorAll:selector=>selector==='.r-sentence'?sentences:[]};
     }
     el.parent=this;this.children.push(el);
    }
@@ -29,6 +30,7 @@ function environment({news=[],search='',storageBlocked=false}={}){
   get innerHTML(){return this.html||''}
   setAttribute(k,v){this.attributes[k]=String(v);if(k.startsWith('data-'))this.dataset[k.slice(5)]=v}
   getAttribute(k){return this.attributes[k]??null}
+  removeAttribute(k){delete this.attributes[k]}
   querySelector(selector){return ['span','.lbl'].includes(selector)?this.label: this.querySelectorAll(selector)[0]||null}
   querySelectorAll(selector){if(selector==='.r-listen')return this.children.filter(el=>el.attributes.class==='r-listen');return this.children.filter(el=>selector==='button'?el.tagName==='button':selector==='button:not(:disabled),a[href]'?['button','a'].includes(el.tagName):selector==='a[href]'?el.tagName==='a':false)}
   closest(selector){return selector==='.r-sum'?this.summary:selector==='a'&&this.tagName==='a'?this:selector==='.tab'&&this.dataset.k?this:null}
@@ -253,7 +255,7 @@ test('reader renders summary status like paired with both summaries and listen c
  assert.match(e.nodes.get('rBody').innerHTML,/r-listen/);
 });
 
-function voiceReader(story,{VoicePlayer,search='?voice=1'}={}){
+function voiceReader(story,{VoicePlayer,chunkText,search='?voice=1'}={}){
  const e=environment({search});
  let resolveSummaries;
  const summaries=new Promise(resolve=>{resolveSummaries=resolve});
@@ -261,7 +263,7 @@ function voiceReader(story,{VoicePlayer,search='?voice=1'}={}){
  e.ctx.thumb=()=>'';
  e.run('sticky.js');
  // Inject only the module boundary; exercise the reader's real player lifecycle.
- e.ctx.__voiceModule={VoicePlayer};
+ e.ctx.__voiceModule={VoicePlayer,chunkText};
  e.run('reader.js',code=>VoicePlayer?code.replace('import(u)','Promise.resolve(__voiceModule)'):code);
  e.ctx.location.hash='#/s/'+story.id;e.ctx.onData([story]);
  return {...e,resolveSummaries};
@@ -363,5 +365,71 @@ test('cached pairs attach only when both joined summaries match, preserving vali
   }
   assert.equal(story.sum_en,'First sentence. Second sentence.');
   assert.equal(story.sum_te,'మొదటి వాక్యం. రెండవ వాక్యం.');
+ }
+});
+
+// Keep speech synthesis outside the VM while exercising the reader's queue override
+// and event handlers with the module's real exported chunker.
+class QueueVoicePlayer{
+ constructor(){this.audio={addEventListener(){}};this.listeners=new Map();this.queueIndex=0;this.chunkIndex=0;this.destroyed=false;this.state='idle';this.mode='speech';this.destroys=0}
+ setStories(stories){this.stories=stories}
+ _makeQueue(){this.queue=[{intro:true},{text:this.stories[0].sum_en}];this.queueIndex=1;return true}
+ addEventListener(type,fn){this.listeners.set(type,fn)}
+ play(){this._makeQueue();this.state='playing';this.listeners.get('statechange')?.()}
+ destroy(){this.destroys++;this.destroyed=true;this.state='idle';this.listeners.get('statechange')?.()}
+}
+
+test('reader bounds every sentence with the exported chunker and highlights its sentence for every speech chunk',async()=>{
+ const {chunkText}=await import('../voice/src/gn-voice.js');
+ for(const paired of [false,true]){
+  const long='A community project brings lasting benefits to local families '.repeat(8).trim()+'.';
+  const story={...pairedSummaryStory(),sum_en:long+' Next sentence.'};
+  if(paired)story.pairs=[{en:long,te:'మొదటి వాక్యం.'},{en:'Next sentence.',te:'రెండవ వాక్యం.'}];
+  const e=voiceReader(story,{VoicePlayer:QueueVoicePlayer,chunkText});
+  const button=e.nodes.get('rBody').querySelectorAll('.r-listen')[0];
+  button.onclick();await flush();
+  const player=e.ctx.__readerPlayer,item=player.queue[1],expected=chunkText(long);
+  assert.ok(long.length>160);assert.ok(expected.length>1);
+  assert.deepEqual([...item.chunks],[...expected,'Next sentence.']);
+  assert.ok(item.chunks.every(chunk=>chunk.length<=160));
+  assert.deepEqual([...item.chunkSentenceIndexes],[...expected.map(()=>0),1]);
+  assert.equal(player.queue[0].chunks,undefined,'intro queue items stay unchanged');
+  const spans=button.summary.querySelectorAll('.r-sentence');
+  assert.equal(spans.length,2);
+  for(let index=0;index<item.chunks.length;index++){
+   player.chunkIndex=index;
+   for(const event of ['progress','statechange']){
+    player.listeners.get(event)();
+    assert.deepEqual(spans.map(span=>span.classList.contains('is-active')),index<expected.length?[true,false]:[false,true]);
+   }
+  }
+ }
+});
+
+test('delayed summaries preserve playback and controls unless matching pairs are newly attached',async()=>{
+ const {chunkText}=await import('../voice/src/gn-voice.js');
+ for(const variant of ['existing','new','mismatch','invalid']){
+  const story=pairedSummaryStory();
+  if(variant==='existing')story.pairs=matchingPairs();
+  const e=voiceReader(story,{VoicePlayer:QueueVoicePlayer,chunkText});
+  let cancels=0;e.ctx.speechSynthesis={cancel(){cancels++}};
+  const body=e.nodes.get('rBody'),button=body.querySelectorAll('.r-listen')[0];
+  button.focus();button.onclick();await flush();
+  const player=e.ctx.__readerPlayer,writes=body.writes,before=cancels;
+  assert.equal(player.state,'playing');
+  const pairs=variant==='invalid'?[null]:matchingPairs();
+  if(variant==='mismatch')pairs[0].en='Stale sentence.';
+  e.resolveSummaries({[story.id]:{pairs}});await flush();
+  if(variant==='new'){
+   assert.equal(body.writes,writes+1);assert.equal(player.destroys,1);
+   assert.ok(cancels>before);assert.equal(button.isConnected,false);
+   assert.equal(e.ctx.__readerPlayer,null);
+   assert.equal(body.querySelectorAll('.r-listen')[0].label.textContent,'🔊 Listen');
+  }else{
+   assert.equal(body.writes,writes);assert.equal(player.destroys,0);assert.equal(cancels,before);
+   assert.equal(player.state,'playing');assert.equal(e.ctx.__readerPlayer,player);
+   assert.equal(body.querySelectorAll('.r-listen')[0],button);assert.equal(button.isConnected,true);
+   assert.equal(e.ctx.document.activeElement,button);assert.equal(button.label.textContent,'⏹ Stop');
+  }
  }
 });
