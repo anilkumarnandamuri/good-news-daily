@@ -33,7 +33,7 @@ A complete summary has 4–6 short sentences in each language. The cache stores 
 When the opt-in LLM hook is not enabled (or when it fails), summarization falls back to the live extract-and-translate method ported from version 5:
 - Extracts up to 6 canonical source-language sentences from the feed description and article og/meta descriptions (never the article body).
 - Translates sentence-by-sentence via free endpoints (Google Translate with MyMemory fallback) strictly 1:1.
-- Builds aligned `pairs` directly from the sentence lists without re-splitting, validates them with `validate_pairs`, stores a version 6 cache entry, and sets `summary_status='paired'`.
+- Builds aligned `pairs` directly from the sentence lists without re-splitting, validates them with `validate_pairs`, stores a version 6 cache entry, and sets `summary_status='paired'` (for 4–6 sentence pairs) or `summary_status='summary'` (for 1–3 sentence pairs).
 
 Existing version 5 cache entries whose joined strings cannot be re-paired by `legacy_pairs` (due to sentence-count mismatch or shorter length) are retained with `summary_status` set to `'summary'` without network calls. Both `'paired'` and `'summary'` stories render complete bilingual summaries with Listen controls in the reader. If extraction or translation fails, the story falls back to `summary_status='excerpt'` with publisher excerpts, and will be retried on the next run.
 

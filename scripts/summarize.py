@@ -41,7 +41,7 @@ def sentences(text, lang=None):
 
 
 def _tok(text):
-    return set(re.findall(r"\w{3,}", text.casefold()))
+    return set(re.findall(r"[\w\u0C00-\u0C7F]{3,}", text.casefold()))
 
 
 def canonical(title, *texts, n=MAX_SENTENCES, max_words=150, lang="en"):
@@ -73,10 +73,10 @@ def canonical(title, *texts, n=MAX_SENTENCES, max_words=150, lang="en"):
     return picked
 
 
-def validate_pairs(pairs):
+def validate_pairs(pairs, min_sentences=MIN_SENTENCES, max_sentences=MAX_SENTENCES):
     """Return normalized pairs or reject the entire summary at its boundary."""
-    if not isinstance(pairs, list) or not MIN_SENTENCES <= len(pairs) <= MAX_SENTENCES:
-        raise ValueError("A summary needs 4–6 sentence pairs")
+    if not isinstance(pairs, list) or not min_sentences <= len(pairs) <= max_sentences:
+        raise ValueError("A summary needs 4–6 sentence pairs" if min_sentences == MIN_SENTENCES and max_sentences == MAX_SENTENCES else f"A summary needs {min_sentences}–{max_sentences} sentence pairs")
     result = []
     seen = {"en": set(), "te": set()}
     for pair in pairs:
@@ -249,9 +249,17 @@ def extract_and_translate(item, timeout=None):
             pairs.append({"en": t, "te": s})
         else:
             pairs.append({"en": s, "te": t})
-    validated = validate_pairs(pairs)
+    if not pairs:
+        raise ValueError("No sentences extracted")
+    if len(pairs) >= MIN_SENTENCES:
+        validated = validate_pairs(pairs)
+        summary_status = "paired"
+    else:
+        validated = validate_pairs(pairs, min_sentences=1)
+        summary_status = "summary"
     return dict(pairs=validated, en=" ".join(p["en"] for p in validated),
                 te=" ".join(p["te"] for p in validated), n=len(validated), v=VERSION,
+                summary_status=summary_status,
                 fingerprint=fingerprint(item), method="extract_and_translate", og_image=img)
 
 
@@ -293,6 +301,7 @@ def run(items):
                     if isinstance(en, str) and en.strip() and isinstance(te, str) and te.strip():
                         status = "summary"
                         method = old.get("method", "cached")
+                        pairs = old.get("pairs") if isinstance(old.get("pairs"), list) else None
                     else:
                         raise ValueError("Empty summary")
                 else:
@@ -345,7 +354,7 @@ def run(items):
                     generated = extract_and_translate(item, timeout=min(20, max(0.1, deadline - time.monotonic())))
                     pairs = generated["pairs"]
                     method = "fallback"
-                    status = "paired"
+                    status = generated.get("summary_status", "paired" if len(pairs) >= MIN_SENTENCES else "summary")
                 except Exception:
                     failed += 1
 
@@ -372,13 +381,14 @@ def run(items):
             item["summary_status"] = "paired"
             complete += 1
         elif status == "summary":
-            en_str = old.get("en") or item.get("sum_en", "")
-            te_str = old.get("te") or item.get("sum_te", "")
-            img = old.get("og_image")
-            cache[item["id"]] = dict(
+            en_str = (generated.get("en") if isinstance(generated, dict) else None) or old.get("en") or item.get("sum_en", "")
+            te_str = (generated.get("te") if isinstance(generated, dict) else None) or old.get("te") or item.get("sum_te", "")
+            img = (generated.get("og_image") if isinstance(generated, dict) else None) or old.get("og_image")
+            stored_pairs = pairs or (generated.get("pairs") if isinstance(generated, dict) else None) or (old.get("pairs") if isinstance(old.get("pairs"), list) else None)
+            entry = dict(
                 en=en_str,
                 te=te_str,
-                n=old.get("n") or len(sentences(en_str)),
+                n=len(stored_pairs) if stored_pairs else (old.get("n") or len(sentences(en_str))),
                 v=VERSION,
                 summary_status="summary",
                 fingerprint=fingerprint(item),
@@ -386,8 +396,11 @@ def run(items):
                 description_fingerprint=description_fingerprint(item) or old.get("description_fingerprint"),
                 t=old.get("t") or int(time.time()),
             )
+            if stored_pairs:
+                entry["pairs"] = stored_pairs
             if img:
-                cache[item["id"]]["og_image"] = img
+                entry["og_image"] = img
+            cache[item["id"]] = entry
             if not item.get("image") and img and str(img).startswith("http"):
                 item["image"] = img
             item["sum_en"] = en_str

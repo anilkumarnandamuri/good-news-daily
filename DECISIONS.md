@@ -54,3 +54,13 @@
 - Alternatives rejected:
   - Allowing `extract_and_translate` to consume its own unconstrained timeout on each sentence: Overruns the routine budget when multiple stories or sentences experience slow network or endpoint outages.
   - Relying solely on `n_sum >= b_sum` in routine simulation: Rejects valid routine builds when the total number of stories naturally fluctuates downwards while all present stories are successfully summarized.
+
+## D008 — Fallback support for 1–3 sentence summaries as summary_status 'summary' (2026-10-15, agy/gemini-3.8-flash-high)
+- Decision: When the extract-and-translate fallback extracts 1–3 sentences (and all sentences translate successfully), validate each pair with `validate_pairs(pairs, min_sentences=1)`, store the resulting 1–3 aligned pairs in the cache with `summary_status = 'summary'`, and assign `summary_status = 'summary'` to the story. Keep 4–6 sentences as `summary_status = 'paired'`. Do not relax `validate_pairs` for the LLM hook path (which strictly enforces 4–6 sentence pairs). Re-tokenize Telugu words in `_tok` using `[\w\u0C00-\u0C7F]{3,}` so Telugu prose with combining vowel marks is not fragmented.
+- Why:
+  - In short news articles with only 1–3 extractable sentences, the live v5 summarizer generated valid 1–3 sentence bilingual summaries. In v6, `validate_pairs` required 4–6 pairs and threw `ValueError`, regressing 5 stories to excerpt-only in routine simulation (111/116 vs 116/116 in v5).
+  - Storing 1–3 aligned pairs under `summary_status = 'summary'` preserves bilingual coverage across routine updates without regressions, avoids dropped stories, and caches the result for instant reuse without re-translation.
+  - The LLM hook path retains the strict 4–6 sentence requirement (`min_sentences=MIN_SENTENCES`), ensuring LLMs produce standard-length summaries as designed.
+- Alternatives rejected:
+  - Relaxing `validate_pairs` to 1–6 pairs globally: Violates the contract that LLM-generated summaries must contain 4–6 sentence pairs.
+  - Dropping short stories to `summary_status = 'excerpt'`: Regresses story summaries compared to the live v5 routine.
