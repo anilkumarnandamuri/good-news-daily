@@ -98,7 +98,12 @@ html.r-open,html.r-open body{overflow:hidden}
 .r-sum.te p{font-family:"Noto Sans Telugu",sans-serif;font-size:1.25rem;line-height:1.9}
 .r-listen{flex:none;min-height:44px;padding:0 16px;border-radius:999px;border:0;cursor:pointer;font:700 1rem system-ui,sans-serif;color:#fff;background:#1d1a17;transition:background .2s}
 [data-theme=dark] .r-listen{background:#f6efe7;color:#14110f}
-.r-listen.on{background:var(--ink)!important;color:var(--bg)!important;animation:pulse 1.4s infinite}
+.r-listen.on{background:var(--ink)!important;color:var(--bg)!important;animation:pulse-listen 1.4s infinite}
+@keyframes pulse-listen{50%{opacity:.85}}
+.r-sentences{margin:0}
+.r-sentence{display:inline;border-radius:4px;padding:2px 4px;margin:0 1px;transition:background-color .15s ease,color .15s ease;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.r-sentence.is-active,.r-sentence.active,.r-sentence.highlight,.r-sentence[aria-current="true"]{background:#ffd54f;color:#1d1a17;font-weight:600;box-shadow:0 0 0 2px #ffca28}
+[data-theme="dark"] .r-sentence.is-active,[data-theme="dark"] .r-sentence.active,[data-theme="dark"] .r-sentence.highlight,[data-theme="dark"] .r-sentence[aria-current="true"]{background:#b08800;color:#fff;box-shadow:0 0 0 2px #d49f00}
 .r-cta{display:flex;align-items:center;justify-content:center;gap:8px;min-height:62px;margin:20px 0 10px;border-radius:999px;text-decoration:none;color:#fff;font:700 1.125rem/1.2 system-ui,sans-serif;padding:10px 20px;text-align:center;background:linear-gradient(135deg,var(--acc),#ff8a3d 55%,var(--acc2));box-shadow:0 10px 24px rgba(242,107,58,.35);margin-top:10px}
 .r-note{font-size:0.875rem;color:var(--mute);text-align:center;margin:6px 8px 22px;line-height:1.5}
 .r-next{display:block;text-decoration:none;color:var(--ink);border-top:1px solid var(--line);padding:18px 2px 8px}

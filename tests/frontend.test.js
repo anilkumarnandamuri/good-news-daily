@@ -17,15 +17,23 @@ function environment({news=[],search='',storageBlocked=false}={}){
     for(const attr of match[2].matchAll(/([\w-]+)="([^"]*)"/g)){
      el.setAttribute(attr[1],attr[2]);if(attr[1]==='id'){el.id=attr[2];nodes.set(el.id,el)}
     }
+    if(el.attributes.class==='r-listen'){
+     el.label=new Element();el.label.textContent='🔊 Listen';
+     const section=value.slice(value.lastIndexOf('<section',match.index));
+     const paragraph=new Element();paragraph.textContent=(section.match(/<p[^>]*>([\s\S]*?)<\/p>/)?.[1]||'').replace(/<[^>]*>/g,'');
+     const sentences=[...section.slice(0,section.indexOf('</section>')).matchAll(/<span class="r-sentence" data-idx="(\d+)">/g)].map(match=>{const sentence=new Element();sentence.dataset.idx=match[1];return sentence});
+     el.summary={querySelector:selector=>selector==='p'?paragraph:null,querySelectorAll:selector=>selector==='.r-sentence'?sentences:[]};
+    }
     el.parent=this;this.children.push(el);
    }
   }
   get innerHTML(){return this.html||''}
   setAttribute(k,v){this.attributes[k]=String(v);if(k.startsWith('data-'))this.dataset[k.slice(5)]=v}
   getAttribute(k){return this.attributes[k]??null}
+  removeAttribute(k){delete this.attributes[k]}
   querySelector(selector){return ['span','.lbl'].includes(selector)?this.label: this.querySelectorAll(selector)[0]||null}
-  querySelectorAll(selector){if(selector==='.r-listen')return [];return this.children.filter(el=>selector==='button'?el.tagName==='button':selector==='button:not(:disabled),a[href]'?['button','a'].includes(el.tagName):selector==='a[href]'?el.tagName==='a':false)}
-  closest(selector){return selector==='a'&&this.tagName==='a'?this:selector==='.tab'&&this.dataset.k?this:null}
+  querySelectorAll(selector){if(selector==='.r-listen')return this.children.filter(el=>el.attributes.class==='r-listen');return this.children.filter(el=>selector==='button'?el.tagName==='button':selector==='button:not(:disabled),a[href]'?['button','a'].includes(el.tagName):selector==='a[href]'?el.tagName==='a':false)}
+  closest(selector){return selector==='.r-sum'?this.summary:selector==='a'&&this.tagName==='a'?this:selector==='.tab'&&this.dataset.k?this:null}
   focus(){document.activeElement=this}
   click(){this.onclick?.({target:this})}
   addEventListener(k,fn){this['on'+k]=fn}
@@ -36,11 +44,11 @@ function environment({news=[],search='',storageBlocked=false}={}){
  }
  for(const id of ['hero','feed','tabs','theme','date','streak','gen','reader','rBody','rBack','rSave','rSm','rLg','rShare','main','push','pushBtn','pushHint'])nodes.set(id,new Element(id,['theme','rBack','rSave','rSm','rLg','rShare','pushBtn'].includes(id)?'button':'div'));
  nodes.get('reader').hidden=true;nodes.get('pushBtn').label=new Element();
- document={activeElement:new Element(),documentElement:new Element(),body:new Element(),title:'',getElementById:id=>nodes.get(id),
+ document={activeElement:new Element(),documentElement:new Element(),body:new Element(),title:'',baseURI:'http://local/',getElementById:id=>nodes.get(id),
   querySelector(selector){if(selector==='#tabs button')return nodes.get('tabs').children[0];if(selector.startsWith('#'))return nodes.get(selector.slice(1));const m=selector.match(/data-k="([^"]+)"/);return m?nodes.get('tabs').children.find(b=>b.dataset.k===m[1]):null},
   querySelectorAll:selector=>selector==='a[href]'?nodes.get('feed').querySelectorAll(selector):[],createElement:()=>new Element()};
  document.body.children=[nodes.get('main'),nodes.get('tabs'),nodes.get('reader')];
- const ctx={document,console,URLSearchParams,Date,Map,Set,Number,Math,Promise,encodeURIComponent,
+ const ctx={document,console,URL,URLSearchParams,Date,Map,Set,Number,Math,Promise,encodeURIComponent,
   navigator:{userAgent:'Test desktop',platform:'Linux',maxTouchPoints:0},location:{search,hash:'',href:'http://local/',origin:'http://local',pathname:'/'},history:{back(){ctx.location.hash='';listeners.get('hashchange')?.forEach(f=>f())}},
   matchMedia(q){if(!media.has(q))media.set(q,{matches:false,addEventListener(_,fn){this.change=fn}});return media.get(q)},
   addEventListener(k,fn){if(!listeners.has(k))listeners.set(k,[]);listeners.get(k).push(fn)},
@@ -48,7 +56,7 @@ function environment({news=[],search='',storageBlocked=false}={}){
   fetch:async url=>({ok:true,json:async()=>url.includes('thoughts')?[]:{generated:'2026-10-14T00:00:00Z',items:news}}),
   scrollTo(){},setTimeout(){},requestAnimationFrame:f=>f()};
  ctx.window=ctx;vm.createContext(ctx);
- const run=name=>vm.runInContext(source(name),ctx,{filename:name});
+ const run=(name,transform=code=>code)=>vm.runInContext(transform(source(name)),ctx,{filename:name});
  const dispatch=(type,event)=>listeners.get(type)?.forEach(f=>f(event));
  return {ctx,nodes,media,stored,run,dispatch,Element};
 }
@@ -188,6 +196,51 @@ test('feed item without summary_status but with both summaries renders the summa
  assert.match(e.nodes.get('rBody').innerHTML,/In short/);
 });
 
+test('splitSentences preserves $16.8 billion, Dr. Rao met U.S. officials., and Telugu sentences with ।',async()=>{
+ const e=environment();
+ e.run('sticky.js');e.run('app.js');e.run('reader.js');await flush();
+ const split=e.ctx.window.splitSentences;
+ assert.equal(typeof split,'function');
+ const s=txt=>[...split(txt)];
+
+ // Decimal preservation: '$16.8 billion'
+ const dec=s('Anthropic told investors that revenue jumped to $16.8 billion in the September quarter.');
+ assert.deepEqual(dec,['Anthropic told investors that revenue jumped to $16.8 billion in the September quarter.']);
+ assert.deepEqual(s('$16.8 billion'),['$16.8 billion']);
+
+ // Abbreviations: 'Dr. Rao met U.S. officials.'
+ const abbr=s('Dr. Rao met U.S. officials. They discussed bilateral trade.');
+ assert.deepEqual(abbr,['Dr. Rao met U.S. officials.','They discussed bilateral trade.']);
+ assert.deepEqual(s('Dr. Rao met U.S. officials.'),['Dr. Rao met U.S. officials.']);
+
+ // Telugu sentence with '।'
+ const te=s('రైతులకు ప్రభుత్వం శుభవార్త చెప్పింది। సాగునీటి ప్రాజెక్టును ప్రారంభించింది.');
+ assert.deepEqual(te,['రైతులకు ప్రభుత్వం శుభవార్త చెప్పింది।','సాగునీటి ప్రాజెక్టును ప్రారంభించింది.']);
+ assert.deepEqual(s('ఇది మొదటి వాక్యం। ఇది రెండవ వాక్యం.'),['ఇది మొదటి వాక్యం।','ఇది రెండవ వాక్యం.']);
+});
+
+test('reader with ?voice=1 preserves $16.8 billion without splitting into separate spans',async()=>{
+ const story3782={
+  id:'378259bf26',
+  title:'Anthropic revenue test',
+  summary:'Anthropic summary',
+  sum_en:'Anthropic told investors it was free cash flow positive and had an 11 percent operating margin, both adjusted, in the third quarter. Anthropic told investors on Wednesday that its revenue jumped around 50 percent to $16.8 billion in the September quarter.',
+  sum_te:'ఆంత్రోపిక్ పెట్టుబడిదారులకు ఇది ఉచిత నగదు ప్రవాహం సానుకూలంగా ఉందని మరియు మూడవ త్రైమాసికంలో సర్దుబాటు చేయబడిన 11 శాతం ఆపరేటింగ్ మార్జిన్‌ను కలిగి ఉందని తెలిపింది. సెప్టెంబర్ త్రైమాసికంలో తమ ఆదాయం దాదాపు 50 శాతం పెరిగి $16.8 బిలియన్లకు చేరుకుందని ఆంత్రోపిక్ బుధవారం పెట్టుబడిదారులకు తెలిపింది.',
+  summary_status:'paired',
+  published:'2026-10-15T04:11:12+00:00',
+  category:'tech',
+  lang:'en'
+ };
+ const e=environment({news:[story3782],search:'?voice=1'});
+ e.run('sticky.js');e.run('app.js');e.run('reader.js');await flush();
+ e.ctx.location.hash='#/s/378259bf26';e.dispatch('hashchange');
+ assert.equal(e.nodes.get('reader').hidden,false);
+ const html=e.nodes.get('rBody').innerHTML;
+ assert.ok(html.includes('$16.8 billion'),'HTML must preserve $16.8 billion in sentence span');
+ assert.ok(!html.includes('$16. 8 billion'),'HTML must not split $16.8 billion into $16. 8 billion');
+});
+
+
 test('reader renders summary status like paired with both summaries and listen controls',async()=>{
  const summaryItem={...stories[0],id:'summary-status-item',summary_status:'summary',sum_en:'A complete English summary.',sum_te:'పూర్తి తెలుగు సారాంశం.'};
  const e=environment({news:[summaryItem]});
@@ -202,3 +255,181 @@ test('reader renders summary status like paired with both summaries and listen c
  assert.match(e.nodes.get('rBody').innerHTML,/r-listen/);
 });
 
+function voiceReader(story,{VoicePlayer,chunkText,search='?voice=1'}={}){
+ const e=environment({search});
+ let resolveSummaries;
+ const summaries=new Promise(resolve=>{resolveSummaries=resolve});
+ e.ctx.fetch=async url=>({ok:true,json:async()=>url==='data/summaries.json'?summaries:url.includes('sample/news')?{items:[]}: {}});
+ e.ctx.thumb=()=>'';
+ e.run('sticky.js');
+ // Inject only the module boundary; exercise the reader's real player lifecycle.
+ e.ctx.__voiceModule={VoicePlayer,chunkText};
+ e.run('reader.js',code=>VoicePlayer?code.replace('import(u)','Promise.resolve(__voiceModule)'):code);
+ e.ctx.location.hash='#/s/'+story.id;e.ctx.onData([story]);
+ return {...e,resolveSummaries};
+}
+
+const pairedSummaryStory=()=>({...stories[0],id:'cache-test',lang:'en',summary_status:'summary',sum_en:'First sentence. Second sentence.',sum_te:'మొదటి వాక్యం. రెండవ వాక్యం.',pairs:undefined});
+const matchingPairs=()=>[{en:'First sentence.',te:'మొదటి వాక్యం.'},{en:'Second sentence.',te:'రెండవ వాక్యం.'}];
+
+test('Stop destroys an externally paused active voice player without starting playback again',async()=>{
+ let created=0,plays=0,destroys=0;
+ class FakeVoicePlayer{
+  constructor(){created++;this.audio={addEventListener(){}};this.listeners=new Map();this.state='idle';this.destroyed=false}
+  get isPlaying(){return this.state==='playing'}
+  setStories(){}
+  addEventListener(type,fn){this.listeners.set(type,fn)}
+  play(){plays++;this.state='playing';this.listeners.get('statechange')?.()}
+  destroy(){destroys++;this.destroyed=true;this.state='idle';this.listeners.get('statechange')?.()}
+ }
+ const e=voiceReader(pairedSummaryStory(),{VoicePlayer:FakeVoicePlayer});
+ const button=e.nodes.get('rBody').querySelectorAll('.r-listen')[0];
+ button.onclick();await flush();
+ const player=e.ctx.__readerPlayer;
+ assert.ok(player);assert.equal(plays,1);assert.equal(button.label.textContent,'⏹ Stop');
+ player.state='paused';player.listeners.get('statechange')();
+ assert.equal(player.isPlaying,false);assert.equal(e.ctx.__readerPlayer,player);
+ assert.equal(button.label.textContent,'⏹ Stop');
+ button.onclick();await flush();
+ assert.equal(destroys,1);assert.equal(player.destroyed,true);assert.equal(player.state,'idle');
+ assert.equal(e.ctx.__readerPlayer,null);assert.equal(created,1);assert.equal(plays,1);
+ assert.equal(button.classList.contains('on'),false);assert.equal(button.label.textContent,'🔊 Listen');
+});
+
+test('native speech Stop cancels externally paused or ended speech without restarting',async()=>{
+ for(const search of ['', '?voice=1'])for(const externalState of ['paused','ended','error','ended-without-event']){
+  const e=voiceReader(pairedSummaryStory(),{search});
+  let plays=0,cancels=0,utterance;
+  const synth=e.ctx.speechSynthesis={speaking:false,paused:false,getVoices:()=>[],
+   cancel(){cancels++;this.speaking=false;this.paused=false},
+   speak(u){plays++;utterance=u;this.speaking=true}};
+  e.ctx.SpeechSynthesisUtterance=function(text){this.text=text};
+  const button=e.nodes.get('rBody').querySelectorAll('.r-listen')[0];
+  button.onclick();await flush();
+  assert.equal(plays,1);assert.equal(button.label.textContent,'⏹ Stop');
+  synth.speaking=false;synth.paused=externalState==='paused';
+  if(externalState==='ended'||externalState==='error'){
+   utterance[externalState==='ended'?'onend':'onerror']();
+   assert.equal(button.label.textContent,'🔊 Listen');assert.equal(button.classList.contains('on'),false);
+  }else{
+   const before=cancels;
+   assert.equal(button.label.textContent,'⏹ Stop');
+   button.onclick();await flush();
+   assert.ok(cancels>before);assert.equal(synth.paused,false);
+   assert.equal(button.label.textContent,'🔊 Listen');assert.equal(button.classList.contains('on'),false);
+  }
+  assert.equal(plays,1);
+ }
+});
+
+test('summary rerender cancels native fallback speech and resets the replacement control',async()=>{
+ const story=pairedSummaryStory(),e=voiceReader(story);
+ let cancels=0,utterance=null;
+ e.ctx.speechSynthesis={getVoices:()=>[],cancel(){cancels++;utterance=null},speak(u){utterance=u}};
+ e.ctx.SpeechSynthesisUtterance=function(text){this.text=text};
+ const body=e.nodes.get('rBody'),button=body.querySelectorAll('.r-listen')[0];
+ // vm has no dynamic import loader: Listen exercises the real module-failure fallback.
+ button.onclick();await flush();
+ assert.equal(utterance.text,story.sum_en);
+ assert.equal(button.label.textContent,'⏹ Stop');
+ const before=cancels,writes=body.writes;
+ e.resolveSummaries({[story.id]:{pairs:matchingPairs()}});await flush();
+ assert.equal(body.writes,writes+1);assert.equal(button.isConnected,false);
+ assert.ok(cancels>before);assert.equal(utterance,null);
+ const replacement=body.querySelectorAll('.r-listen')[0];
+ assert.equal(replacement.label.textContent,'🔊 Listen');
+ assert.equal(button.label.textContent,'🔊 Listen');
+ replacement.onclick();await flush();assert.ok(utterance);assert.equal(replacement.label.textContent,'⏹ Stop');
+ replacement.onclick();await flush();assert.equal(utterance,null);assert.equal(replacement.label.textContent,'🔊 Listen');
+});
+
+test('cached pairs attach only when both joined summaries match, preserving valid story pairs',async()=>{
+ for(const cachedFirst of [false,true])for(const variant of ['matching','different-en','different-te','existing','invalid']){
+  const story=pairedSummaryStory(),pairs=matchingPairs();
+  if(variant==='matching'){pairs[0].en='  First   sentence.\n';pairs[1].te='\n రెండవ వాక్యం.  '}
+  if(variant==='different-en')pairs[0].en='A stale English sentence.';
+  if(variant==='different-te')pairs[0].te='పాత వాక్యం.';
+  if(variant==='invalid')pairs[0]=null;
+  const existing=[{en:story.sum_en,te:story.sum_te}];
+  if(variant==='existing')story.pairs=existing;
+  const e=voiceReader(story);
+  if(cachedFirst){e.ctx.location.hash='';e.dispatch('hashchange')}
+  e.resolveSummaries({[story.id]:{en:'Stale cache metadata.',te:'పాత సారాంశం.',pairs}});await flush();
+  if(cachedFirst){e.ctx.location.hash='#/s/'+story.id;e.dispatch('hashchange')}
+  if(variant==='matching')assert.equal(story.pairs,pairs);
+  else if(variant==='existing')assert.equal(story.pairs,existing);
+  else{
+   assert.equal(story.pairs,undefined);assert.equal(story.summary_status,'summary');
+   assert.ok(!e.nodes.get('rBody').innerHTML.includes('A stale English sentence.'));
+   assert.ok(!e.nodes.get('rBody').innerHTML.includes('పాత వాక్యం.'));
+  }
+  assert.equal(story.sum_en,'First sentence. Second sentence.');
+  assert.equal(story.sum_te,'మొదటి వాక్యం. రెండవ వాక్యం.');
+ }
+});
+
+// Keep speech synthesis outside the VM while exercising the reader's queue override
+// and event handlers with the module's real exported chunker.
+class QueueVoicePlayer{
+ constructor(){this.audio={addEventListener(){}};this.listeners=new Map();this.queueIndex=0;this.chunkIndex=0;this.destroyed=false;this.state='idle';this.mode='speech';this.destroys=0}
+ setStories(stories){this.stories=stories}
+ _makeQueue(){this.queue=[{intro:true},{text:this.stories[0].sum_en}];this.queueIndex=1;return true}
+ addEventListener(type,fn){this.listeners.set(type,fn)}
+ play(){this._makeQueue();this.state='playing';this.listeners.get('statechange')?.()}
+ destroy(){this.destroys++;this.destroyed=true;this.state='idle';this.listeners.get('statechange')?.()}
+}
+
+test('reader bounds every sentence with the exported chunker and highlights its sentence for every speech chunk',async()=>{
+ const {chunkText}=await import('../voice/src/gn-voice.js');
+ for(const paired of [false,true]){
+  const long='A community project brings lasting benefits to local families '.repeat(8).trim()+'.';
+  const story={...pairedSummaryStory(),sum_en:long+' Next sentence.'};
+  if(paired)story.pairs=[{en:long,te:'మొదటి వాక్యం.'},{en:'Next sentence.',te:'రెండవ వాక్యం.'}];
+  const e=voiceReader(story,{VoicePlayer:QueueVoicePlayer,chunkText});
+  const button=e.nodes.get('rBody').querySelectorAll('.r-listen')[0];
+  button.onclick();await flush();
+  const player=e.ctx.__readerPlayer,item=player.queue[1],expected=chunkText(long);
+  assert.ok(long.length>160);assert.ok(expected.length>1);
+  assert.deepEqual([...item.chunks],[...expected,'Next sentence.']);
+  assert.ok(item.chunks.every(chunk=>chunk.length<=160));
+  assert.deepEqual([...item.chunkSentenceIndexes],[...expected.map(()=>0),1]);
+  assert.equal(player.queue[0].chunks,undefined,'intro queue items stay unchanged');
+  const spans=button.summary.querySelectorAll('.r-sentence');
+  assert.equal(spans.length,2);
+  for(let index=0;index<item.chunks.length;index++){
+   player.chunkIndex=index;
+   for(const event of ['progress','statechange']){
+    player.listeners.get(event)();
+    assert.deepEqual(spans.map(span=>span.classList.contains('is-active')),index<expected.length?[true,false]:[false,true]);
+   }
+  }
+ }
+});
+
+test('delayed summaries preserve playback and controls unless matching pairs are newly attached',async()=>{
+ const {chunkText}=await import('../voice/src/gn-voice.js');
+ for(const variant of ['existing','new','mismatch','invalid']){
+  const story=pairedSummaryStory();
+  if(variant==='existing')story.pairs=matchingPairs();
+  const e=voiceReader(story,{VoicePlayer:QueueVoicePlayer,chunkText});
+  let cancels=0;e.ctx.speechSynthesis={cancel(){cancels++}};
+  const body=e.nodes.get('rBody'),button=body.querySelectorAll('.r-listen')[0];
+  button.focus();button.onclick();await flush();
+  const player=e.ctx.__readerPlayer,writes=body.writes,before=cancels;
+  assert.equal(player.state,'playing');
+  const pairs=variant==='invalid'?[null]:matchingPairs();
+  if(variant==='mismatch')pairs[0].en='Stale sentence.';
+  e.resolveSummaries({[story.id]:{pairs}});await flush();
+  if(variant==='new'){
+   assert.equal(body.writes,writes+1);assert.equal(player.destroys,1);
+   assert.ok(cancels>before);assert.equal(button.isConnected,false);
+   assert.equal(e.ctx.__readerPlayer,null);
+   assert.equal(body.querySelectorAll('.r-listen')[0].label.textContent,'🔊 Listen');
+  }else{
+   assert.equal(body.writes,writes);assert.equal(player.destroys,0);assert.equal(cancels,before);
+   assert.equal(player.state,'playing');assert.equal(e.ctx.__readerPlayer,player);
+   assert.equal(body.querySelectorAll('.r-listen')[0],button);assert.equal(button.isConnected,true);
+   assert.equal(e.ctx.document.activeElement,button);assert.equal(button.label.textContent,'⏹ Stop');
+  }
+ }
+});

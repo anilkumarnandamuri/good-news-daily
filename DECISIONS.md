@@ -35,6 +35,39 @@
   - Marking invalidated summaries with an invalidation flag instead of deletion: Adds schema complexity when eviction already ensures clean re-summarization or explicit excerpt fallback.
   - Raising `unittest.SkipTest` at module level: Causes `pytest` to exit with status code 5 (no tests collected) when invoked on the single file.
 
+## D006 — Voice player re-entrancy teardown, async cancellation, and opacity pulse animation (2026-10-15, agy/gemini-3.8-flash-high)
+- Decision:
+  1. Clear `activePlayer = null`, `activeBtn = null`, and `window.__readerPlayer = null` before invoking `player.destroy()` in `stopVoice()`, and guard event listeners with `player.destroyed || player !== activePlayer` checks.
+  2. Invalidate pending `playVoice` asynchronous continuations across module/manifest loading by incrementing a `playRequestId` token on `stop()` / `stopVoice()` and aborting execution if `reqId !== playRequestId || R.hidden || !cur || cur.id !== story.id || !btn.isConnected`.
+  3. Change `.r-listen.on` pulse animation to use `opacity: 0.85` instead of `transform: scale(1.03)`, and deduplicate `highlightSentence` scroll calls against the active highlight index.
+- Why:
+  1. Synchronous `destroy()` -> `stop()` -> `statechange` ('idle') previously re-entered `stopVoice()` while `activePlayer` was non-null, leading to call-stack exhaustion.
+  2. Navigating away, closing the reader, or toggling playback while the voice module or manifest was fetching allowed stale continuations to instantiate background audio over subsequent stories.
+  3. Infinite CSS keyframe `transform: scale(1.03)` kept the button's layout bounding box unstable across frames, preventing Playwright actionability checks from clicking the stop button during active MP3 playback. Opacity pulsing provides equivalent visual feedback without geometry mutation or layout thrashing.
+- Alternatives rejected:
+  - Using Playwright `force=True` on click: Rejected because real touch/mouse interactions also suffer when target elements oscillate geometry continuously.
+  - Relying on setTimeout for async teardown: Brittle across varying network and device speeds.
+
+## D007 — Summary load playback teardown, sample route verification, and optional browser test discovery (2026-10-15, agy/gemini-3.8-flash-high)
+- Decision:
+  1. In `reader.js`, invoke `stopVoice()` before calling `renderBody(it)` when asynchronous summary loading completes for an active story.
+  2. In `reader.js`, verify `location.hash` still matches the target story id before invoking `open(id, found)` after asynchronous `getSampleNews()` resolves.
+  3. In `tests/test_voice_reader.py`, make `pytest` and `playwright` imports optional inside `try...except ImportError` blocks with `pytestmark` skip markers, mirroring `test_legacy_feed_browser.py`, and isolate `test_voice_reader` during playwright-absent discovery checks in `test_compatibility.py`.
+- Why:
+  1. If a reader started playback on an initial render before summaries finished loading, replacing `rBody.innerHTML` without stopping detached the active audio controls, leaving invisible background playback and resetting the visible button to an idle state.
+  2. If a user navigated away or closed the reader while sample news was fetching, the resolved lookup callback previously opened the original story regardless of the URL, corrupting reader state and overriding the user's route.
+  3. Direct module-level imports of `pytest` and `playwright` caused `python3 -m unittest discover -s tests -v` to emit `_FailedTest` errors in basic environments lacking browser dependencies.
+- Alternatives rejected:
+  - Skipping the summary rerender while playing: Leaves outdated excerpt text and missing sentence spans permanently displayed for the session.
+  - Relying on `cur` ID comparison without checking `location.hash`: Fails when the user closes the reader (`cur = null`), incorrectly reopening the story on hash `""`.
+
+## D008 — Protected sentence splitter for legacy summary rendering and playback (2026-10-15, agy/gemini-3.8-flash-high)
+- Decision: Introduce a unified `splitSentences(text)` function in `reader.js` (and expose it on `window.splitSentences`) that protects decimal points between digits (`/(?<=\d)\.(?=\d)/gu`) and common abbreviations/initialisms (`/\b(?:Mr|Mrs|Ms|Dr|Prof|Sr|Jr|St|vs|etc)\./giu` and `/\b(?:[A-Za-z]\.){2,}|\b[A-Z]\.(?=\s+[A-Z][a-z])/gu`) before splitting against sentence terminators `[^.!?।॥…]+[.!?।॥…]*|[.!?।॥…]+`, and use it consistently in both `block()` DOM rendering and `playVoice()` queue creation. Wrap dynamic import in `getVoiceModule()` in `try...catch`.
+- Why: Previously, legacy stories without precomputed pairs in `data/summaries.json` were split naively on all punctuation characters including periods, corrupting decimal numbers such as `$16.8 billion` into `$16. 8 billion` in DOM text and generating separate broken speech chunks. Sharing a single protected splitter ensures rendered sentence spans and spoken queue chunks stay aligned without corrupting numerical or abbreviation data.
+- Alternatives rejected:
+  - Importing `chunkText` asynchronously from `voice/src/gn-voice.js`: Rejected because `block()` renders story cards and summary sections synchronously during initial page layout and route changes before dynamic ES modules can be imported.
+  - Relying on CSS or string replacement post-split: Fragile and fails to preserve audio player chunk boundaries during speech playback.
+
 ## D006 — Extract-and-translate fallback and summary status preservation (2026-10-15, agy/gemini-3.8-flash-high)
 - Decision: In `scripts/summarize.py` v6, fall back to the live extract-and-translate method (feed description + og/meta descriptions, 1:1 sentence machine translation) when the LLM hook is not enabled or fails, building aligned `pairs` directly without re-splitting. For existing v5 cache entries whose joined strings cannot be re-paired by `legacy_pairs` (sentence count mismatch or <4 sentences), preserve them as `sum_en`/`sum_te` with `summary_status = 'summary'`, and render `'summary'` status in `reader.js`/`app.js` like `'paired'`.
 - Why:
@@ -70,3 +103,22 @@
 - Why: The forced 125% root, default large-text mode, and separate reader multiplier compounded text growth. Opaque body panels and removed clamps hid photos and enlarged the first screen. A single early scale restores predictable behavior while retaining focus styles and 44px targets.
 - Alternatives rejected: Keeping two size controls or a reader-only multiplier; keeping the opaque panels or 400px minimum mobile cards. Browser tests reuse the existing local-server fixture with the repo feed, as requested, rather than routing a synthetic feed.
 - Workflow: The explicit GN-5 instruction to work only in this directory and not commit overrides the general board checkpoint/commit instructions. GN-5 was already claimed on job/GN-5; no board mutation or commit was performed. Browser validation and screenshots remain pending because this sandbox denies socket creation for the local server.
+
+## D010 — Voice module failure recovery, speechSynthesis fallback, and fixed browser fixtures (2026-10-15, agy/gemini-3.8-flash-high)
+- Decision:
+  1. In `reader.js`, gracefully fall back to the existing `speechSynthesis` playback path via `speak(btn, fallbackText, lang)` when `getVoiceModule()` fails to load or import `VoicePlayer`. Reset `voicePromise = null` and increment a retry query token (`voiceLoadAttempt`) so failed module imports are not cached and subsequent user clicks re-attempt dynamic import without requiring a page reload. Never extend an undefined `VoicePlayer` class.
+  2. In `tests/test_voice_reader.py`, decouple all browser tests from mutable routine data files by intercepting network requests to `data/news.json` and `data/summaries.json` using controlled test fixtures under `tests/fixtures/` (`news.json` and `summaries.json`). Include stories covering bilingual sentence pairs (`be4d5ceb60`), prebuilt MP3 manifest entries (`beb21be0b4`), legacy decimal preservation (`378259bf26`), and `summary_status: 'summary'` stories without pairs (`summary-story-no-pairs`).
+  3. In `tests/test_legacy_feed_browser.py`, launch Chromium with `executable_path="/usr/bin/google-chrome"` when present.
+- Why:
+  1. Dynamic import failure previously left `voicePromise` resolving to `{}` and caused `class ReaderVoicePlayer extends VoicePlayer` to throw an unhandled TypeError, permanently breaking Listen until page reload. Resetting the failed promise with cache-busting retries allows immediate recovery once connectivity is restored.
+  2. Routine updates periodically prune departed stories (such as `beb21be0b4`) from `data/news.json`, causing browser tests depending on live routine data to time out. Controlled fixtures ensure regression tests remain 100% deterministic and independent of scheduled data refreshes.
+  3. Playwright in the test environment requires explicit pointing to the system Google Chrome binary.
+- Alternatives rejected:
+  - Showing an unrecoverable error banner on import failure: Degrades user experience when native speech synthesis is readily available on the device.
+  - Relying on `voice/sample/news.json` fallback: Sample fallback lacks `summary_status` and cannot test routine feed adapter behaviors.
+
+
+## D011 — Reader rerender teardown and cache text consistency (2026-10-15, Codex)
+- Decision: Put full `stop()` teardown in `renderBody()`; retain existing valid pairs and require both cached joined texts to match current summaries after whitespace normalization before attachment.
+- Why: Native speech and the voice player must stop before controls are replaced, and rendering, speech, sharing, and MP3 freshness must use consistent summary content.
+- Alternatives rejected: Partial voice-only teardown; unconditional cache pair replacement; replacing current story summaries with cache text.

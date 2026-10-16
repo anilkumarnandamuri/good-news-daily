@@ -1,41 +1,38 @@
 # HANDOFF — good-news
 
 ## Updated
-2026-10-15 21:38 PDT | codex/gpt-6.1-sol | branch `job/GN-5` | last commit ba412a0
+2026-10-15 22:54 PDT | agy/gemini-3.8-flash-high | branch `job/GV-2` | last commit 6470e64
 
 ## Current task / claim
-**GN-5** Fix mobile text-size regressions from 2026-10-15 merge: default normal ~16px body (was forced 125% root + Large text on by default), one unified working text-size control (A-/A+ with bounds+persistence; Large-text pill removed from the header), compact Today's 5 / hero cards on the first screen at 384px; Playwright assertions. — status **in-review** by codex/gpt-6.1-sol on `job/GN-5` (since 2026-10-15 21:28 PDT). Last note: text size + landing fixes built by codex gpt-6.1-sol; codex review 0 must-fix; all tests pass; NOT pushed Next: Anil approves; merge job/GN-5 into main and push (avoid ~6:30 AM PT routine window)
+**GV-2** Integrate voice player into Good News UI using the `pairs` field — status **in-review** by agy/gemini-3.8-flash-high on `job/GV-2` (since 2026-10-15 13:58 PDT). Last note: Codex fix pass 3 (6470e64) cleared reader.js:87/:144; Codex review clean; done-check PASS Next: Anil: review/merge job/GV-2
 
 ## Done this session
-- Made hero and Today's 5 cards grow with normal-flow text over the existing absolute photo/gradient layers. Minimum heights retain 360px mobile heroes, 300px mobile Today's 5 cards, and 400px wider cards.
-- Added a three-line hero headline clamp; retained the two-line hero excerpt clamp.
-- Reduced phone reader images to `min(30vh,240px)` below 760px.
-- Extended browser tests for 160% scale preset before load in All, Science and Health: body/heading containment and headline clamps. Added the default phone reader summary-top assertion before any scrolling, plus maximum-scale screenshots.
-- Appended the fix-pass note to tasks/GN-5.md. No protected paths changed.
+- Reused the voice module's exported chunker per sentence and mapped every speech chunk back to its rendered sentence for statechange/progress highlighting.
+- Made cache attachment report changes; unchanged, stale, or invalid cache responses preserve active playback and controls. Newly attached matching pairs still rerender with full stop.
+- Added Node regressions using the real chunker, paired/legacy summaries, focus/control preservation, and teardown on changed content.
+- Preserved previous Stop, full rerender teardown, cache matching, module failure fallback, and GN-5 fixes. Routine-owned data untouched.
+- Updated GV-2 Review response and Checkpoint. No network, commits, pushes, or branch changes.
 
 ## Verified (with evidence)
-- `python3 -m unittest discover -s tests -p 'test_*.py'`: 43 passed.
-- `node --test tests/*.test.js`: passed.
-- `node --test voice/tests/*.test.js`: passed.
-- `git diff --check`: passed.
+- Requested `python3 -m unittest discover -s tests -p 'test_*.py' && node --test tests/*.test.js && node --test voice/tests/*.test.js` passed: 43 Python tests, 22 frontend tests, voice suite green.
+- `git diff --check` passed.
 
 ## Unverified
-- `python3 -m pytest tests/test_text_size_browser.py -q`: all five cases blocked in server fixture setup by `PermissionError: [Errno 1] Operation not permitted` creating an AF_INET socket, before browser launch.
-- Visual layout, exact default card sizes, reader summary position and screenshots remain unverified in this sandbox. No new screenshots generated.
+- Voice Playwright suite attempted: all 8 cases blocked before browser launch by local HTTP server socket creation (`PermissionError: [Errno 1] Operation not permitted`). No new screenshots.
 
 ## Broken / half-done
-- Fix pass complete; browser acceptance remains pending in a socket-enabled environment.
+- No known implementation issue. Browser acceptance and review remain pending.
 
 ## Next 3 steps (smallest first)
-1. Run `python3 -m pytest tests/test_text_size_browser.py -q` in a socket-enabled environment.
-2. Inspect default landing/reader screenshots and `artifacts/GN-5/gn5-max-scale-{all,science,health}-384.png`.
-3. Review the uncommitted fix pass; commit only when authorized.
+1. Review the uncommitted GV-2 fixes and regression tests.
+2. Run voice Playwright tests and inspect screenshots in a socket-enabled environment.
+3. Operator commits when satisfied; this pass explicitly prohibits commits.
 
 ## Blockers / questions for Anil
-- Sandbox socket creation blocks browser tests and screenshots. No product clarification needed.
+- Sandbox denies the local server socket needed for browser verification; no product clarification needed.
 
 ## How to resume
 ```sh
-cd /workspace/repos/.wt/good-news-gn5
-python3 -m pytest tests/test_text_size_browser.py -q
+python3 -m unittest discover -s tests -p 'test_*.py' && node --test tests/*.test.js && node --test voice/tests/*.test.js
+python3 -m pytest tests/test_voice_reader.py -q
 ```
