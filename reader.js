@@ -16,11 +16,23 @@
  function voiceFor(lang){const vs=speechSynthesis.getVoices();const want=lang==="te"?["te-IN","te"]:["en-IN","en-GB","en-US","en"];
   for(const w of want){const v=vs.find(v=>v.lang.replace("_","-").toLowerCase().startsWith(w.toLowerCase()));if(v)return v}return null}
  function isVoiceEnabled(){try{const p=new URLSearchParams(window.location.search);if(p.get("voice")==="1")return true}catch(e){}try{if(window.localStorage&&window.localStorage.getItem("gn-voice")==="1")return true}catch(e){}return false}
- let summariesData=null,summariesPromise=null,manifestData=null,manifestURL=null,manifestPromise=null,sampleNews=null,samplePromise=null,voiceModule=null,voicePromise=null;
+ let summariesData=null,summariesPromise=null,manifestData=null,manifestURL=null,manifestPromise=null,sampleNews=null,samplePromise=null,voiceModule=null,voicePromise=null,voiceLoadAttempt=0;
  function getSummaries(){if(!summariesPromise){summariesPromise=fetch("data/summaries.json").then(r=>r.ok?r.json():{}).then(d=>{summariesData=d;return d}).catch(()=>({}))}return summariesPromise}
  function getManifest(){if(!manifestPromise){const u=new URL("voice/demo/audio/manifest.json",document.baseURI).href;manifestPromise=fetch(u).then(r=>r.ok?r.json():{}).then(m=>{manifestData=m;manifestURL=u;return{manifest:m,manifestURL:u}}).catch(()=>({manifest:{},manifestURL:document.baseURI}))}return manifestPromise}
  function getSampleNews(){if(!samplePromise){samplePromise=fetch("voice/sample/news.json").then(r=>r.ok?r.json():{items:[]}).then(d=>{sampleNews=d.items||[];return sampleNews}).catch(()=>[])}return samplePromise}
- function getVoiceModule(){if(!voicePromise){try{voicePromise=import("./voice/src/gn-voice.js").then(m=>{voiceModule=m;return m}).catch(()=>({}))}catch(e){voicePromise=Promise.resolve({})}}return voicePromise}
+ function getVoiceModule(){
+  if(voiceModule&&typeof voiceModule.VoicePlayer==="function")return Promise.resolve(voiceModule);
+  if(!voicePromise){
+   try{
+    const u=voiceLoadAttempt>0?`./voice/src/gn-voice.js?r=${voiceLoadAttempt}`:"./voice/src/gn-voice.js";
+    voicePromise=import(u).then(m=>{
+     if(!m||typeof m.VoicePlayer!=="function"){voicePromise=null;voiceModule=null;voiceLoadAttempt++;return null}
+     voiceModule=m;return m
+    }).catch(()=>{voicePromise=null;voiceModule=null;voiceLoadAttempt++;return null});
+   }catch(e){voicePromise=null;voiceModule=null;voiceLoadAttempt++;return Promise.resolve(null)}
+  }
+  return voicePromise
+ }
  if(isVoiceEnabled()){getSummaries();getManifest();getVoiceModule();getSampleNews()}
 
  function splitSentences(text){
@@ -53,14 +65,22 @@
  if("speechSynthesis" in window)speechSynthesis.onvoiceschanged=()=>{};
 
  async function playVoice(btn,lang,story){
-  if(activeBtn===btn&&activePlayer&&activePlayer.isPlaying){stopVoice();return}stop();
+  if((activeBtn===btn&&activePlayer&&activePlayer.isPlaying)||speaking===btn){stop();return}stop();
   const reqId=++playRequestId;
   const container=btn.closest(".r-sum");const targetSentenceEls=container?[...container.querySelectorAll(".r-sentence")]:[];
   let sentences=[];
   if(story&&story.pairs&&story.pairs.length){sentences=story.pairs.map(p=>p[lang]||"").filter(Boolean)}
   if(!sentences.length){const txt=(story&&story["sum_"+lang])||(story&&story.lang===lang?story.summary:"")||"";sentences=splitSentences(txt)}
-  const {VoicePlayer}=await getVoiceModule();const {manifest,manifestURL}=await getManifest();
+  const mod=await getVoiceModule();
+  const VoicePlayer=mod&&mod.VoicePlayer;
+  const {manifest,manifestURL}=await getManifest();
   if(reqId!==playRequestId||R.hidden||!cur||(story&&cur.id!==story.id)||!btn.isConnected)return;
+  if(typeof VoicePlayer!=="function"){
+   const pEl=container?container.querySelector("p"):null;
+   const fallbackText=(pEl&&pEl.textContent)||(story&&story["sum_"+lang])||(story&&story.lang===lang?story.summary:"")||"";
+   speak(btn,fallbackText,lang);
+   return;
+  }
   activeSentenceEls=targetSentenceEls;
   class ReaderVoicePlayer extends VoicePlayer{_makeQueue(){const ok=super._makeQueue();if(ok&&sentences.length){for(const it of this.queue){if(!it.intro){it.chunks=sentences.slice()}}}return ok}}
   const player=new ReaderVoicePlayer({language:lang,preferAudio:true,radio:false});

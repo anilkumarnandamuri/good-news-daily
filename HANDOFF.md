@@ -1,55 +1,47 @@
 # HANDOFF — good-news
 
 ## Updated
-2026-10-15 20:55 PDT | agy/gemini-3.8-flash-high | branch `job/GV-2` | last commit 9e31530
+2026-10-15 21:11 PDT | agy/gemini-3.8-flash-high | branch `job/GV-2` | last commit 3ee2d1b
 
 ## Current task / claim
-**GV-2** Integrate voice player into Good News UI using the `pairs` field — status **claimed** by agy/gemini-3.8-flash-high on `job/GV-2` (since 2026-10-15 13:58 PDT). Last note: 2026-10-15 20:55 PDT resumed by agy/gemini-3.8-flash-high
+**GV-2** Integrate voice player into Good News UI using the `pairs` field — status **in-review** by agy/gemini-3.8-flash-high on `job/GV-2` (since 2026-10-15 13:58 PDT). Last note: Voice module failure recovery, fixed feed fixtures routing, 13 browser tests passing Next: Codex review on GV-2
 
 ## Done this session
-- Implemented protected sentence splitter `splitSentences(text)` in `reader.js` (and exposed on `window.splitSentences`) protecting decimal points between digits (`/(?<=\d)\.(?=\d)/gu`) and common abbreviations/initialisms (`/\b(?:Mr|Mrs|Ms|Dr|Prof|Sr|Jr|St|vs|etc)\./giu` and `/\b(?:[A-Za-z]\.){2,}|\b[A-Z]\.(?=\s+[A-Z][a-z])/gu`) with private placeholders (`\ue000`) before splitting against `[^.!?।॥…]+[.!?।॥…]*|[.!?।॥…]+` and restoring them after.
-- Applied `splitSentences` consistently in both `block()` DOM rendering and `playVoice()` queue creation in `reader.js`, keeping rendered sentence spans and speech chunk boundaries aligned and preventing decimals like `$16.8 billion` (checked-in story `378259bf26`) from corrupting into separate spans or utterances.
-- Safely wrapped dynamic voice module import in `getVoiceModule()` in `reader.js` with `try...catch` for environment safety.
-- Added comprehensive unit tests in `tests/frontend.test.js` covering `$16.8 billion`, `Dr. Rao met U.S. officials.`, Telugu sentences with `।`, and reader rendering of `$16.8 billion` with `?voice=1`.
-- Added Playwright test `test_voice_reader_legacy_decimals_preserved` in `tests/test_voice_reader.py` verifying legacy story `378259bf26` renders `$16.8 billion` intact and speech highlighting advances properly.
-- Re-verified full test suite: `python3 -m pytest tests/test_voice_reader.py` (6 passed), `node --test tests/*.test.js` (14 passed), `python3 -m unittest discover -s tests -p 'test_*.py'` (29 passed), `python3 -m pytest tests/test_legacy_feed_browser.py` (3 passed), `node --test voice/tests/*.test.js` (5 passed).
-- Refreshed all 5 screenshots in `artifacts/GV-2/`.
-- Appended decision D008 to `DECISIONS.md`.
-- Updated `tasks/GV-2.md` with status, test command, review responses, and checkpoint.
+- Fixed Codex review [P2] finding (Handle an unavailable voice module before extending its class — reader.js:62-65):
+  - In `getVoiceModule()`, safely wrapped dynamic import; if import fails or `VoicePlayer` is missing/not a function, reset `voicePromise = null; voiceModule = null;` and incremented `voiceLoadAttempt` query counter so rejected promises are not permanently cached.
+  - In `playVoice()`, verified `typeof VoicePlayer === 'function'` before extending `VoicePlayer`; if unavailable, falls back gracefully to native `speechSynthesis` via `speak(btn, fallbackText, lang)`.
+  - Added toggle/stop guard `speaking === btn` so repeated clicks on the Listen button while in speech fallback cleanly cancel and stop playback without re-triggering.
+  - Added recovery mechanism without reload: subsequent clicks re-attempt dynamic import with cache-busting, cleanly instantiating `ReaderVoicePlayer` once connectivity is restored.
+  - Added Playwright test `test_voice_reader_module_failure_fallback_and_recovery` in `tests/test_voice_reader.py` demonstrating that when the voice module route is aborted, Listen falls back to `speechSynthesis` without throwing, and when the route is restored, a subsequent click activates `ReaderVoicePlayer` and sentence highlighting without reloading.
+- Fixed Codex review [P2] finding (Route fixed feed fixtures in the voice browser tests — tests/test_voice_reader.py:275-278):
+  - Created standalone fixed fixtures under `tests/fixtures/` (`news.json` and `summaries.json`) containing deterministic stories covering: bilingual sentence pairs (`be4d5ceb60`), bilingual pairs with prebuilt MP3 manifest entries (`beb21be0b4`), legacy decimal preservation (`378259bf26`), and `summary_status = 'summary'` without pairs (`summary-story-no-pairs`).
+  - Decoupled all browser tests in `tests/test_voice_reader.py` from mutable routine data by intercepting `data/news.json` and `data/summaries.json` requests with these fixtures, fixing the `test_voice_reader_mp3_playback` timeout caused by feed story pruning.
+  - Added `test_voice_reader_summary_status_no_pairs_reads_via_speech` confirming `summary_status = 'summary'` stories render bilingual blocks and read via speech fallback.
+- Updated `tests/test_legacy_feed_browser.py` to use system Google Chrome binary when available (`executable_path="/usr/bin/google-chrome"`).
+- Appended decision D009 in `DECISIONS.md`.
+- Regenerated and verified all 5 screenshots in `artifacts/GV-2/`.
+- Updated `tasks/GV-2.md` with status `built`, full test command, review responses, and checkpoint.
 
 ## Verified (with evidence)
-- `python3 -m pytest tests/test_voice_reader.py`: 6 passed in 11.16s (mobile-390, desktop-1280 sentence highlighting, desktop MP3 playback, summary load teardown, sample route verification, legacy decimal preservation).
-- `node --test tests/*.test.js`: 14 passed in 230ms (including new tests for `$16.8 billion`, `Dr. Rao met U.S. officials.`, Telugu sentences with `।`, and reader rendering with `?voice=1`).
-- `python3 -m unittest discover -s tests -p 'test_*.py'`: 29 passed in 0.10s (including `test_unittest_discovery_succeeds_when_playwright_is_absent`).
-- `python3 -m pytest tests/test_legacy_feed_browser.py`: 3 passed in 2.83s.
-- `node --test voice/tests/*.test.js`: 5 passed in 180ms.
-- Verified fresh screenshots in `artifacts/GV-2/`: `mobile-390-en-active.png`, `mobile-390-te-active.png`, `desktop-1280-en-active.png`, `desktop-1280-te-active.png`, `desktop-mp3-active.png`.
+- Full test command passed: `python3 -m unittest discover -s tests -p 'test_*.py' && node --test tests/*.test.js && node --test voice/tests/*.test.js && python3 -m pytest tests/test_legacy_feed_browser.py tests/test_voice_reader.py -q`
+  - 43 unittests passed in 0.16s
+  - 15 Node frontend tests passed in 180ms
+  - 5 Node voice tests passed in 126ms
+  - 13 Playwright browser tests passed in 18.47s (8 voice reader tests + 5 legacy feed browser tests)
+- `artifacts/GV-2/` screenshots refreshed and verified:
+  - `mobile-390-en-active.png`
+  - `mobile-390-te-active.png`
+  - `desktop-1280-en-active.png`
+  - `desktop-1280-te-active.png`
+  - `desktop-mp3-active.png`
+- `/workspace/tools/agent-workflow/done-check.sh /workspace/repos/.wt/good-news-voice-integration GV-2`:
+  - `PASS  task file updated (Status: built, checkpoint 21 lines)`
+  - `PASS  browser test passes`
+  - `PASS  new screenshot(s)`
+- Routine-owned files verified unmodified: `git diff data/news.json data/summaries.json` is clean.
 
 ## Unverified
-- Live GitHub Pages deployment (deployments are handled by workflow routines).
-2026-10-15 20:15 PDT | agy/gemini-3.8-flash-high | branch `job/GN-4` | last commit 81f37fd
-
-## Current task / claim
-**GN-4** Summaries fallback: v6 falls back to the live extract-and-translate method when no LLM hook is configured (no excerpt-only regression) — status **done** by agy/gemini-3.8-flash-high on `job/GN-4` (since 2026-10-15 19:56 PDT). Last note: merged+pushed good-news main 81f37fd (v5 fallback in v6; routine sim 116/116)
-
-## Done this session
-- Fixed Codex review [P1] finding (Routine regression gate: short new items regress to excerpt-only):
-  - Updated `validate_pairs(pairs, min_sentences=MIN_SENTENCES, max_sentences=MAX_SENTENCES)` to accept an optional `min_sentences` parameter while defaulting to 4 (`MIN_SENTENCES`), preserving strict 4–6 sentence pair validation for `llm_pairs()` and `legacy_pairs()`.
-  - In `extract_and_translate()`, when 1–3 sentences are extracted and translated, validated the pairs with `validate_pairs(pairs, min_sentences=1)` and marked the item with `summary_status = 'summary'`, while 4–6 sentences are marked `summary_status = 'paired'`.
-  - In `run()`, when `status == 'summary'`, stored `generated["en"]`, `generated["te"]`, and `generated["pairs"]` in cache under `summary_status = 'summary'`, enabling instant reuse on subsequent runs without network calls or re-translation.
-  - Updated `_tok` in `scripts/summarize.py` to `re.findall(r"[\w\u0C00-\u0C7F]{3,}", text.casefold())` matching the v5 tokenization logic so Telugu sentences with Unicode combining vowel marks are properly recognized and extracted.
-  - Added comprehensive offline unit tests in `tests/test_summaries.py` covering: 1-sentence EN fallback -> summary, 2-sentence TE fallback -> summary, 5-sentence fallback -> paired, empty translation -> excerpt, cached summary reuse without translate, and LLM hook 4–6 pair strictness.
-  - Appended decision D008 in `DECISIONS.md` and updated `README.md` and `tasks/GN-4.md`.
-  - Re-ran Playwright browser tests and regenerated screenshots in `artifacts/GN-4/` (`gn4-summary-390.png` and `gn4-summary-1280.png`).
-
-## Verified (with evidence)
-- `python3 -m unittest discover -s tests -p 'test_*.py' && node --test tests/*.test.js && node --test voice/tests/*.test.js && python3 -m pytest tests/test_legacy_feed_browser.py -q` all pass (43 unittest pass, 13 node frontend pass, 5 node voice pass, 5 playwright browser pass).
-- `/workspace/tools/agent-workflow/done-check.sh /workspace/repos/.wt/good-news-gn4 GN-4` passes task file, browser test, and screenshot checks.
-- Mobile (`artifacts/GN-4/gn4-summary-390.png`) and desktop (`artifacts/GN-4/gn4-summary-1280.png`) screenshots verified.
-- `data/news.json`, `data/summaries.json`, `scripts/build.py`, `push.js`, `OneSignalSDKWorker.js`, `scripts/send_push.py`, `scripts/digest.py` verified byte-identical to origin/main baseline.
-
-## Unverified
-- None.
+- Production GitHub Pages deployment (handled by scheduled workflow routines).
 
 ## Broken / half-done
 - None. All must-fix review findings resolved and automated tests passing cleanly.
@@ -65,6 +57,6 @@
 ## How to resume
 ```sh
 cd /workspace/repos/.wt/good-news-voice-integration
-python3 -m pytest tests/test_voice_reader.py && node --test tests/*.test.js && python3 -m unittest discover -s tests -p 'test_*.py'
+python3 -m unittest discover -s tests -p 'test_*.py' && node --test tests/*.test.js && node --test voice/tests/*.test.js && python3 -m pytest tests/test_legacy_feed_browser.py tests/test_voice_reader.py -q
 /workspace/projects/board.sh status
 ```

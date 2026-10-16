@@ -4,7 +4,7 @@ Status: built
 Branch: job/GV-2 (base: feat/voice-integration)
 Model: agy/gemini-3.8-flash-high | Playbook: Feature | Cost: cheap
 Created: 2026-10-15 13:58 PDT
-Test command: python3 -m pytest tests/test_voice_reader.py && node --test tests/*.test.js && python3 -m unittest discover -s tests -p 'test_*.py'
+Test command: python3 -m unittest discover -s tests -p 'test_*.py' && node --test tests/*.test.js && node --test voice/tests/*.test.js && python3 -m pytest tests/test_legacy_feed_browser.py tests/test_voice_reader.py -q
 
 ## Task
 GV-2 (see PLAN.md and HANDOFF.md): Integrate the voice player (imported under voice/, see voice/INTEGRATION.md and voice/README.md) into the Good News Daily reader (reader.js, index.html, styles.css) using the paired EN/TE summaries in data/summaries.json (the `pairs` field from the laptop branch). The reader Listen button should, when the flag is on (URL ?voice=1 or localStorage gn-voice=1; default OFF so the live site is unchanged), play the story sentence by sentence from `pairs` in the selected language (EN or TE), highlighting the current sentence, using pre-built MP3 when available and Web Speech fallback otherwise. Reuse voice/src code by importing it rather than copy-pasting. Do NOT modify data/news.json, data/summaries.json or scripts/build.py (routine-owned), and do not commit __pycache__ files. Add a Python Playwright pytest (serve the repo with python http.server on a free port, mock speechSynthesis if needed) that opens the reader with ?voice=1 at 390px and 1280px, starts Listen in EN and TE, asserts sentence highlighting advances, and saves screenshots to artifacts/GV-2/. Keep node --test tests/*.test.js green. Note: python3 -m unittest discover -s tests currently fails in tests/test_artifacts.py because routine data predates the new data contract; that is pre-existing and out of scope; do not fix it by editing data.
@@ -16,6 +16,12 @@ GV-2 (see PLAN.md and HANDOFF.md): Integrate the voice player (imported under vo
 - [ ] Codex review (artifacts/GV-2/review.md) has no [P0]-[P2] items
 
 ## Review response
+### [P2] Handle an unavailable voice module before extending its class — reader.js:62-65
+Resolved in `reader.js`. In `getVoiceModule()`, dynamic module import is safely guarded. If the module fails to load or import (network error, 404, or missing `VoicePlayer` class), `voicePromise` and `voiceModule` are reset to `null` and a retry query parameter (`voiceLoadAttempt`) is incremented, ensuring failed promises are never permanently cached. In `playVoice()`, `VoicePlayer` is checked for validity (`typeof VoicePlayer !== 'function'`) before extending; if unavailable, Listen falls back to the native `speechSynthesis` playback path (`speak(btn, fallbackText, lang)`). When the user clicks Listen on a subsequent attempt, `getVoiceModule()` re-attempts the import with cache busting, recovering full voice player functionality without requiring a page reload. Added Playwright test `test_voice_reader_module_failure_fallback_and_recovery` in `tests/test_voice_reader.py` demonstrating that when the voice module route is aborted, Listen falls back to `speechSynthesis`, and when the route is subsequently restored, a later click cleanly instantiates `ReaderVoicePlayer` and activates sentence highlighting without reloading.
+
+### [P2] Route fixed feed fixtures in the voice browser tests — tests/test_voice_reader.py:275-278
+Resolved in `tests/test_voice_reader.py` and `tests/fixtures/`. Created standalone fixed fixtures under `tests/fixtures/` (`news.json` and `summaries.json`) containing deterministic test data: story with bilingual pairs (`be4d5ceb60`), story with bilingual pairs and prebuilt MP3 manifest entries (`beb21be0b4`), legacy decimal story preserving `$16.8 billion` (`378259bf26`), and a story with `summary_status = 'summary'` without pairs (`summary-story-no-pairs`). Updated every browser test in `tests/test_voice_reader.py` to route `data/news.json` and `data/summaries.json` to these fixed fixtures. This completely decouples all browser tests from mutable routine feed pruning and eliminates the timeout on `test_voice_reader_mp3_playback`. Added `test_voice_reader_summary_status_no_pairs_reads_via_speech` confirming `summary_status = 'summary'` stories render bilingual blocks and read via speech fallback.
+
 ### [P1] Reconcile the shipped feed with the new summary contract — reader.js:69-74
 Resolved via merge of job/GN-1 (commit 84d099d). As recorded in D003, `app.js` now contains a transitional legacy feed adapter upon fetching `data/news.json` that derives `summary_status = 'paired'` when both `sum_en` and `sum_te` are non-empty strings. `reader.js` line 69 correctly remains strict so that unmigrated saved items in localStorage safely use explicit excerpt fallback. `tests/test_artifacts.py` and `tests/test_legacy_feed_browser.py` confirm feed items render summaries and Listen controls cleanly without altering routine-owned data files.
 
@@ -42,25 +48,25 @@ Resolved in `styles.css` and `reader.js`. The `.r-listen.on` pulse animation use
 
 ## Checkpoint
 - **What changed**:
-  - `reader.js`: Implemented protected `splitSentences(text)` preserving decimal points between digits and common abbreviations/initialisms; used `splitSentences` in `block()` and `playVoice()`; safely wrapped dynamic voice module import in `try...catch`.
-  - `tests/frontend.test.js`: Added tests for `splitSentences` asserting preservation of `$16.8 billion`, `Dr. Rao met U.S. officials.`, Telugu sentences with `।`, and reader rendering with `?voice=1` for story `378259bf26`.
-  - `tests/test_voice_reader.py`: Added browser assertion `test_voice_reader_legacy_decimals_preserved` verifying legacy story `378259bf26` renders `$16.8 billion` intact and speech highlighting advances across the full sentences.
-  - `DECISIONS.md`: Recorded decision D008.
-  - `HANDOFF.md` & `tasks/GV-2.md`: Updated review responses, checkpoints, and handoff state.
+  - `reader.js`: Safely handled unavailable voice module by verifying `VoicePlayer` before class extension; added fallback to native `speechSynthesis` (`speak()`); prevented caching of rejected load promises by resetting `voicePromise = null` with cache-busting `voiceLoadAttempt` counter to allow retry and recovery without reload; added toggle/stop guard for speech synthesis fallback.
+  - `tests/fixtures/`: Created standalone `tests/fixtures/news.json` and `tests/fixtures/summaries.json` with controlled fixtures for paired stories (`be4d5ceb60`), MP3 playback stories (`beb21be0b4`), legacy decimal stories (`378259bf26`), and summary status stories (`summary-story-no-pairs`).
+  - `tests/test_voice_reader.py`: Routed `data/news.json` and `data/summaries.json` across all browser tests to fixed fixtures, eliminating reliance on mutable routine feed data and fixing the `test_voice_reader_mp3_playback` timeout; added `test_voice_reader_module_failure_fallback_and_recovery` testing speech fallback under module failure and recovery without reload; added `test_voice_reader_summary_status_no_pairs_reads_via_speech` testing speech playback on stories with `summary_status = 'summary'` (no pairs).
+  - `tests/test_legacy_feed_browser.py`: Configured Chromium launch with system Google Chrome binary when available.
+  - `DECISIONS.md`: Appended decision D009.
+  - `tasks/GV-2.md` & `HANDOFF.md`: Updated review responses, checkpoints, test commands, and handoff documentation.
 - **Files modified**:
   - `reader.js`
-  - `tests/frontend.test.js`
+  - `tests/fixtures/news.json` (new)
+  - `tests/fixtures/summaries.json` (new)
   - `tests/test_voice_reader.py`
+  - `tests/test_legacy_feed_browser.py`
   - `DECISIONS.md`
   - `tasks/GV-2.md`
   - `HANDOFF.md`
 - **Verification evidence**:
-  - `python3 -m pytest tests/test_voice_reader.py` (6 passed in 11.16s)
-  - `node --test tests/*.test.js` (14 passed in 230ms)
-  - `python3 -m unittest discover -s tests -p 'test_*.py'` (29 passed in 0.10s)
-  - `python3 -m pytest tests/test_legacy_feed_browser.py` (3 passed in 2.83s)
-  - `node --test voice/tests/*.test.js` (5 passed in 180ms)
-  - Fresh screenshots verified in `artifacts/GV-2/`: `desktop-1280-en-active.png`, `desktop-1280-te-active.png`, `desktop-mp3-active.png`, `mobile-390-en-active.png`, `mobile-390-te-active.png`
+  - Full test command passed: `python3 -m unittest discover -s tests -p 'test_*.py' && node --test tests/*.test.js && node --test voice/tests/*.test.js && python3 -m pytest tests/test_legacy_feed_browser.py tests/test_voice_reader.py -q` (43 unittests passed, 15 node frontend tests passed, 5 node voice tests passed, 13 playwright browser tests passed).
+  - All 5 screenshots in `artifacts/GV-2/` re-generated and verified (`mobile-390-en-active.png`, `mobile-390-te-active.png`, `desktop-1280-en-active.png`, `desktop-1280-te-active.png`, `desktop-mp3-active.png`).
+  - `data/news.json` and `data/summaries.json` confirmed unmodified.
 - **Open items**: None. All must-fix findings resolved and verified.
 
 ## Log
@@ -85,3 +91,6 @@ Resolved in `styles.css` and `reader.js`. The `.r-listen.on` pulse animation use
 - 2026-10-15 17:45 PDT [P2] decimal and abbreviation splitting resolved; 14 node tests + 6 browser tests passing; screenshots updated
 - 2026-10-15 17:48 PDT Codex review: 2 must-fix item(s) open
 - 2026-10-15 20:55 PDT run-job resumed
+- 2026-10-15 20:55 PDT Codex review: 2 must-fix item(s); running one fix pass
+- 2026-10-15 21:05 PDT All must-fix findings resolved: voice module failure fallback & recovery, fixed feed fixtures routing, 13 browser tests + 20 node tests + 43 unittests passing
+

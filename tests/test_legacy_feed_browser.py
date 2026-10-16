@@ -119,7 +119,8 @@ else:
         ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
 
         with sync_playwright() as p:
-            browser = p.chromium.launch()
+            launch_args = {"executable_path": "/usr/bin/google-chrome", "args": ["--no-sandbox", "--disable-dev-shm-usage"]} if Path("/usr/bin/google-chrome").exists() else {}
+            browser = p.chromium.launch(**launch_args)
             context = browser.new_context(viewport={"width": width, "height": height})
 
             def handle_route(route):
@@ -157,7 +158,8 @@ else:
 
     def test_legacy_feed_excerpt_fallback(server):
         with sync_playwright() as p:
-            browser = p.chromium.launch()
+            launch_args = {"executable_path": "/usr/bin/google-chrome", "args": ["--no-sandbox", "--disable-dev-shm-usage"]} if Path("/usr/bin/google-chrome").exists() else {}
+            browser = p.chromium.launch(**launch_args)
             context = browser.new_context(viewport={"width": 390, "height": 844})
 
             def handle_route(route):
@@ -200,7 +202,8 @@ else:
         ARTIFACTS_DIR_GN4.mkdir(parents=True, exist_ok=True)
 
         with sync_playwright() as p:
-            browser = p.chromium.launch()
+            launch_args = {"executable_path": "/usr/bin/google-chrome", "args": ["--no-sandbox", "--disable-dev-shm-usage"]} if Path("/usr/bin/google-chrome").exists() else {}
+            browser = p.chromium.launch(**launch_args)
             context = browser.new_context(viewport={"width": width, "height": height})
 
             def handle_route(route):

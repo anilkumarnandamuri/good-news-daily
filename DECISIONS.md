@@ -97,3 +97,17 @@
 - Alternatives rejected:
   - Relaxing `validate_pairs` to 1–6 pairs globally: Violates the contract that LLM-generated summaries must contain 4–6 sentence pairs.
   - Dropping short stories to `summary_status = 'excerpt'`: Regresses story summaries compared to the live v5 routine.
+
+## D009 — Voice module failure recovery, speechSynthesis fallback, and fixed browser fixtures (2026-10-15, agy/gemini-3.8-flash-high)
+- Decision:
+  1. In `reader.js`, gracefully fall back to the existing `speechSynthesis` playback path via `speak(btn, fallbackText, lang)` when `getVoiceModule()` fails to load or import `VoicePlayer`. Reset `voicePromise = null` and increment a retry query token (`voiceLoadAttempt`) so failed module imports are not cached and subsequent user clicks re-attempt dynamic import without requiring a page reload. Never extend an undefined `VoicePlayer` class.
+  2. In `tests/test_voice_reader.py`, decouple all browser tests from mutable routine data files by intercepting network requests to `data/news.json` and `data/summaries.json` using controlled test fixtures under `tests/fixtures/` (`news.json` and `summaries.json`). Include stories covering bilingual sentence pairs (`be4d5ceb60`), prebuilt MP3 manifest entries (`beb21be0b4`), legacy decimal preservation (`378259bf26`), and `summary_status: 'summary'` stories without pairs (`summary-story-no-pairs`).
+  3. In `tests/test_legacy_feed_browser.py`, launch Chromium with `executable_path="/usr/bin/google-chrome"` when present.
+- Why:
+  1. Dynamic import failure previously left `voicePromise` resolving to `{}` and caused `class ReaderVoicePlayer extends VoicePlayer` to throw an unhandled TypeError, permanently breaking Listen until page reload. Resetting the failed promise with cache-busting retries allows immediate recovery once connectivity is restored.
+  2. Routine updates periodically prune departed stories (such as `beb21be0b4`) from `data/news.json`, causing browser tests depending on live routine data to time out. Controlled fixtures ensure regression tests remain 100% deterministic and independent of scheduled data refreshes.
+  3. Playwright in the test environment requires explicit pointing to the system Google Chrome binary.
+- Alternatives rejected:
+  - Showing an unrecoverable error banner on import failure: Degrades user experience when native speech synthesis is readily available on the device.
+  - Relying on `voice/sample/news.json` fallback: Sample fallback lacks `summary_status` and cannot test routine feed adapter behaviors.
+

@@ -18,6 +18,9 @@ except ImportError:
 ROOT = Path(__file__).resolve().parents[1]
 ART = ROOT / "artifacts" / "GV-2"
 ART.mkdir(parents=True, exist_ok=True)
+FIXTURES_DIR = ROOT / "tests" / "fixtures"
+NEWS_FIXTURE = (FIXTURES_DIR / "news.json").read_text(encoding="utf-8")
+SUMMARIES_FIXTURE = (FIXTURES_DIR / "summaries.json").read_text(encoding="utf-8")
 
 MOCK_SPEECH_SCRIPT = """
 window.__spoken = [];
@@ -55,6 +58,20 @@ class QuietHandler(SimpleHTTPRequestHandler):
         pass
 
 
+def route_fixtures(page, route_summaries=True):
+    page.route("**/data/news.json", lambda route: route.fulfill(
+        status=200,
+        content_type="application/json; charset=utf-8",
+        body=NEWS_FIXTURE
+    ))
+    if route_summaries:
+        page.route("**/data/summaries.json", lambda route: route.fulfill(
+            status=200,
+            content_type="application/json; charset=utf-8",
+            body=SUMMARIES_FIXTURE
+        ))
+
+
 if pytest is None:
     # Isolate optional browser tests from standard unittest discovery
     pass
@@ -73,11 +90,13 @@ else:
     @pytest.fixture(scope="module")
     def browser_instance():
         with sync_playwright() as pw:
-            browser = pw.chromium.launch(
-                executable_path="/usr/bin/google-chrome",
-                headless=True,
-                args=["--no-sandbox", "--disable-dev-shm-usage", "--autoplay-policy=no-user-gesture-required"]
-            )
+            launch_args = {
+                "headless": True,
+                "args": ["--no-sandbox", "--disable-dev-shm-usage", "--autoplay-policy=no-user-gesture-required"]
+            }
+            if Path("/usr/bin/google-chrome").exists():
+                launch_args["executable_path"] = "/usr/bin/google-chrome"
+            browser = pw.chromium.launch(**launch_args)
             yield browser
             browser.close()
 
@@ -89,6 +108,7 @@ else:
         context = browser_instance.new_context(viewport={"width": width, "height": height})
         context.add_init_script(MOCK_SPEECH_SCRIPT)
         page = context.new_page()
+        route_fixtures(page)
 
         # Open story with pairs (be4d5ceb60) behind voice flag ?voice=1
         url = f"{server}/?voice=1#/s/be4d5ceb60"
@@ -156,6 +176,7 @@ else:
         """Verify pre-built MP3 playback for story beb21be0b4."""
         context = browser_instance.new_context(viewport={"width": 1280, "height": 800})
         page = context.new_page()
+        route_fixtures(page)
 
         # Open story with prebuilt MP3 (beb21be0b4)
         url = f"{server}/?voice=1#/s/beb21be0b4"
@@ -184,6 +205,7 @@ else:
         context = browser_instance.new_context(viewport={"width": 1280, "height": 800})
         context.add_init_script(MOCK_SPEECH_SCRIPT)
         page = context.new_page()
+        route_fixtures(page, route_summaries=False)
 
         summaries_route_holder = []
         def handle_summaries(route):
@@ -203,7 +225,11 @@ else:
         assert en_listen.locator("span").inner_text() == "⏹ Stop"
 
         assert len(summaries_route_holder) >= 1
-        summaries_route_holder[0].continue_()
+        summaries_route_holder[0].fulfill(
+            status=200,
+            content_type="application/json; charset=utf-8",
+            body=SUMMARIES_FIXTURE
+        )
 
         # Playback is stopped cleanly upon summaries load before replacing body
         page.wait_for_function("document.querySelector('.r-sum[lang=\"en\"] .r-listen span')?.innerText.includes('Listen')")
@@ -214,6 +240,7 @@ else:
         """Verify sample lookup does not open story if route changed before request resolved."""
         context = browser_instance.new_context(viewport={"width": 1280, "height": 800})
         page = context.new_page()
+        route_fixtures(page)
 
         sample_route_holder = []
         def handle_sample(route):
@@ -271,6 +298,7 @@ else:
         context = browser_instance.new_context(viewport={"width": 1280, "height": 800})
         context.add_init_script(MOCK_SPEECH_SCRIPT)
         page = context.new_page()
+        route_fixtures(page)
 
         # Open legacy story with decimal '$16.8 billion' (378259bf26)
         url = f"{server}/?voice=1#/s/378259bf26"
@@ -300,3 +328,88 @@ else:
         page.wait_for_function("!document.querySelector('.r-sum[lang=\"en\"] .r-sentence.is-active')")
         context.close()
 
+    def test_voice_reader_module_failure_fallback_and_recovery(server, browser_instance):
+        """Verify Listen falls back to speechSynthesis on module failure and recovers without reload."""
+        context = browser_instance.new_context(viewport={"width": 1280, "height": 800})
+        context.add_init_script(MOCK_SPEECH_SCRIPT)
+        page = context.new_page()
+        route_fixtures(page)
+
+        # Abort voice module loading
+        page.route("**/voice/src/gn-voice.js*", lambda route: route.abort())
+
+        url = f"{server}/?voice=1#/s/be4d5ceb60"
+        page.goto(url)
+        page.wait_for_selector("#reader:not([hidden])")
+        page.wait_for_selector(".r-sum")
+
+        en_listen = page.locator(".r-sum[lang='en'] .r-listen")
+        en_listen.click()
+
+        # 1. Verify fallback to speechSynthesis
+        page.wait_for_selector(".r-sum[lang='en'] .r-listen.on")
+        assert en_listen.locator("span").inner_text() == "⏹ Stop"
+
+        # Verify speech was called via window.speechSynthesis
+        page.wait_for_function("window.__spoken && window.__spoken.length >= 1")
+        spoken = page.evaluate("window.__spoken")
+        assert len(spoken) >= 1, f"Expected speech synthesis spoken text, got {spoken}"
+
+        # Verify voice player class did not break reader or set __readerPlayer
+        active_player = page.evaluate("window.__readerPlayer")
+        assert active_player is None, "Should not have instantiated voice player when module failed"
+
+        # Stop fallback playback
+        en_listen.click()
+        page.wait_for_function("!document.querySelector('.r-sum[lang=\"en\"] .r-listen.on')")
+        assert en_listen.locator("span").inner_text() == "🔊 Listen"
+
+        # 2. Recover WITHOUT reload: allow the voice module route
+        page.unroute("**/voice/src/gn-voice.js*")
+
+        # Click Listen again
+        en_listen.click()
+
+        # Voice player loads successfully and activates sentence highlighting
+        page.wait_for_selector(".r-sum[lang='en'] .r-sentence[data-idx='0'].is-active")
+        assert en_listen.locator("span").inner_text() == "⏹ Stop"
+        player_active = page.evaluate("Boolean(window.__readerPlayer)")
+        assert player_active is True, "Voice player should be active after recovery"
+
+        # Stop voice player
+        en_listen.click()
+        page.wait_for_function("!document.querySelector('.r-sum[lang=\"en\"] .r-sentence.is-active')")
+        context.close()
+
+    def test_voice_reader_summary_status_no_pairs_reads_via_speech(server, browser_instance):
+        """Verify summary_status='summary' story without pairs renders summaries and reads via speech."""
+        context = browser_instance.new_context(viewport={"width": 1280, "height": 800})
+        context.add_init_script(MOCK_SPEECH_SCRIPT)
+        page = context.new_page()
+        route_fixtures(page)
+
+        url = f"{server}/?voice=1#/s/summary-story-no-pairs"
+        page.goto(url)
+        page.wait_for_selector("#reader:not([hidden])")
+
+        # Must NOT render Publisher excerpt
+        assert page.locator("h2:has-text('Publisher excerpt')").count() == 0
+
+        # Renders bilingual summary sections with sentence spans
+        page.wait_for_selector(".r-sum[lang='en'] .r-sentence")
+        page.wait_for_selector(".r-sum[lang='te'] .r-sentence")
+
+        en_listen = page.locator(".r-sum[lang='en'] .r-listen")
+        en_listen.click()
+
+        # Sentence highlighting begins at sentence 0
+        page.wait_for_selector(".r-sum[lang='en'] .r-sentence[data-idx='0'].is-active")
+        assert en_listen.locator("span").inner_text() == "⏹ Stop"
+
+        # Highlighting advances to sentence 1
+        page.wait_for_selector(".r-sum[lang='en'] .r-sentence[data-idx='1'].is-active", timeout=5000)
+
+        # Stop
+        en_listen.click()
+        page.wait_for_function("!document.querySelector('.r-sum[lang=\"en\"] .r-sentence.is-active')")
+        context.close()
