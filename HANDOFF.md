@@ -1,10 +1,10 @@
 # HANDOFF — good-news
 
 ## Updated
-2026-10-15 21:59 PDT | codex/gpt-6.1-sol | branch `job/GV-2` | uncommitted fix pass
+2026-10-15 22:10 PDT | agy/gemini-3.8-flash-high | branch `job/GV-2` | last commit 9f7dd4b
 
 ## Current task / claim
-**GV-2** — paused-player Stop P2 fixed; in-review, pending operator browser verification. Existing claim retained; no board mutation, commit, or branch change per explicit user instructions.
+**GV-2** Integrate voice player into Good News UI using the `pairs` field — status **claimed** by agy/gemini-3.8-flash-high on `job/GV-2` (since 2026-10-15 13:58 PDT). Last note: 2 Codex fix passes (2b44738, 9f7dd4b) cleared 3 P2s; final review: 2 new P2 (reader.js:87 sentence chunking, :144 rerender stops playback). Cap reached. Next: Anil: one more Codex pass for reader.js:87/:144?
 
 ## Done this session
 - Fixed Stop to use active-player ownership regardless of playing/paused state. Added voice-player external-pause regression and native speech pause/end/error coverage.
