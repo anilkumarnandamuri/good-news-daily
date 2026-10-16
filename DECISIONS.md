@@ -133,3 +133,8 @@
 - Decision: Keep the active voice player and audio element on autoplay rejection, display a bilingual Tap to play action, and call player.play() before any await on its next tap. Clear the Telugu manifest promise after empty or unsuccessful loads. Accept legacy bilingual summaries for audio generation when summary_status is absent; explicit excerpts remain excluded.
 - Why: Safari requires user activation at play(), transient host failures must recover without reloading, and legacy v5 feed stories already have usable bilingual summaries.
 - Alternatives rejected: Destroying paused players prevents recovery; permanently caching unavailable manifests prevents retries; requiring modern status fields skips legacy narration. Silent audio priming adds browser-dependent behavior when an explicit synchronous resume satisfies the playback requirement.
+
+## D014 — Prefetch Telugu audio and resume delayed device speech in a tap (2026-10-15, Codex)
+- Decision: Prefetch Telugu audio metadata and the voice module on story open. Keep the resolved manifest separate from its retryable promise, use it synchronously in taps, and present bilingual Tap to listen when an asynchronous lookup requires device speech. Apply the explicit resume on all devices; Stop cancels pending work.
+- Why: iOS Safari can lose user activation while awaiting the audio host. A stored synchronous speech action recovers without repeating a failed request; resolved metadata allows normal first-tap playback.
+- Alternatives rejected: Speaking after manifest awaits; permanently caching failed manifests; relying on user-agent detection for correctness.

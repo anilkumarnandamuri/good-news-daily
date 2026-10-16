@@ -21,7 +21,7 @@
  let summariesData=null,summariesPromise=null,manifestData=null,manifestURL=null,manifestPromise=null,sampleNews=null,samplePromise=null,voiceModule=null,voicePromise=null,voiceLoadAttempt=0;
  function getSummaries(){if(!summariesPromise){summariesPromise=fetch("data/summaries.json").then(r=>r.ok?r.json():{}).then(d=>{summariesData=d;return d}).catch(()=>({}))}return summariesPromise}
  const AUDIO_BASE="https://anilkumarnandamuri.github.io/good-news-audio/";
- let teluguManifestPromise=null;
+ let teluguManifestPromise=null,teluguManifestResult=null;
  async function audioJSON(url){
   // Bound offline/slow host waits so device speech remains reachable.
   const controller=typeof AbortController!=="undefined"?new AbortController():null;
@@ -39,8 +39,9 @@
     const manifest=await audioJSON(u);
     // Empty/failed/timeout results must be retried on a later Listen tap.
     if(!manifest||!Object.keys(manifest.stories||{}).length)teluguManifestPromise=null;
-    return{manifest:manifest||{},manifestURL:u};
-   })().catch(()=>{teluguManifestPromise=null;return{manifest:{},manifestURL:AUDIO_BASE}});
+    teluguManifestResult={manifest:manifest||{},manifestURL:u};
+    return teluguManifestResult;
+   })().catch(()=>{teluguManifestPromise=null;return teluguManifestResult={manifest:{},manifestURL:AUDIO_BASE}});
    return teluguManifestPromise;
   }
   if(!manifestPromise){const u=new URL("voice/demo/audio/manifest.json",document.baseURI).href;manifestPromise=fetch(u).then(r=>r.ok?r.json():{}).then(m=>{manifestData=m;manifestURL=u;return{manifest:m,manifestURL:u}}).catch(()=>({manifest:{},manifestURL:document.baseURI}))}return manifestPromise
@@ -74,11 +75,12 @@
  }
  window.splitSentences=splitSentences;
 
+ let pendingBtn=null,resumeSpeech=null;
  let activePlayer=null,activeBtn=null,activeSentenceEls=[],currentHighlightIdx=-1,playRequestId=0;
  function clearHighlight(){currentHighlightIdx=-1;if(activeSentenceEls&&activeSentenceEls.length){activeSentenceEls.forEach(el=>{el.classList.remove("is-active","active","highlight");el.removeAttribute("aria-current")})}}
  function highlightSentence(idx){if(!activeSentenceEls||!activeSentenceEls.length)return;if(idx===currentHighlightIdx)return;currentHighlightIdx=idx;activeSentenceEls.forEach((el,i)=>{const on=(i===idx);el.classList.toggle("is-active",on);el.classList.toggle("active",on);el.classList.toggle("highlight",on);if(on){el.setAttribute("aria-current","true");try{el.scrollIntoView({block:"nearest"})}catch(e){}}else{el.removeAttribute("aria-current")}})}
  function stopVoice(){playRequestId++;const player=activePlayer,btn=activeBtn;activePlayer=null;activeBtn=null;window.__readerPlayer=null;if(btn){btn.classList.remove("on");const sp=btn.querySelector("span");if(sp)sp.textContent="🔊 Listen"}clearHighlight();activeSentenceEls=[];if(player){try{player.destroy()}catch(e){}}}
- function stop(){playRequestId++;stopVoice();if("speechSynthesis" in window)speechSynthesis.cancel();if(speaking){speaking.classList.remove("on");speaking.querySelector("span").textContent="🔊 Listen"}speaking=null}
+ function stop(){playRequestId++;if(pendingBtn){pendingBtn.classList.remove("on");pendingBtn.querySelector("span").textContent="🔊 Listen"}pendingBtn=null;resumeSpeech=null;stopVoice();if("speechSynthesis" in window)speechSynthesis.cancel();if(speaking){speaking.classList.remove("on");speaking.querySelector("span").textContent="🔊 Listen"}speaking=null}
  function audioUnavailable(btn){
   const section=btn.closest(".r-sum");
   let note=section.querySelector(".r-audio-status");
@@ -103,26 +105,47 @@
    if(activePlayer.state==="paused"){activePlayer.play();return}
    stop();return;
   }
+  if(pendingBtn===btn){
+   const resume=resumeSpeech;
+   if(resume){resume();return}
+   stop();return;
+  }
   if(speaking===btn){stop();return}stop();clearAudioMessage(btn);
   const reqId=++playRequestId;
   const container=btn.closest(".r-sum");const targetSentenceEls=container?[...container.querySelectorAll(".r-sentence")]:[];
   let sentences=[];
   if(story&&story.pairs&&story.pairs.length){sentences=story.pairs.map(p=>p[lang]||"").filter(Boolean)}
   if(!sentences.length){const txt=(story&&story["sum_"+lang])||(story&&story.lang===lang?story.summary:"")||"";sentences=splitSentences(txt)}
-  const mod=await getVoiceModule();
+  // The resolved Telugu path must not cross an await: activation belongs to this tap.
+  const ready=lang==="te"&&teluguManifestResult;
+  let mod=voiceModule,result=ready;
+  if(!ready){
+   pendingBtn=btn;btn.classList.add("on");btn.querySelector("span").textContent="⏹ Stop";
+   [mod,result]=await Promise.all([getVoiceModule(),getManifest(lang)]);
+  }
   const VoicePlayer=mod&&mod.VoicePlayer;
-  const {manifest,manifestURL}=await getManifest(lang);
+  const {manifest,manifestURL}=result;
+  if(lang==="te"&&!teluguManifestPromise)teluguManifestResult=null;
   if(reqId!==playRequestId||R.hidden||!cur||(story&&cur.id!==story.id)||!btn.isConnected)return;
+  pendingBtn=null;btn.classList.remove("on");btn.querySelector("span").textContent="🔊 Listen";
+  const fallbackText=container?.querySelector("p")?.textContent||(story&&story["sum_"+lang])||"";
+  function speechFallback(){
+   if(lang==="te"&&!ready&&voiceFor(lang)){
+    pendingBtn=btn;resumeSpeech=()=>speak(btn,fallbackText,lang);
+    btn.classList.remove("on");btn.querySelector("span").textContent="▶ వినడానికి నొక్కండి · Tap to listen";
+   }else speak(btn,fallbackText,lang);
+  }
   if(typeof VoicePlayer!=="function"){
-   const pEl=container?container.querySelector("p"):null;
-   const fallbackText=(pEl&&pEl.textContent)||(story&&story["sum_"+lang])||(story&&story.lang===lang?story.summary:"")||"";
-   speak(btn,fallbackText,lang);
+   speechFallback();
    return;
   }
   activeSentenceEls=targetSentenceEls;
   class ReaderVoicePlayer extends VoicePlayer{_makeQueue(){const ok=super._makeQueue();if(ok&&sentences.length){for(const it of this.queue){if(!it.intro){it.chunks=sentences.slice()}}}return ok}}
   const player=new ReaderVoicePlayer({language:lang,preferAudio:true,radio:false});
   player.setStories([story],{manifest,manifestURL,limit:1});
+  if(lang==="te"&&!ready&&!player.hasAudio(lang)){
+   player.destroy();speechFallback();return;
+  }
   player.audio.addEventListener("timeupdate",()=>{if(player===activePlayer&&!player.destroyed&&player.mode==="audio"&&player.audio.duration>0&&sentences.length){const curT=player.audio.currentTime,dur=player.audio.duration;const totalChars=sentences.reduce((acc,s)=>acc+s.length,0)||1;let accum=0,activeIdx=0;for(let i=0;i<sentences.length;i++){accum+=sentences[i].length;if(curT<=(accum/totalChars)*dur||i===sentences.length-1){activeIdx=i;break}}highlightSentence(activeIdx)}});
   player.addEventListener("statechange",()=>{if(player.destroyed||player!==activePlayer)return;if(player.state==="playing"||player.state==="loading"){btn.classList.add("on");const sp=btn.querySelector("span");if(sp)sp.textContent="⏹ Stop";if(player.mode==="speech"){highlightSentence(player.chunkIndex)}else if(player.mode==="audio"){highlightSentence(0)}}else if(player.state==="paused"){btn.classList.remove("on");const sp=btn.querySelector("span");if(sp)sp.textContent=lang==="te"?"▶ వినడానికి నొక్కండి · Tap to play":"▶ Tap to play"}else if(player.state==="ended"||player.state==="idle"){stopVoice()}else if(player.state==="error"){if(lang==="te")audioUnavailable(btn);else toast(player.message||"Speech unavailable");stopVoice()}});
   player.addEventListener("progress",()=>{if(player===activePlayer&&!player.destroyed&&player.mode==="speech"){highlightSentence(player.chunkIndex)}});
@@ -168,6 +191,7 @@
   let it=customIt||DATA.find(x=>x.id===id)||GN.saved().find(x=>x.id===id);
   if(!it&&isVoiceEnabled()){getSampleNews().then(items=>{const found=items.find(x=>x.id===id);const m=location.hash.match(/^#\/s\/([\w-]+)/);if(found&&m&&m[1]===id&&(!cur||cur.id!==id))open(id,found)});return}
   if(!it)return;
+  getManifest("te");getVoiceModule();
   if(isVoiceEnabled()){
    const normalize=text=>String(text||"").replace(/\s+/gu," ").trim();
    const matches=(pairs,en,te)=>Array.isArray(pairs)&&pairs.length>0&&pairs.every(p=>p&&typeof p.en==="string"&&normalize(p.en)&&typeof p.te==="string"&&normalize(p.te))&&[ ["en",en],["te",te] ].every(([lang,text])=>normalize(pairs.map(p=>p[lang]).join(" "))===normalize(text));

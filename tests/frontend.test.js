@@ -373,7 +373,7 @@ test('cached pairs attach only when both joined summaries match, preserving vali
 });
 
 // Exercise the real reader and real VoicePlayer together; only browser APIs are faked.
-function teluguReader({entry=true,voice=false,broken=false,moduleMissing=false,manifestOffline=false}={}){
+function teluguReader({entry=true,voice=false,broken=false,moduleMissing=false,manifestOffline=false,manifestGate=null}={}){
  const story=pairedSummaryStory();
  const spoken=[],requests=[];
  const e=voiceReader(story,{search:'',setup(e){
@@ -388,7 +388,7 @@ function teluguReader({entry=true,voice=false,broken=false,moduleMissing=false,m
   e.ctx.SpeechSynthesisUtterance=function(text){this.text=text};
   e.ctx.fetch=async url=>{
    requests.push(url);
-   if(manifestOffline&&url.includes('manifest.json'))throw Error('offline');
+   if(url.includes('manifest.json')){if(manifestGate)await manifestGate;if(manifestOffline)throw Error('offline')}
    return{ok:true,json:async()=>url==='data/audio-config.json'?{base_url:'https://audio.example/'}:
     {stories:{[story.id]:entry?{te:{file:'te/key.mp3',text:entry==='stale'?'పాత వార్త.':story.sum_te}}:{}}}};
   };
@@ -409,7 +409,7 @@ test('default Telugu Listen plays manifest MP3 without a device voice and Stop t
 
 test('default Telugu falls back to device speech for absent, stale, failed, or offline audio',async()=>{
  for(const options of [{entry:false},{entry:'stale'},{broken:true},{manifestOffline:true},{moduleMissing:true}]){
-  const e=teluguReader({...options,voice:true});e.button.onclick();await flush();
+  const e=teluguReader({...options,voice:true});await flush();e.button.onclick();await flush();
   assert.ok(e.spoken.length>0,JSON.stringify(options));
   assert.equal(e.spoken[0].lang,'te-IN');assert.equal(e.button.label.textContent,'⏹ Stop');
   e.button.onclick();assert.equal(e.button.label.textContent,'🔊 Listen');
@@ -429,7 +429,7 @@ test('default English remains on native speech even when Telugu MP3 is present',
  const e=teluguReader();const button=e.nodes.get('rBody').querySelectorAll('.r-listen')[0];
  button.onclick();await flush();assert.equal(e.spoken[0].text,pairedSummaryStory().sum_en);
  assert.equal(e.spoken[0].lang,'en-IN');assert.equal(e.ctx.__readerPlayer,null);
- assert.equal(e.requests.length,0);
+ assert.ok(e.requests.includes('data/audio-config.json'),'story opening prefetches Telugu audio');
 });
 
 test('autoplay rejection offers synchronous resume on the same Telugu audio element',async()=>{
@@ -484,4 +484,45 @@ test('Telugu manifest retries after failed, empty, invalid, and timed-out loads'
   assert.equal(attempts,2,'successful manifest is cached');
   e.button.onclick();
  }
+});
+
+
+test('prefetched Telugu without a clip speaks inside the first click, including offline hosts',async()=>{
+ for(const options of [{entry:false},{entry:'stale'},{manifestOffline:true},{moduleMissing:true}]){
+  const e=teluguReader({...options,voice:true});await flush();
+  let inClick=false,calls=0;
+  const speak=e.ctx.speechSynthesis.speak;
+  e.ctx.speechSynthesis.speak=u=>{assert.equal(inClick,true);calls++;speak(u)};
+  inClick=true;e.button.onclick();inClick=false;
+  assert.ok(calls>0);assert.equal(e.button.label.textContent,'⏹ Stop');
+  e.button.onclick();assert.equal(e.button.label.textContent,'🔊 Listen');
+ }
+});
+
+test('pending Telugu manifest offers a synchronous speech resume on the next tap',async()=>{
+ let resolve;const manifestGate=new Promise(r=>resolve=r);
+ const e=teluguReader({entry:false,voice:true,manifestGate});
+ e.ctx.navigator.userAgent='iPhone';
+ e.button.onclick();assert.equal(e.button.label.textContent,'⏹ Stop');
+ resolve();await flush();
+ assert.equal(e.spoken.length,0);assert.match(e.button.label.textContent,/Tap to listen/);
+ e.button.onclick();assert.equal(e.spoken.length,1);
+ assert.equal(e.button.label.textContent,'⏹ Stop');
+ e.button.onclick();assert.equal(e.spoken.length,1);assert.equal(e.button.label.textContent,'🔊 Listen');
+});
+
+test('prefetched Telugu clip plays synchronously in the click handler',async()=>{
+ const e=teluguReader();await flush();let calls=0;
+ e.ctx.Audio.prototype.play=function(){calls++;this.onplaying?.();return Promise.resolve()};
+ e.button.onclick();assert.equal(calls,1);assert.equal(e.ctx.__readerPlayer.mode,'audio');
+ e.button.onclick();
+});
+
+test('Stop during Telugu manifest loading cancels the pending fallback',async()=>{
+ let resolve;const manifestGate=new Promise(r=>resolve=r);
+ const e=teluguReader({entry:false,voice:true,manifestGate});
+ e.button.onclick();assert.equal(e.button.label.textContent,'⏹ Stop');
+ e.button.onclick();assert.equal(e.button.label.textContent,'🔊 Listen');
+ resolve();await flush();
+ assert.equal(e.spoken.length,0);assert.equal(e.button.label.textContent,'🔊 Listen');
 });
