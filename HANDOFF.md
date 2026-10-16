@@ -1,10 +1,10 @@
 # HANDOFF — good-news
 
 ## Updated
-2026-10-15 17:46 PDT | agy/gemini-3.8-flash-high | branch `job/GV-2` | last commit d1a31a0
+2026-10-15 17:48 PDT | agy/gemini-3.8-flash-high | branch `job/GV-2` | last commit 99844db
 
 ## Current task / claim
-**GV-2** Integrate voice player into Good News UI using the `pairs` field — status **in-review** by agy/gemini-3.8-flash-high on `job/GV-2` (since 2026-10-15 13:58 PDT). Last note: Protected sentence splitter implemented; decimals and abbreviations preserved in legacy summaries Next: Codex review
+**GV-2** Integrate voice player into Good News UI using the `pairs` field — status **claimed** by agy/gemini-3.8-flash-high on `job/GV-2` (since 2026-10-15 13:58 PDT). Last note: agy/gemini-3.8-flash-high build finished; done-check FAIL (see artifacts/GV-2/done-check.txt) Next: fix done-check failures on job/GV-2
 
 ## Done this session
 - Implemented protected sentence splitter `splitSentences(text)` in `reader.js` (and exposed on `window.splitSentences`) protecting decimal points between digits (`/(?<=\d)\.(?=\d)/gu`) and common abbreviations/initialisms (`/\b(?:Mr|Mrs|Ms|Dr|Prof|Sr|Jr|St|vs|etc)\./giu` and `/\b(?:[A-Za-z]\.){2,}|\b[A-Z]\.(?=\s+[A-Z][a-z])/gu`) with private placeholders (`\ue000`) before splitting against `[^.!?।॥…]+[.!?।॥…]*|[.!?।॥…]+` and restoring them after.
