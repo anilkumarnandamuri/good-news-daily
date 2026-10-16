@@ -30,11 +30,16 @@ Use Node 22 or newer. The isolation flag lets Node's test runner work in sandbox
 
 A complete summary has 4–6 short sentences in each language. The cache stores an ordered `pairs` array of `{en, te}` objects. Each object contains one English sentence and the Telugu sentence for the same fact. The public `sum_en` and `sum_te` strings are derived from those pairs in the same order. Validation rejects missing translations, different counts, multiple sentences inside one pair, repeated sentences, incomplete sentences, wrong-language text, and mismatched numeric figures.
 
-With `GOOD_NEWS_LLM` unset, summarization reads only local data. It does not fetch article pages, call translation services, or start a model process. Repeated runs with the same input and cache produce the same data. Run the offline step with:
+When the opt-in LLM hook is not enabled (or when it fails), summarization falls back to the live extract-and-translate method ported from version 5:
+- Extracts up to 6 canonical source-language sentences from the feed description and article og/meta descriptions (never the article body).
+- Translates sentence-by-sentence via free endpoints (Google Translate with MyMemory fallback) strictly 1:1.
+- Builds aligned `pairs` directly from the sentence lists without re-splitting, validates them with `validate_pairs`, stores a version 6 cache entry, and sets `summary_status='paired'`.
+
+Existing version 5 cache entries whose joined strings cannot be re-paired by `legacy_pairs` (due to sentence-count mismatch or shorter length) are retained with `summary_status` set to `'summary'` without network calls. Both `'paired'` and `'summary'` stories render complete bilingual summaries with Listen controls in the reader. If extraction or translation fails, the story falls back to `summary_status='excerpt'` with publisher excerpts, and will be retried on the next run.
+
+Run summarization with:
 
     python3 scripts/summarize.py
-
-Existing version 5 translations migrate only when they pass validation. `summary_status` is `paired` for complete summaries. Otherwise both bilingual fields are empty, `summary_status` is `excerpt`, and the reader shows the original publisher excerpt with a clear label. The checked-in snapshot has 11 complete summaries and 101 excerpts. A short RSS excerpt cannot always support four factual sentences, and this repository includes no offline translation model. The fallback never pads a story or invents translations. Structural tests cannot prove translation meaning or factual accuracy; model output still needs editorial review.
 
 ### Optional LLM hook
 

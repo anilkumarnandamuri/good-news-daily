@@ -43,6 +43,6 @@ const p=new URLSearchParams(location.search);if(["dark","light"].includes(p.get(
 fetch("data/thoughts.json").then(r=>r.json()).then(t=>{window.THOUGHTS=t;if(DATA.length&&cur==="all")$("#hero").insertAdjacentHTML("beforeend",thoughtCard())}).catch(()=>{});
 fetch("data/news.json",{cache:"default"}).then(r=>{if(!r.ok)throw new Error("News unavailable");return r.json()}).then(d=>{
  // Transitional legacy feed adapter until routine runs summarize v6
- d.items.forEach(it=>{if(!("summary_status" in it)){const p=typeof it.sum_en==="string"&&it.sum_en!==""&&typeof it.sum_te==="string"&&it.sum_te!=="";it.summary_status=p?"paired":"excerpt";if(!p){it.sum_en="";it.sum_te=""}}});
+ d.items.forEach(it=>{if(!("summary_status" in it)){const p=typeof it.sum_en==="string"&&it.sum_en!==""&&typeof it.sum_te==="string"&&it.sum_te!=="";it.summary_status=p?"paired":"excerpt";if(!p){it.sum_en="";it.sum_te=""}}else if(it.summary_status==="summary"&&(!it.sum_en||!it.sum_te)){it.summary_status="excerpt"}});
  DATA=d.items;window.GN_data=DATA;$("#gen").textContent="Updated "+new Date(d.generated).toLocaleString()+".";tabs();render();window.onData&&onData(DATA)}).catch(()=>{$("#feed").innerHTML='<p class="empty" role="alert">News could not load. Please refresh to try again.</p>'});
 wide.addEventListener("change",()=>{if(DATA.length)render()});

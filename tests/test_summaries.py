@@ -192,6 +192,80 @@ class SummaryContract(unittest.TestCase):
         self.assertNotIn("old_departed", saved_cache)
         self.assertNotIn("no_timestamp_departed", saved_cache)
 
+    def test_no_llm_fallback_produces_paired_pairs_aligned_one_to_one(self):
+        translation_map = {p["en"]: p["te"] for p in PAIRS}
+        with patch.dict("os.environ", {}, clear=True), \
+             patch.object(summarize, "meta", return_value=("", "https://example.invalid/fallback.jpg")), \
+             patch.object(summarize, "translate", side_effect=lambda text, sl, tl: translation_map.get(text, "")):
+            result = self.run_items([item()])[0]
+            self.assertEqual(result["summary_status"], "paired")
+            self.assertEqual(result["sum_en"], " ".join(p["en"] for p in PAIRS))
+            self.assertEqual(result["sum_te"], " ".join(p["te"] for p in PAIRS))
+            self.assertEqual(result["image"], "https://example.invalid/fallback.jpg")
+            cached = json.loads(self.cache.read_text())["library"]
+            self.assertEqual(cached["pairs"], PAIRS)
+            self.assertEqual(cached["summary_status"], "paired")
+            self.assertEqual(cached["method"], "fallback")
+
+    def test_translation_failure_results_in_excerpt_and_retried_next_run(self):
+        with patch.dict("os.environ", {}, clear=True), \
+             patch.object(summarize, "meta", return_value=("", None)), \
+             patch.object(summarize, "translate", return_value=""):
+            result = self.run_items([item()])[0]
+            self.assertEqual(result["summary_status"], "excerpt")
+            self.assertEqual((result["sum_en"], result["sum_te"]), ("", ""))
+            self.assertNotIn("library", json.loads(self.cache.read_text()))
+
+            translation_map = {p["en"]: p["te"] for p in PAIRS}
+            with patch.object(summarize, "translate", side_effect=lambda text, sl, tl: translation_map.get(text, "")):
+                retry_item = item()
+                retry_result = self.run_items([retry_item])[0]
+                self.assertEqual(retry_result["summary_status"], "paired")
+                self.assertIn("library", json.loads(self.cache.read_text()))
+
+    def test_v5_cache_entry_kept_as_summary_without_network(self):
+        v5_en = "Volunteers opened a library in the village. They donated 500 books for local children."
+        v5_te = "వాలంటీర్లు గ్రామంలో ఒక గ్రంథాలయాన్ని ప్రారంభించారు. వారు స్థానిక పిల్లల కోసం 500 పుస్తకాలను ఇచ్చారు."
+        self.cache.write_text(json.dumps({"library": dict(v=5, en=v5_en, te=v5_te, n=2, t=int(time.time()))}))
+
+        with patch.object(summarize, "meta", side_effect=AssertionError("Network forbidden")), \
+             patch.object(summarize, "translate", side_effect=AssertionError("Network forbidden")):
+            result = self.run_items([item()])[0]
+            self.assertEqual(result["summary_status"], "summary")
+            self.assertEqual(result["sum_en"], v5_en)
+            self.assertEqual(result["sum_te"], v5_te)
+            saved = json.loads(self.cache.read_text())["library"]
+            self.assertEqual(saved["summary_status"], "summary")
+            self.assertEqual(saved["en"], v5_en)
+            self.assertEqual(saved["te"], v5_te)
+
+    def test_hook_configured_uses_hook_without_calling_fallback(self):
+        with patch.dict("os.environ", {"GOOD_NEWS_LLM": "1"}), \
+             patch.object(summarize, "llm_pairs", return_value=PAIRS[:4]) as mock_hook, \
+             patch.object(summarize, "meta", side_effect=AssertionError("Fallback must not be called when hook succeeds")), \
+             patch.object(summarize, "translate", side_effect=AssertionError("Fallback must not be called when hook succeeds")):
+            result = self.run_items([item()])[0]
+            self.assertEqual(result["summary_status"], "paired")
+            self.assertEqual(result["sum_en"], " ".join(p["en"] for p in PAIRS[:4]))
+            self.assertEqual(result["sum_te"], " ".join(p["te"] for p in PAIRS[:4]))
+            mock_hook.assert_called_once()
+            cached = json.loads(self.cache.read_text())["library"]
+            self.assertEqual(cached["method"], "llm")
+
+    def test_hook_failure_falls_back_to_extract_and_translate(self):
+        translation_map = {p["en"]: p["te"] for p in PAIRS}
+        with patch.dict("os.environ", {"GOOD_NEWS_LLM": "1"}), \
+             patch.object(summarize, "llm_pairs", side_effect=subprocess.CalledProcessError(1, "hook")), \
+             patch.object(summarize, "meta", return_value=("", "https://example.invalid/fallback.jpg")), \
+             patch.object(summarize, "translate", side_effect=lambda text, sl, tl: translation_map.get(text, "")):
+            result = self.run_items([item()])[0]
+            self.assertEqual(result["summary_status"], "paired")
+            self.assertEqual(result["sum_en"], " ".join(p["en"] for p in PAIRS))
+            self.assertEqual(result["sum_te"], " ".join(p["te"] for p in PAIRS))
+            cached = json.loads(self.cache.read_text())["library"]
+            self.assertEqual(cached["method"], "fallback")
+            self.assertEqual(cached["pairs"], PAIRS)
+
 
 if __name__ == "__main__":
     unittest.main()

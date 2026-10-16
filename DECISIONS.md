@@ -34,3 +34,14 @@
 - Alternatives rejected:
   - Marking invalidated summaries with an invalidation flag instead of deletion: Adds schema complexity when eviction already ensures clean re-summarization or explicit excerpt fallback.
   - Raising `unittest.SkipTest` at module level: Causes `pytest` to exit with status code 5 (no tests collected) when invoked on the single file.
+
+## D006 — Extract-and-translate fallback and summary status preservation (2026-10-15, agy/gemini-3.8-flash-high)
+- Decision: In `scripts/summarize.py` v6, fall back to the live extract-and-translate method (feed description + og/meta descriptions, 1:1 sentence machine translation) when the LLM hook is not enabled or fails, building aligned `pairs` directly without re-splitting. For existing v5 cache entries whose joined strings cannot be re-paired by `legacy_pairs` (sentence count mismatch or <4 sentences), preserve them as `sum_en`/`sum_te` with `summary_status = 'summary'`, and render `'summary'` status in `reader.js`/`app.js` like `'paired'`.
+- Why:
+  - Without the LLM hook configured, summarize v6 previously dropped ~107/115 stories to excerpt-only on every routine run because v5 cache entries had sentence counts that did not match `legacy_pairs` validation.
+  - Building pairs directly from aligned per-sentence translation lists preserves exact 1:1 correspondence without fragility from re-splitting joined prose.
+  - Retaining existing v5 cache entries under `summary_status = 'summary'` prevents discarding existing valid human-checked and machine translations, requires zero network requests for already-cached stories, and maintains complete bilingual coverage across routine refreshes.
+- Alternatives rejected:
+  - Dropping all non-re-pairable v5 cache entries to excerpts: Rejects over 90% of existing stories and violates the routine's zero-regression requirement.
+  - Re-splitting joined strings with punctuation regexes: Introduces mismatch between English and Telugu sentence boundaries and breaks number alignment.
+  - Making live network calls to re-summarize already cached stories: Wastes network bandwidth, slows down the routine, and risks API rate limits.

@@ -15,6 +15,8 @@ import subprocess
 import tempfile
 from collections import Counter
 import time
+import urllib.parse
+import urllib.request
 
 ROOT = Path(__file__).resolve().parent.parent
 CACHE = ROOT / "data" / "summaries.json"
@@ -24,6 +26,7 @@ MIN_SENTENCES = 4
 MAX_SENTENCES = 6
 PREFIX = re.compile(r"^[^:：.!?]{2,45}[:：]\s+")
 TELUGU = re.compile(r"[\u0C00-\u0C7F]")
+UA = {"User-Agent": "Mozilla/5.0 (GoodNewsDaily summary bot)"}
 
 
 def sentences(text, lang=None):
@@ -144,6 +147,77 @@ def llm_pairs(item, timeout=20):
     return validate_pairs(json.loads(response)["pairs"])
 
 
+def _get(url, timeout=8, limit=400_000):
+    with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=timeout) as r:
+        return r.read(limit).decode("utf-8", "ignore")
+
+
+def meta(url):
+    """og:description/meta description and og:image only — no article body."""
+    try:
+        h = _get(url)
+    except Exception:
+        return "", None
+    def m(*names):
+        for n in names:
+            for pat in (rf'<meta[^>]+(?:property|name)=["\']{n}["\'][^>]*content=["\']([^"\']+)',
+                        rf'<meta[^>]+content=["\']([^"\']+)["\'][^>]*(?:property|name)=["\']{n}["\']'):
+                x = re.search(pat, h, re.I)
+                if x:
+                    return html.unescape(x.group(1)).strip()
+        return None
+    ds = []
+    for n in ("og:description", "description", "twitter:description"):
+        v = m(n)
+        if v and v not in ds:
+            ds.append(v)
+    return " ".join(ds), m("og:image", "twitter:image")
+
+
+def translate(text, sl, tl):
+    if not text:
+        return ""
+    q = urllib.parse.quote(text[:1500])
+    for url, pick in (
+        (f"https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl={sl}&tl={tl}&q={q}",
+         lambda d: d[0] if isinstance(d[0], str) else d[0][0]),
+        (f"https://api.mymemory.translated.net/get?langpair={sl}|{tl}&q={q}",
+         lambda d: d["responseData"]["translatedText"]),
+    ):
+        try:
+            out = pick(json.loads(_get(url, timeout=10)))
+            if out and "MYMEMORY WARNING" not in out and out.strip() != text.strip():
+                return html.unescape(out).strip()
+        except Exception:
+            continue
+    return ""
+
+
+def extract_and_translate(item, timeout=None):
+    desc = item.get("desc") or item.get("summary") or ""
+    link = item.get("link", "")
+    md, img = meta(link) if link else ("", None)
+    src_lang = "te" if item.get("lang") == "te" else "en"
+    other = "en" if src_lang == "te" else "te"
+    sents = canonical(item.get("title", ""), desc, md, lang=src_lang)
+    pairs = []
+    for s in sents:
+        t = translate(s, src_lang, other)
+        if not t:
+            raise ValueError("Translation failed for sentence")
+        t = t.strip()
+        if not re.search(r'[.!?।॥][”"’\']?$', t) and not t.endswith(("...", "…")):
+            t = t + "."
+        if src_lang == "te":
+            pairs.append({"en": t, "te": s})
+        else:
+            pairs.append({"en": s, "te": t})
+    validated = validate_pairs(pairs)
+    return dict(pairs=validated, en=" ".join(p["en"] for p in validated),
+                te=" ".join(p["te"] for p in validated), n=len(validated), v=VERSION,
+                fingerprint=fingerprint(item), method="extract_and_translate", og_image=img)
+
+
 def summarize_item(item, timeout=20):
     if os.environ.get("GOOD_NEWS_LLM") != "1":
         raise ValueError("LLM summarization is disabled")
@@ -168,44 +242,127 @@ def run(items):
         if not isinstance(old, dict):
             old = {}
         pairs = None
+        status = None
         method = "cached"
+        generated = None
         try:
             if old.get("v") == VERSION:
-                if old.get("fingerprint") != fingerprint(item):
+                if old.get("fingerprint") and old["fingerprint"] != fingerprint(item):
                     raise ValueError("Changed source")
                 if old.get("description_fingerprint") and item.get("desc") and old["description_fingerprint"] != description_fingerprint(item):
                     raise ValueError("Changed description")
-                pairs = validate_pairs(old.get("pairs"))
-                method = old.get("method", "cached")
+                if old.get("summary_status") == "summary" or not old.get("pairs"):
+                    en, te = old.get("en", ""), old.get("te", "")
+                    if isinstance(en, str) and en.strip() and isinstance(te, str) and te.strip():
+                        status = "summary"
+                        method = old.get("method", "cached")
+                    else:
+                        raise ValueError("Empty summary")
+                else:
+                    pairs = validate_pairs(old.get("pairs"))
+                    method = old.get("method", "cached")
+                    status = "paired"
             elif old.get("v") == 5:
-                pairs = legacy_pairs(old.get("en", ""), old.get("te", ""))
+                if old.get("fingerprint") and old["fingerprint"] != fingerprint(item):
+                    raise ValueError("Changed source")
+                if old.get("description_fingerprint") and item.get("desc") and old["description_fingerprint"] != description_fingerprint(item):
+                    raise ValueError("Changed description")
+                en, te = old.get("en", ""), old.get("te", "")
+                if not (isinstance(en, str) and en.strip() and isinstance(te, str) and te.strip()):
+                    raise ValueError("Empty v5 summary")
+                try:
+                    pairs = legacy_pairs(en, te)
+                    status = "paired"
+                    method = "migrated"
+                except (ValueError, TypeError, AttributeError):
+                    pairs = None
+                    status = "summary"
+                    method = "cached"
             else:
-                pairs = legacy_pairs(item.get("sum_en", ""), item.get("sum_te", ""))
+                en, te = item.get("sum_en", ""), item.get("sum_te", "")
+                if isinstance(en, str) and en.strip() and isinstance(te, str) and te.strip():
+                    try:
+                        pairs = legacy_pairs(en, te)
+                        status = "paired"
+                        method = "migrated"
+                    except (ValueError, TypeError, AttributeError):
+                        pairs = None
+                        status = "summary"
+                        method = "cached"
         except (ValueError, TypeError, AttributeError):
             cache.pop(item["id"], None)
             pairs = None
-        if pairs is None and enabled and time.monotonic() < deadline:
-            try:
-                generated = summarize_item(item, timeout=min(20, deadline - time.monotonic()))
-                pairs = generated["pairs"]
-                method = "llm"
-            except (ValueError, KeyError, TypeError, OSError, subprocess.SubprocessError):
-                failed += 1
-        if pairs is not None:
-            cache[item["id"]] = dict(pairs=pairs, en=" ".join(p["en"] for p in pairs),
-                te=" ".join(p["te"] for p in pairs), n=len(pairs), v=VERSION,
-                fingerprint=fingerprint(item), method=method,
+            status = None
+
+        if status is None and time.monotonic() < deadline:
+            if enabled:
+                try:
+                    generated = summarize_item(item, timeout=min(20, max(1, deadline - time.monotonic())))
+                    pairs = generated["pairs"]
+                    method = "llm"
+                    status = "paired"
+                except Exception:
+                    failed += 1
+            if status is None and time.monotonic() < deadline:
+                try:
+                    generated = extract_and_translate(item, timeout=min(20, max(1, deadline - time.monotonic())))
+                    pairs = generated["pairs"]
+                    method = "fallback"
+                    status = "paired"
+                except Exception:
+                    failed += 1
+
+        if status == "paired" and pairs is not None:
+            img = (generated.get("og_image") if isinstance(generated, dict) else None) or old.get("og_image")
+            cache[item["id"]] = dict(
+                pairs=pairs,
+                en=" ".join(p["en"] for p in pairs),
+                te=" ".join(p["te"] for p in pairs),
+                n=len(pairs),
+                v=VERSION,
+                summary_status="paired",
+                fingerprint=fingerprint(item),
+                method=method,
                 description_fingerprint=description_fingerprint(item) or old.get("description_fingerprint"),
-                t=old.get("t") or int(time.time()))
+                t=old.get("t") or int(time.time()),
+            )
+            if img:
+                cache[item["id"]]["og_image"] = img
+            if not item.get("image") and img and str(img).startswith("http"):
+                item["image"] = img
             item["sum_en"] = cache[item["id"]]["en"]
             item["sum_te"] = cache[item["id"]]["te"]
             item["summary_status"] = "paired"
+            complete += 1
+        elif status == "summary":
+            en_str = old.get("en") or item.get("sum_en", "")
+            te_str = old.get("te") or item.get("sum_te", "")
+            img = old.get("og_image")
+            cache[item["id"]] = dict(
+                en=en_str,
+                te=te_str,
+                n=old.get("n") or len(sentences(en_str)),
+                v=VERSION,
+                summary_status="summary",
+                fingerprint=fingerprint(item),
+                method=method,
+                description_fingerprint=description_fingerprint(item) or old.get("description_fingerprint"),
+                t=old.get("t") or int(time.time()),
+            )
+            if img:
+                cache[item["id"]]["og_image"] = img
+            if not item.get("image") and img and str(img).startswith("http"):
+                item["image"] = img
+            item["sum_en"] = en_str
+            item["sum_te"] = te_str
+            item["summary_status"] = "summary"
             complete += 1
         else:
             cache.pop(item["id"], None)
             item["sum_en"] = item["sum_te"] = ""
             item["summary_status"] = "excerpt"
         item.pop("desc", None)
+
     live = {i["id"] for i in items}
     now = time.time()
     cache = {k: v for k, v in cache.items()
@@ -218,7 +375,9 @@ def run(items):
             Path(staged.name).replace(CACHE)
         finally:
             Path(staged.name).unlink(missing_ok=True)
-    print(f"summaries: paired={complete}/{len(items)}, excerpts={len(items)-complete}, hook failures={failed}")
+    paired_cnt = sum(1 for i in items if i.get("summary_status") == "paired")
+    summary_cnt = sum(1 for i in items if i.get("summary_status") == "summary")
+    print(f"summaries: paired={paired_cnt}/{len(items)}, summary={summary_cnt}/{len(items)}, excerpts={len(items)-complete}, hook failures={failed}")
     return items
 
 

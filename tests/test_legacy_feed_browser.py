@@ -18,10 +18,11 @@ except ImportError:
 
 ROOT = Path(__file__).resolve().parents[1]
 ARTIFACTS_DIR = ROOT / "artifacts" / "GN-1"
+ARTIFACTS_DIR_GN4 = ROOT / "artifacts" / "GN-4"
 
 CONTROLLED_LEGACY_FEED = {
     "generated": "2026-10-15T14:00:00Z",
-    "count": 2,
+    "count": 3,
     "items": [
         {
             "id": "legacy-sample-paired",
@@ -48,6 +49,20 @@ CONTROLLED_LEGACY_FEED = {
             "sum_en": "",
             "sum_te": "",
             "read_time": 1,
+        },
+        {
+            "id": "sample-summary-status",
+            "title": "Clean Energy Microgrid Supplies Remote Clinic Day and Night",
+            "link": "https://example.com/clean-energy-clinic",
+            "published": "Thu, 15 Oct 2026 12:30:00 GMT",
+            "source": "Renewable Post",
+            "category": "science",
+            "score": 0.90,
+            "summary": "Clean microgrid provides 24-hour power to remote health clinic.",
+            "sum_en": "A newly installed solar microgrid ensures uninterrupted electricity for medical operations. Essential vaccines and diagnostic machines now stay powered through both day and night.",
+            "sum_te": "కొత్తగా ఏర్పాటు చేసిన సోలార్ మైక్రోగ్రిడ్ వైద్య కార్యకలాపాలకు అంతరాయం లేని విద్యుత్‌ను అందిస్తుంది. ముఖ్యమైన టీకాలు మరియు పరికరాలు రాత్రింబవళ్లు పనిచేస్తాయి.",
+            "summary_status": "summary",
+            "read_time": 2,
         },
     ],
 }
@@ -172,4 +187,57 @@ else:
             listen_btn = page.locator('.r-listen[data-lang="en"]')
             assert listen_btn.count() == 0
 
+            browser.close()
+
+    @pytest.mark.parametrize(
+        "width,height,filename",
+        [
+            (390, 844, "gn4-summary-390.png"),
+            (1280, 800, "gn4-summary-1280.png"),
+        ],
+    )
+    def test_summary_status_story_reader(server, width, height, filename):
+        ARTIFACTS_DIR_GN4.mkdir(parents=True, exist_ok=True)
+
+        with sync_playwright() as p:
+            browser = p.chromium.launch()
+            context = browser.new_context(viewport={"width": width, "height": height})
+
+            def handle_route(route):
+                url = route.request.url
+                if "/data/news.json" in url:
+                    route.fulfill(
+                        status=200,
+                        content_type="application/json; charset=utf-8",
+                        body=json.dumps(CONTROLLED_LEGACY_FEED),
+                    )
+                elif "127.0.0.1" in url or "localhost" in url:
+                    route.continue_()
+                else:
+                    route.abort()
+
+            context.route("**/*", handle_route)
+            page = context.new_page()
+
+            # Test item with summary_status='summary': reader renders both summaries + Listen
+            page.goto(f"{server}/#/s/sample-summary-status")
+            page.wait_for_selector("#reader:not([hidden])")
+
+            in_short_heading = page.locator('.r-sum h2:has-text("In short")')
+            in_short_heading.wait_for(state="visible", timeout=5000)
+            assert in_short_heading.is_visible()
+
+            telugu_heading = page.locator('.r-sum.te h2:has-text("తెలుగులో సారాంశం")')
+            assert telugu_heading.is_visible()
+
+            listen_en = page.locator('.r-listen[data-lang="en"]')
+            assert listen_en.is_visible()
+
+            listen_te = page.locator('.r-listen[data-lang="te"]')
+            assert listen_te.is_visible()
+
+            excerpt_heading = page.locator('h2:has-text("Publisher excerpt")')
+            assert excerpt_heading.count() == 0
+
+            page.screenshot(path=str(ARTIFACTS_DIR_GN4 / filename))
             browser.close()
