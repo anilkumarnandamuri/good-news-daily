@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#176044">
+  <title>మంచి వార్తలు · Your daily listen</title>
+  <link rel="icon" href="./mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../src/gn-voice.css">
+  <link rel="stylesheet" href="./demo.css">
+  <script type="module" src="./demo.js"></script>
+</head>
+<body>
+  <header class="masthead">
+    <a href="./" class="brand" aria-label="మంచి వార్తలు · Manchi Vaarthalu home"><img src="./mark.svg" width="44" height="44" alt=""><span><strong lang="te">మంచి వార్తలు</strong><small>MANCHI VAARTHALU · GOOD NEWS DAILY</small></span></a>
+    <span class="edition">THE LISTENING EDITION</span>
+  </header>
+  <main>
+    <div class="page-intro"><p class="eyebrow">A LITTLE NEWS. A GENTLER PACE.</p><h1>Your daily listen<span lang="te">ఈ రోజు వార్తలు, మీ వేగంలో.</span></h1><p>Five stories. Two languages. Just press play.</p></div>
+    <div class="listen-layout">
+      <div class="player-column"><gn-voice-player></gn-voice-player><p class="privacy-note">No sign-in. Your listening preferences stay on this device.</p></div>
+      <section class="stories" aria-labelledby="stories-heading">
+        <div class="stories-heading"><div><p class="eyebrow">THE DAILY FIVE</p><h2 id="stories-heading">ఈ రోజు 5 <span>Today's 5</span></h2></div><span class="edition-date"></span></div>
+        <p class="queue-help">Choose a story below, or turn on radio mode to hear them all.</p>
+        <ol id="story-list" class="story-list"></ol>
+        <p id="feed-status" role="status">Loading the sample edition…</p>
+        <aside class="listening-note"><span aria-hidden="true">☀</span><div><strong>A small pause in your day.</strong><p>Put your phone down, make a cup of tea, and let the news come to you. Recordings keep playing when you switch apps on supported devices.</p></div></aside>
+      </section>
+    </div>
+  </main>
+  <footer><span lang="te">మంచి వార్తలు · వినండి, తెలుసుకోండి.</span><span>Listening module demo · First five stories in the sample feed.</span></footer>
+</body>
+</html>

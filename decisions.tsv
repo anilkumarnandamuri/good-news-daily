@@ -1,0 +1,7 @@
+ts	phase	decision	why	evidence	result
+2026-10-14T00:00:00Z	frame	Keep script CLIs and push integration unchanged	Twice-daily callers depend on their contracts	scripts/build.py; scripts/send_push.py; scripts/digest.py; push.js; OneSignalSDKWorker.js	baseline read
+2026-10-15T05:27:59.283587+00:00	summaries	Require 4–6 validated ordered pairs and opt-in executable hook	Do not fabricate translations or pad short source material	scripts/summarize.py; tests/test_summaries.py	18 Python tests pass; offline data migrated
+2026-10-15T05:34:42.074841+00:00	audit	Correct the first row timestamp	The initial midnight timestamp was a placeholder; later rows use observed UTC time	decisions.tsv:2	initial decision was real; exact time not recorded
+2026-10-15T05:34:42.074879+00:00	delivery	Leave changes uncommitted after the first git failure	The user explicitly prohibits working around a read-only .git	CHECKPOINT.md	git index.lock creation denied; no retry
+2026-10-15T05:34:42.074886+00:00	frontend	Use relative large text, local Telugu font, lazy images, and breakpoint rerenders	Improve readability and remove unnecessary rendering work without a framework	app.js; reader.js; styles.css; fonts/OFL.txt; tests/frontend.test.js	24 Python and 8 Node tests pass
+2026-10-15T05:34:42.074891+00:00	verification	Record browser checks as not verified	Firefox state writes and local server socket binding were denied	CHECKPOINT.md	browser layout and zoom remain open

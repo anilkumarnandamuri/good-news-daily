@@ -1,6 +1,7 @@
 /* Good News Daily — local-only habits: read marks, streak, saved stories, Today's 5, banners. No accounts. */
 (function(){
  const LS={get(k,d){try{return JSON.parse(localStorage.getItem("gn_"+k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem("gn_"+k,JSON.stringify(v))}catch(e){}}};
+ for(const key of ["theme","rfs"]){try{const old=localStorage.getItem(key);if(old!==null&&localStorage.getItem("gn_"+key)===null)LS.set(key,key==="rfs"?Number(old):old)}catch(e){}}
  const day=(d=new Date())=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
  const GN=window.GN={
   isRead:id=>!!LS.get("read",{})[id],
