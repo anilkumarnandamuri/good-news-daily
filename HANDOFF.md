@@ -1,10 +1,10 @@
 # HANDOFF — good-news
 
 ## Updated
-2026-10-17 10:55 PDT | codex/gpt-6.1-sol | branch `job/GN-7` | last commit 8cd1b17
+2026-10-17 11:18 PDT | codex/gpt-6.1-sol | branch `job/GN-7` | last commit a8d1abf
 
 ## Current task / claim
-**GN-7** Write `scripts/routine_run.sh` that runs the daily routine in order: `git pull --ff-only origin main`; `GOOD_NEWS_AUDIO=1 python3 scripts/build.py`; `GOOD_NEWS_AUDIO_DIR=/workspace/good-news-audio bash scripts/publish_audio.sh --push` (failure here must not block the rest); commit `data/news.json` plus `data/audio-config.json` only if it changed and never `data/summaries.json`; push `main` without force; `python3 scripts/send_push.py` only if build and push succeeded. Compact summary output, never print secrets, offline unit test that does not need the network. Job must not push itself — only the script's runtime does. Branch `job/GN-7`. — status **in-review** by codex/gpt-6.1-sol on `job/GN-7` (since 2026-10-17 10:40 PDT). Last note: codex gpt-6.1-sol build + P2 fix + rereview clean; 10 offline tests pass Next: Chief of Staff review/merge of job/GN-7
+**GN-7** Write `scripts/routine_run.sh` that runs the daily routine in order: `git pull --ff-only origin main`; `GOOD_NEWS_AUDIO=1 python3 scripts/build.py`; `GOOD_NEWS_AUDIO_DIR=/workspace/good-news-audio bash scripts/publish_audio.sh --push` (failure here must not block the rest); commit `data/news.json` plus `data/audio-config.json` only if it changed and never `data/summaries.json`; push `main` without force; `python3 scripts/send_push.py` only if build and push succeeded. Compact summary output, never print secrets, offline unit test that does not need the network. Job must not push itself — only the script's runtime does. Branch `job/GN-7`. — status **done** by codex/gpt-6.1-sol on `job/GN-7` (since 2026-10-17 10:40 PDT). Last note: merged+pushed to good-news-daily main a8d1abf (Anil approved 11:11 PT) Next: -
 
 ## Done this session
 - Addressed the sole P2 finding repeated in artifacts/GN-7/review.md and review-1.md.
