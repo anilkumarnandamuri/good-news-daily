@@ -1,10 +1,10 @@
 # HANDOFF — good-news
 
 ## Updated
-2026-10-16 13:58 PDT | codex | branch `job/GN-6` | last commit 2d94ab9
+2026-10-17 10:40 PDT | codex/gpt-6.1-sol | branch `job/GN-7` | last commit 0aea7cc
 
 ## Current task / claim
-**GN-6** Telugu audio via local Piper TTS (pre-generated MP3, hosted outside main history) — status **done** by codex on `job/GN-6` (since 2026-10-15 22:10 PDT). Last note: merged+pushed good-news-daily main 2d94ab9; Telugu audio live via good-news-audio (Pages), verified on live site
+**GN-7** Write `scripts/routine_run.sh` that runs the daily routine in order: `git pull --ff-only origin main`; `GOOD_NEWS_AUDIO=1 python3 scripts/build.py`; `GOOD_NEWS_AUDIO_DIR=/workspace/good-news-audio bash scripts/publish_audio.sh --push` (failure here must not block the rest); commit `data/news.json` plus `data/audio-config.json` only if it changed and never `data/summaries.json`; push `main` without force; `python3 scripts/send_push.py` only if build and push succeeded. Compact summary output, never print secrets, offline unit test that does not need the network. Job must not push itself — only the script's runtime does. Branch `job/GN-7`. — status **claimed** by codex/gpt-6.1-sol on `job/GN-7` (since 2026-10-17 10:40 PDT). Last note: 2026-10-17 10:40 PDT claimed by codex/gpt-6.1-sol
 
 ## Done this session
 - Fixed post-GV-2 chunkText compatibility: whole-sentence fallback when absent; Telugu test helper injects the real chunker.
