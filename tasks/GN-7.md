@@ -1,6 +1,6 @@
 # GN-7: scripts/routine_run.sh daily routine wrapper
 
-Status: in-progress
+Status: built
 Branch: job/GN-7 (base: main)
 Model: codex/gpt-6.1-sol (medium) | Playbook: Feature | Cost: cheap
 Created: 2026-10-17
@@ -26,9 +26,15 @@ Requirements:
 - Commit on `job/GN-7` only
 
 ## Acceptance
-- [ ] `scripts/routine_run.sh` exists and is executable
-- [ ] Offline test covers: order of steps; publish_audio failure does not skip later site commit/push; send_push skipped when build or push fails; summaries.json never staged; audio-config.json committed only when changed; no secrets in output
+- [x] `scripts/routine_run.sh` exists and is executable
+- [x] Offline test covers: order of steps; publish_audio failure does not skip later site commit/push; send_push skipped when build or push fails; summaries.json never staged; audio-config.json committed only when changed; no secrets in output
 - [ ] Existing unittest / node suites still pass if run
 
 ## Checkpoint
-(empty — builder fills)
+2026-10-17 — Codex, job/GN-7. Implementation built; ready for review.
+
+- Executable runner implements the specified order, main guard, nonfatal audio publish, scoped commits, ordinary main push and notification gates. Fixed output suppresses child logs/credentials.
+- Eight offline unit tests pass, covering order/environment, audio failure continuation, fatal failure gates, unchanged configuration exclusion, no-change publication, secret suppression, wrong-branch refusal and real Git exclusion of pre-staged cache/unrelated files.
+- Validation: targeted unittest (8 passed), Bash syntax and diff whitespace checks passed; frontend and voice Node suites passed. Full unittest ran 60 tests with nine existing artifact-contract errors (missing cache entries/pairs); data and artifact test files remain unchanged.
+- No browser test needed for shell-only changes. No live runner execution or publication performed; news/summaries contents unchanged.
+- Shared checkpoint attempted as in-review but failed on read-only /workspace/good-news/PLAN.md. git add also failed on read-only worktree index.lock; commit unavailable in this sandbox. Local changes remain for review/commit in a writable environment.
