@@ -5,6 +5,7 @@ set +x
 set -euo pipefail
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.."
 steps=(pull build publish_audio commit push send_push)
+audio_dir=${GOOD_NEWS_AUDIO_DIR:-/workspace/good-news-audio}
 
 stop() {
   local index=$1 reason=$2 next
@@ -21,9 +22,9 @@ branch=$(git symbolic-ref --quiet --short HEAD 2>/dev/null) || stop 0 'main chec
 
 git pull --ff-only origin main >/dev/null 2>&1 || stop 0 'git pull failed'
 printf 'pull: ok\n'
-GOOD_NEWS_AUDIO=1 python3 scripts/build.py >/dev/null 2>&1 || stop 1 'build failed'
+GOOD_NEWS_AUDIO=1 GOOD_NEWS_AUDIO_DIR="$audio_dir" python3 scripts/build.py >/dev/null 2>&1 || stop 1 'build failed'
 printf 'build: ok\n'
-if GOOD_NEWS_AUDIO_DIR=/workspace/good-news-audio bash scripts/publish_audio.sh --push >/dev/null 2>&1; then
+if GOOD_NEWS_AUDIO_DIR="$audio_dir" bash scripts/publish_audio.sh --push >/dev/null 2>&1; then
   printf 'publish_audio: ok\n'
 else
   printf 'publish_audio: fail (continuing with site publication)\n'

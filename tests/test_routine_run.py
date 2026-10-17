@@ -57,6 +57,7 @@ class RoutineRunTests(unittest.TestCase):
         self.env = dict(os.environ, PATH=str(self.bin) + os.pathsep + os.environ['PATH'],
                         CALLS=str(self.root / 'calls'), ONESIGNAL_API_KEY='private-key-fixture')
         for key in ('FAIL_STEP', 'BRANCH', 'CONFIG_CHANGED', 'NO_CHANGES',
+                    'GOOD_NEWS_AUDIO', 'GOOD_NEWS_AUDIO_DIR',
                     'BASH_ENV', 'SHELLOPTS', 'BASHOPTS'):
             self.env.pop(key, None)
 
@@ -80,12 +81,27 @@ class RoutineRunTests(unittest.TestCase):
             'add', 'diff', 'commit', 'push', 'send_push'])
         self.assertEqual(calls[1][1], ['pull', '--ff-only', 'origin', 'main'])
         self.assertEqual(calls[2][2], '1')
+        self.assertEqual(calls[2][3], '/workspace/good-news-audio')
         self.assertEqual(calls[3][1:], [['--push'], None, '/workspace/good-news-audio'])
         paths = ['data/news.json', 'data/audio-config.json']
         self.assertEqual(calls[5][1], ['add', '--'] + paths)
         self.assertEqual(calls[7][1], ['commit', '--only', '-m', 'Refresh daily good news', '--'] + paths)
         self.assertEqual(calls[8][1], ['push', 'origin', 'main'])
         self.assertNotIn('data/summaries.json', str(calls))
+
+    def test_audio_directory_override_shared_by_build_and_publication(self):
+        audio_dir = str(self.root / 'custom audio checkout')
+        result, calls = self.run_script(GOOD_NEWS_AUDIO_DIR=audio_dir)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual([(c[0], c[3]) for c in calls if c[0] in ('build', 'publish_audio')],
+                         [('build', audio_dir), ('publish_audio', audio_dir)])
+
+    def test_empty_audio_directory_uses_shared_default(self):
+        result, calls = self.run_script(GOOD_NEWS_AUDIO_DIR='')
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual([(c[0], c[3]) for c in calls if c[0] in ('build', 'publish_audio')],
+                         [('build', '/workspace/good-news-audio'),
+                          ('publish_audio', '/workspace/good-news-audio')])
 
     def test_unchanged_audio_config_excluded(self):
         result, calls = self.run_script()

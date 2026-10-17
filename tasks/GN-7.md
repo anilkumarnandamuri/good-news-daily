@@ -31,10 +31,9 @@ Requirements:
 - [ ] Existing unittest / node suites still pass if run
 
 ## Checkpoint
-2026-10-17 — Codex, job/GN-7. Implementation built; ready for review.
+2026-10-17 — Codex, job/GN-7. One fix pass addressed the P2 finding in review.md and review-1.md; Status remains built.
 
-- Executable runner implements the specified order, main guard, nonfatal audio publish, scoped commits, ordinary main push and notification gates. Fixed output suppresses child logs/credentials.
-- Eight offline unit tests pass, covering order/environment, audio failure continuation, fatal failure gates, unchanged configuration exclusion, no-change publication, secret suppression, wrong-branch refusal and real Git exclusion of pre-staged cache/unrelated files.
-- Validation: targeted unittest (8 passed), Bash syntax and diff whitespace checks passed; frontend and voice Node suites passed. Full unittest ran 60 tests with nine existing artifact-contract errors (missing cache entries/pairs); data and artifact test files remain unchanged.
-- No browser test needed for shell-only changes. No live runner execution or publication performed; news/summaries contents unchanged.
-- Shared checkpoint attempted as in-review but failed on read-only /workspace/good-news/PLAN.md. git add also failed on read-only worktree index.lock; commit unavailable in this sandbox. Local changes remain for review/commit in a writable environment.
+- Build and audio publication now receive the same GOOD_NEWS_AUDIO_DIR, honoring a nonempty override and otherwise defaulting to /workspace/good-news-audio.
+- Ten offline runner tests pass, including default directory, custom directory with spaces, empty override fallback, failure gates, secret suppression and commit scope. Tests clear inherited audio settings for deterministic defaults.
+- Bash syntax, diff whitespace checks and both frontend/voice Node suites pass. No UI changes; no browser run needed. No live runner execution, push or deployment; routine-owned data unchanged.
+- Shared board checkpoint and local commit results are recorded in HANDOFF.md.

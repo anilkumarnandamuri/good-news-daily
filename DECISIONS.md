@@ -144,3 +144,8 @@
 - Why: Keeps the requested daily order and prevents failed builds from notifying subscribers. Audio availability must not block site publication. The summary cache is local routine state; existing staged work must not enter daily commits. Fixed output avoids leaking credentials from git hooks, remotes or API errors.
 - Alternatives rejected: `git add data/` or unscoped commits (include cache/unrelated files); aborting on audio failure (blocks text publication); forwarding child logs (may expose secrets); running from feature branches (could publish incorrect main state).
 - Workflow: GN-7 was already claimed on job/GN-7. Board checkpoint was attempted but failed on read-only `/workspace/good-news/PLAN.md`; git add was denied on the worktree index.lock outside the writable root, so no commit was possible. Local task checkpoint records review readiness. No UI changes require browser screenshots.
+
+## D016 — Share the routine audio checkout (2026-10-17, Codex)
+- Decision: Resolve GOOD_NEWS_AUDIO_DIR once in the routine, defaulting empty/unset values to /workspace/good-news-audio, and pass it explicitly to both build and publication.
+- Why: A custom checkout or site location must not generate narration in one directory and publish stale audio from another.
+- Alternatives rejected: Hardcoding only publication (directory mismatch); ignoring operator overrides (breaks configured checkouts). Standalone build and publisher defaults remain unchanged.
