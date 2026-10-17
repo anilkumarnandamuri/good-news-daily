@@ -1,39 +1,44 @@
 # HANDOFF — good-news
 
 ## Updated
-2026-10-16 13:58 PDT | codex | branch `job/GN-6` | last commit 2d94ab9
+2026-10-17 10:55 PDT | codex/gpt-6.1-sol | branch `job/GN-7` | last commit 8cd1b17
 
 ## Current task / claim
-**GN-6** Telugu audio via local Piper TTS (pre-generated MP3, hosted outside main history) — status **done** by codex on `job/GN-6` (since 2026-10-15 22:10 PDT). Last note: merged+pushed good-news-daily main 2d94ab9; Telugu audio live via good-news-audio (Pages), verified on live site
+**GN-7** Write `scripts/routine_run.sh` that runs the daily routine in order: `git pull --ff-only origin main`; `GOOD_NEWS_AUDIO=1 python3 scripts/build.py`; `GOOD_NEWS_AUDIO_DIR=/workspace/good-news-audio bash scripts/publish_audio.sh --push` (failure here must not block the rest); commit `data/news.json` plus `data/audio-config.json` only if it changed and never `data/summaries.json`; push `main` without force; `python3 scripts/send_push.py` only if build and push succeeded. Compact summary output, never print secrets, offline unit test that does not need the network. Job must not push itself — only the script's runtime does. Branch `job/GN-7`. — status **in-review** by codex/gpt-6.1-sol on `job/GN-7` (since 2026-10-17 10:40 PDT). Last note: codex gpt-6.1-sol build + P2 fix + rereview clean; 10 offline tests pass Next: Chief of Staff review/merge of job/GN-7
 
 ## Done this session
-- Fixed post-GV-2 chunkText compatibility: whole-sentence fallback when absent; Telugu test helper injects the real chunker.
-- Cached Telugu manifests now retry failed module imports. Ready playback stays synchronous; asynchronous recovery preserves MP3 and device-speech resume gestures.
-- Added three regressions (35 frontend cases total). Updated task Review response and Checkpoint. GN-5 controls/styles and routine-owned data unchanged.
+- Addressed the sole P2 finding repeated in artifacts/GN-7/review.md and review-1.md.
+- Resolve the audio directory once and pass it to build and publication; honor overrides and default to /workspace/good-news-audio.
+- Added offline regression coverage for a custom directory with spaces and an empty override; default test verifies both commands receive the same directory.
+- Updated tasks/GN-7.md Checkpoint and appended D016. Routine-owned data unchanged; no live runner, push or deployment.
 
 ## Verified (with evidence)
-- Requested combined command passed: 52 Python tests, frontend Node suite and voice Node suite.
-- Direct `node tests/frontend.test.js`: all 35 cases pass, including GN-6, GV-2 and GN-5 regressions.
-- `git diff --check` passed; data/news.json and data/summaries.json match HEAD.
+- `python3 -m unittest discover -s tests -p 'test_routine_run.py' -q`: ten tests pass.
+- `node --test tests/*.test.js voice/tests/*.test.js`: both suites pass.
+- `bash -n scripts/routine_run.sh` and `git diff --check`: pass.
 
 ## Unverified
-- Playwright GN-6 retry: six setup errors from sandbox-denied AF_INET sockets before browser launch. No new screenshots.
-- Physical-device playback and external hosting still require operator verification.
+- Operator runtime with real audio generation and publication.
+- No browser run: shell/test changes only, no UI changes.
+- Full Python discovery not repeated; prior handoff reports nine existing artifact/cache errors.
 
 ## Broken / half-done
-- Browser acceptance remains pending; no known implementation failures.
+- Board checkpoint attempted as in-review but failed writing read-only /workspace/good-news/PLAN.md.
+- git add/commit attempted on job/GN-7 but failed creating read-only /workspace/good-news/.git/worktrees/good-news-gn7/index.lock; changes remain uncommitted.
 
 ## Next 3 steps (smallest first)
-1. Review the uncommitted reader/test fixes.
-2. Run Playwright and inspect screenshots in a socket-enabled environment.
-3. Operator commits when satisfied and configures audio hosting before routine opt-in.
+1. Review the shared audio directory fix and offline tests.
+2. Record board checkpoint and commit if sandbox metadata permissions permit.
+3. Operator validates real narration publication when ready.
 
 ## Blockers / questions for Anil
-- Local server sockets are denied by the sandbox; no product clarification needed.
-- No network, commits, pushes or branch switches. Shared board writes are outside permitted writable roots; checkpoint recorded in tasks/GN-6.md.
+- Shared board and Git metadata need writable access to checkpoint and commit. No product clarification needed.
 
 ## How to resume
 ```sh
-python3 -m unittest discover -s tests -p 'test_*.py' && node --test tests/*.test.js && node --test voice/tests/*.test.js
-python3 -m pytest tests/test_te_audio_browser.py -q
+python3 -m unittest discover -s tests -p 'test_routine_run.py' -q
+bash -n scripts/routine_run.sh
+/workspace/projects/board.sh checkpoint GN-7 'Review P2 fixed; shared audio directory; ten offline tests pass' --status in-review --next 'Review GN-7 directory fix'
+git add -- scripts/routine_run.sh tests/test_routine_run.py tasks/GN-7.md HANDOFF.md DECISIONS.md
+git commit -m 'Fix GN-7 shared audio generation and publication directory'
 ```
